@@ -1,0 +1,92 @@
+{
+    "standing": 1208,
+    "battlenet_account": 702040630,
+    "alias": "scgotoboy",
+    "avatar": "https://scrassets.classic.blizzard.com/avatar-icons/S1/34b083d5b2d61299abf343d643b1ecca.png",
+    "wins": 143,
+    "losses": 80,
+    "disconnects": 0,
+    "last_updated": null,
+    "race": "zerg",
+    "rank": "S",
+    "rating": 2250,
+    "account_id": 1324081578,
+    "gateway_name": "Korea",
+    "gateway": 30,
+    "country_code": "HKG",
+    "battlenet_name": "Cqusa77",
+    "stats": {
+        "win_loss": {
+            "win": 52,
+            "loss": 26
+        },
+        "games_dodged": 14,
+        "games_per_race": {
+            "zerg": 78,
+            "terran": 0,
+            "protoss": 0
+        },
+        "opponent_races": {
+            "zerg": 33,
+            "terran": 23,
+            "protoss": 22
+        },
+        "win_loss_matchup": {
+            "win": {
+                "pvp": 0,
+                "pvt": 0,
+                "pvz": 0,
+                "tvp": 0,
+                "tvt": 0,
+                "tvz": 0,
+                "zvp": 13,
+                "zvt": 16,
+                "zvz": 23
+            },
+            "loss": {
+                "pvp": 0,
+                "pvt": 0,
+                "pvz": 0,
+                "tvp": 0,
+                "tvt": 0,
+                "tvz": 0,
+                "zvp": 9,
+                "zvt": 7,
+                "zvz": 10
+            }
+        },
+        "avg_game_duration": 613.418615384615,
+        "total_games_analyzed": 100,
+        "games_opponent_dodged": 8,
+        "games_won_lost_by_map": {
+            "win": {
+                "(4)Octagon1.0.scx": 8,
+                "(4)KnockOut1.4.scx": 7,
+                "(2)Jane Doe 1.2.scx": 1,
+                "(4)Attitude 1.0.scx": 15,
+                "(2)MatchPoint1.4.scx": 1,
+                "(4)Pole Star 1.1.scx": 15,
+                "(3)Neo_Sylphid_3.2.scx": 5
+            },
+            "loss": {
+                "(4)Octagon1.0.scx": 6,
+                "(4)KnockOut1.4.scx": 5,
+                "(2)Jane Doe 1.2.scx": 3,
+                "(4)Attitude 1.0.scx": 4,
+                "(4)Pole Star 1.1.scx": 7,
+                "(3)Neo_Sylphid_3.2.scx": 1
+            }
+        },
+        "avg_game_duration_matchup": {
+            "pvp": null,
+            "pvt": null,
+            "pvz": null,
+            "tvp": null,
+            "tvt": null,
+            "tvz": null,
+            "zvp": 752.340272727273,
+            "zvt": 663.963391304348,
+            "zvz": 485.576
+        }
+    }
+}
