@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"image/color"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -37,15 +38,17 @@ const (
 	profileRetryInterval   = 700 * time.Millisecond
 	profileRetryMaxAttempt = 4
 	updateAPIURL           = "https://v2.api.cwal.gg/player-update"
+	apiLogPath             = "api_fetch.log"
 
 	flashDuration = 1200 * time.Millisecond
 
 	// Column widths – kept tight so that every column stays visible when the
 	// window is resized narrow. The middle PLAYER column always takes the
 	// remaining space via Border layout.
-	colRankWidth   = 26
-	colArrowWidth  = 14
-	colRatingWidth = 56
+	colRankWidth   = 22
+	colArrowWidth  = 12
+	colBadgeWidth  = 16
+	colRatingWidth = 50
 	rowHeight      = 26
 	headerHeight   = 18
 
@@ -57,9 +60,15 @@ const (
 	prefFontTypeKey        = "ui.font_type"
 	prefWindowOpacityKey   = "ui.window_opacity"
 	prefSettingsSavedKey   = "ui.settings_saved"
+	prefPollSettingsSaved  = "poll.settings_saved"
+	prefPollIntervalSecKey = "poll.interval_sec"
+	prefPollStopEnabledKey = "poll.stop_enabled"
+	prefPollStopAtKey      = "poll.stop_at"
+	prefHistoryScoresKey   = "history.scores_json"
 	defaultWindowOpacity   = 0
 	defaultFontSize        = 13
 	defaultFontType        = "Regular"
+	appVersion             = "v1.1.0"
 )
 
 var (
@@ -70,6 +79,33 @@ var (
 	colorMuted      = color.NRGBA{R: 148, G: 163, B: 184, A: 255}
 	colorText       = color.NRGBA{R: 255, G: 255, B: 255, A: 255}
 	colorHeaderText = color.NRGBA{R: 148, G: 163, B: 184, A: 255}
+	colorTop8Row    = color.NRGBA{R: 51, G: 65, B: 85, A: 125}
+	colorRating2200 = color.NRGBA{R: 110, G: 178, B: 238, A: 255} // blue
+	colorRating2300 = color.NRGBA{R: 152, G: 176, B: 234, A: 255} // blue-violet
+	colorRating2400 = color.NRGBA{R: 188, G: 172, B: 232, A: 255} // violet
+
+	badgeResourceNone = fyne.NewStaticResource("badge-none.svg", []byte(`
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <circle cx="8" cy="8" r="6.5" fill="#000000" fill-opacity="0"/>
+</svg>`))
+	badgeResourceChampion = fyne.NewStaticResource("badge-champion.svg", []byte(`
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <circle cx="8" cy="8" r="6.5" fill="#EAB308"/>
+  <circle cx="8" cy="8" r="4.8" fill="#FDE047"/>
+</svg>`))
+	badgeResourceRunnerUp = fyne.NewStaticResource("badge-runner-up.svg", []byte(`
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <circle cx="8" cy="8" r="6.5" fill="#94A3B8"/>
+  <circle cx="8" cy="8" r="4.8" fill="#E2E8F0"/>
+</svg>`))
+	badgeResourceThird = fyne.NewStaticResource("badge-third.svg", []byte(`
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <circle cx="8" cy="8" r="6.5" fill="#B45309"/>
+  <circle cx="8" cy="8" r="4.8" fill="#F59E0B"/>
+</svg>`))
+
+	apiLoggerMu sync.RWMutex
+	apiLogger   *log.Logger
 )
 
 type player struct {
@@ -81,6 +117,7 @@ type playerState struct {
 	player
 	LiveScore int
 	LastError string
+	hasManual bool
 
 	hasPrev   bool
 	prevScore int
@@ -94,11 +131,156 @@ type apiConfig struct {
 }
 
 type rowUI struct {
+	background *canvas.Rectangle
 	rankText   *canvas.Text
 	arrowText  *canvas.Text
+	badgeIcon  *canvas.Image
 	nameText   *canvas.Text
 	ratingText *canvas.Text
 	container  *fyne.Container
+}
+
+type pollControl struct {
+	mu          sync.RWMutex
+	interval    time.Duration
+	stopEnabled bool
+	stopAt      time.Time
+	stopped     bool
+}
+
+type savedScore struct {
+	CwalID string `json:"cwal_id"`
+	Score  int    `json:"score"`
+}
+
+func newPollControl() *pollControl {
+	return &pollControl{interval: fetchInterval}
+}
+
+func (p *pollControl) Snapshot() (time.Duration, bool, time.Time, bool) {
+	p.mu.RLock()
+	defer p.mu.RUnlock()
+	return p.interval, p.stopEnabled, p.stopAt, p.stopped
+}
+
+func (p *pollControl) Update(interval time.Duration, stopEnabled bool, stopAt time.Time) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.interval = interval
+	p.stopEnabled = stopEnabled
+	p.stopAt = stopAt
+	p.stopped = false
+}
+
+func (p *pollControl) MarkStopped() bool {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	if p.stopped {
+		return false
+	}
+	p.stopped = true
+	return true
+}
+
+func shouldShowBadges(p *pollControl) bool {
+	if p == nil {
+		return false
+	}
+	_, stopEnabled, stopAt, stopped := p.Snapshot()
+	if stopped {
+		return true
+	}
+	if !stopEnabled {
+		return false
+	}
+	return !time.Now().Before(stopAt)
+}
+
+func loadPollSettingsFromPrefs(p fyne.Preferences) *pollControl {
+	pc := newPollControl()
+	if !p.Bool(prefPollSettingsSaved) {
+		return pc
+	}
+
+	intervalSec := p.Int(prefPollIntervalSecKey)
+	if intervalSec < 1 || intervalSec > 3600 {
+		intervalSec = int(fetchInterval / time.Second)
+	}
+
+	stopEnabled := p.Bool(prefPollStopEnabledKey)
+	stopAt := time.Time{}
+	if raw := strings.TrimSpace(p.String(prefPollStopAtKey)); raw != "" {
+		if parsed, err := time.Parse(time.RFC3339, raw); err == nil {
+			stopAt = parsed
+		}
+	}
+	// Backward/compat mode: if stop time exists, treat it as enabled.
+	if !stopEnabled && !stopAt.IsZero() {
+		stopEnabled = true
+	}
+	if stopEnabled && stopAt.IsZero() {
+		stopEnabled = false
+	}
+	pc.Update(time.Duration(intervalSec)*time.Second, stopEnabled, stopAt)
+	return pc
+}
+
+func savePollSettingsToPrefs(p fyne.Preferences, interval time.Duration, stopEnabled bool, stopAt time.Time) {
+	p.SetBool(prefPollSettingsSaved, true)
+	p.SetInt(prefPollIntervalSecKey, int(interval/time.Second))
+	p.SetBool(prefPollStopEnabledKey, stopEnabled)
+	if stopEnabled && !stopAt.IsZero() {
+		p.SetString(prefPollStopAtKey, stopAt.Format(time.RFC3339))
+	} else {
+		p.SetString(prefPollStopAtKey, "")
+	}
+}
+
+func loadHistoryScoresFromPrefs(p fyne.Preferences, rows []*playerState) {
+	raw := strings.TrimSpace(p.String(prefHistoryScoresKey))
+	if raw == "" {
+		return
+	}
+	var items []savedScore
+	if err := json.Unmarshal([]byte(raw), &items); err != nil {
+		return
+	}
+	scoreByID := make(map[string]int, len(items))
+	for _, it := range items {
+		if it.CwalID == "" {
+			continue
+		}
+		scoreByID[it.CwalID] = it.Score
+	}
+	for _, r := range rows {
+		if score, ok := scoreByID[r.CwalID]; ok {
+			r.LiveScore = score
+			r.prevScore = score
+			r.hasPrev = true
+			r.LastError = ""
+			r.trend = 0
+		}
+	}
+}
+
+func saveHistoryScoresToPrefs(p fyne.Preferences, rows []*playerState, rowsMu *sync.RWMutex) {
+	rowsMu.RLock()
+	defer rowsMu.RUnlock()
+	items := make([]savedScore, 0, len(rows))
+	for _, r := range rows {
+		if r.LastError != "" {
+			continue
+		}
+		items = append(items, savedScore{
+			CwalID: r.CwalID,
+			Score:  r.LiveScore,
+		})
+	}
+	b, err := json.Marshal(items)
+	if err != nil {
+		return
+	}
+	p.SetString(prefHistoryScoresKey, string(b))
 }
 
 type headerUI struct {
@@ -120,6 +302,35 @@ type uiSettingsSnapshot struct {
 	FontColor       color.NRGBA
 	FontType        string
 	BackgroundAlpha uint8
+}
+
+type doubleTapBox struct {
+	widget.BaseWidget
+	content   fyne.CanvasObject
+	onDouble  func()
+	lastTapAt time.Time
+}
+
+func newDoubleTapBox(content fyne.CanvasObject, onDouble func()) *doubleTapBox {
+	d := &doubleTapBox{content: content, onDouble: onDouble}
+	d.ExtendBaseWidget(d)
+	return d
+}
+
+func (d *doubleTapBox) Tapped(_ *fyne.PointEvent) {
+	now := time.Now()
+	if !d.lastTapAt.IsZero() && now.Sub(d.lastTapAt) <= 450*time.Millisecond && d.onDouble != nil {
+		d.onDouble()
+		d.lastTapAt = time.Time{}
+		return
+	}
+	d.lastTapAt = now
+}
+
+func (d *doubleTapBox) TappedSecondary(_ *fyne.PointEvent) {}
+
+func (d *doubleTapBox) CreateRenderer() fyne.WidgetRenderer {
+	return widget.NewSimpleRenderer(d.content)
 }
 
 func defaultUISettings() *uiSettings {
@@ -235,20 +446,29 @@ func main() {
 	myApp := app.NewWithID("cwalgg.score.monitor")
 	win := myApp.NewWindow("Score Monitor")
 	win.Resize(fyne.NewSize(420, 700))
+	if err := initAPILogger(apiLogPath); err != nil {
+		fmt.Fprintf(os.Stderr, "failed to init api logger: %v\n", err)
+	}
 	settings := loadUISettingsFromPrefs(myApp.Preferences())
+	pollCfg := loadPollSettingsFromPrefs(myApp.Preferences())
+	loadHistoryScoresFromPrefs(myApp.Preferences(), rows)
 
 	// ---- Header ----
 	statusDot := canvas.NewCircle(colorRed)
 	statusDotBox := container.NewGridWrap(fyne.NewSize(10, 10), statusDot)
 	updatedText := canvas.NewText("", colorHeaderText)
 	updatedText.TextSize = 11
-
-	leftPane := container.NewHBox(container.NewCenter(statusDotBox), updatedText)
+	countdownText := canvas.NewText("", colorHeaderText)
+	countdownText.TextSize = 10
+	leftTimePane := container.NewHBox(container.NewCenter(statusDotBox), updatedText)
 	settingsBtn := widget.NewButtonWithIcon("", theme.SettingsIcon(), nil)
 	settingsBtn.Importance = widget.LowImportance
-	settingsBtnBox := container.NewGridWrap(fyne.NewSize(24, 24), settingsBtn)
+	settingsBtnBox := container.NewGridWrap(fyne.NewSize(20, 20), settingsBtn)
+	logBtn := widget.NewButtonWithIcon("", theme.DocumentIcon(), nil)
+	logBtn.Importance = widget.LowImportance
+	logBtnBox := container.NewGridWrap(fyne.NewSize(20, 20), logBtn)
 
-	headerBar := container.NewBorder(nil, nil, leftPane, settingsBtnBox)
+	headerBar := container.NewBorder(nil, nil, leftTimePane, countdownText)
 	headerPadded := container.NewPadded(headerBar)
 
 	// ---- Column header ----
@@ -256,20 +476,32 @@ func main() {
 
 	// ---- Rows ----
 	rowUIs := make([]*rowUI, len(rows))
+	var listVBox *fyne.Container
+	var rowsMu sync.RWMutex
 	for i := range rows {
-		rowUIs[i] = buildRowUI()
+		idx := i
+		rowUIs[i] = buildRowUI(func() {
+			showManualScoreDialog(win, rows[idx], &rowsMu, func() {
+				saveHistoryScoresToPrefs(myApp.Preferences(), rows, &rowsMu)
+				applySortAndRender(rows, rowUIs, listVBox, &rowsMu, settings, shouldShowBadges(pollCfg))
+			})
+		})
 	}
 
-	listVBox := container.NewVBox()
+	listVBox = container.NewVBox()
 	for _, ru := range rowUIs {
 		listVBox.Add(ru.container)
 	}
 	scroll := container.NewVScroll(listVBox)
 
 	// ---- Footer ----
-	footer := canvas.NewText(fmt.Sprintf("%d players  •  source: cwal.gg", len(rows)), colorHeaderText)
-	footer.TextSize = 11
-	footerBox := container.New(layout.NewCenterLayout(), footer)
+	footer := canvas.NewText(
+		fmt.Sprintf("%d P  •  cwal.gg  •  %s  •  秋天的树", len(rows), appVersion),
+		colorHeaderText,
+	)
+	footer.TextSize = 10
+	leftFooterBtns := container.NewHBox(settingsBtnBox, logBtnBox)
+	footerBox := container.NewBorder(nil, nil, leftFooterBtns, nil, container.New(layout.NewCenterLayout(), footer))
 
 	backgroundRect := canvas.NewRectangle(color.NRGBA{R: 15, G: 23, B: 42, A: settings.Snapshot().BackgroundAlpha})
 	settingsBtn.OnTapped = func() {
@@ -277,11 +509,15 @@ func main() {
 			win,
 			settings,
 			myApp.Preferences(),
+			pollCfg,
 			backgroundRect,
-			[]*canvas.Text{updatedText, footer},
+			[]*canvas.Text{updatedText, countdownText, footer},
 			headerRefs,
 			rowUIs,
 		)
+	}
+	logBtn.OnTapped = func() {
+		showAPILogDialog(win, apiLogPath)
 	}
 
 	content := container.NewBorder(
@@ -299,12 +535,11 @@ func main() {
 		nil,
 		scroll,
 	)
-	applyTypography(settings.Snapshot(), []*canvas.Text{updatedText, footer}, headerRefs, rowUIs)
+	applyTypography(settings.Snapshot(), []*canvas.Text{updatedText, countdownText, footer}, headerRefs, rowUIs)
 	win.SetContent(container.NewMax(backgroundRect, content))
 
-	var rowsMu sync.RWMutex
 	stopCh := make(chan struct{})
-	go pollLoop(rows, rowUIs, listVBox, &rowsMu, statusDot, updatedText, stopCh, cfg, settings)
+	go pollLoop(rows, rowUIs, listVBox, &rowsMu, statusDot, updatedText, countdownText, stopCh, cfg, settings, pollCfg, myApp.Preferences(), win)
 	win.SetCloseIntercept(func() {
 		close(stopCh)
 		win.Close()
@@ -322,11 +557,12 @@ func buildHeaderRow() (*fyne.Container, headerUI) {
 	player := canvas.NewText("PLAYER", colorHeaderText)
 	player.TextStyle = fyne.TextStyle{Bold: true}
 	player.TextSize = 11
+	player.Alignment = fyne.TextAlignCenter
 
 	rating := canvas.NewText("RATING", colorHeaderText)
 	rating.TextStyle = fyne.TextStyle{Bold: true, Monospace: true}
 	rating.TextSize = 11
-	rating.Alignment = fyne.TextAlignTrailing
+	rating.Alignment = fyne.TextAlignCenter
 
 	rankBox := container.NewGridWrap(fyne.NewSize(colRankWidth, headerHeight), rank)
 	ratingBox := container.NewGridWrap(fyne.NewSize(colRatingWidth, headerHeight), rating)
@@ -338,7 +574,8 @@ func buildHeaderRow() (*fyne.Container, headerUI) {
 	}
 }
 
-func buildRowUI() *rowUI {
+func buildRowUI(onDoubleTap func()) *rowUI {
+	bg := canvas.NewRectangle(color.Transparent)
 	rank := canvas.NewText("", colorMuted)
 	rank.TextStyle = fyne.TextStyle{Monospace: true, Bold: true}
 	rank.TextSize = 13
@@ -351,6 +588,10 @@ func buildRowUI() *rowUI {
 	name := canvas.NewText("", colorText)
 	name.TextSize = 13
 
+	badge := canvas.NewImageFromResource(badgeResourceNone)
+	badge.FillMode = canvas.ImageFillContain
+	badge.SetMinSize(fyne.NewSize(16, 16))
+
 	rating := canvas.NewText("", colorText)
 	rating.TextStyle = fyne.TextStyle{Monospace: true, Bold: true}
 	rating.TextSize = 13
@@ -358,15 +599,19 @@ func buildRowUI() *rowUI {
 
 	rankBox := container.NewGridWrap(fyne.NewSize(colRankWidth, rowHeight), rank)
 	arrowBox := container.NewGridWrap(fyne.NewSize(colArrowWidth, rowHeight), arrow)
+	badgeBox := container.NewGridWrap(fyne.NewSize(colBadgeWidth, rowHeight), container.NewCenter(badge))
 	ratingBox := container.NewGridWrap(fyne.NewSize(colRatingWidth, rowHeight), rating)
 
-	playerBox := container.NewHBox(arrowBox, name)
+	playerBox := container.NewHBox(arrowBox, badgeBox, name)
 
-	row := container.NewBorder(nil, nil, rankBox, ratingBox, playerBox)
+	rowContent := container.NewBorder(nil, nil, rankBox, ratingBox, playerBox)
+	row := container.NewMax(bg, rowContent, newDoubleTapBox(rowContent, onDoubleTap))
 
 	return &rowUI{
+		background: bg,
 		rankText:   rank,
 		arrowText:  arrow,
+		badgeIcon:  badge,
 		nameText:   name,
 		ratingText: rating,
 		container:  row,
@@ -377,6 +622,7 @@ func showFontSettingsDialog(
 	win fyne.Window,
 	settings *uiSettings,
 	prefs fyne.Preferences,
+	pollCfg *pollControl,
 	backgroundRect *canvas.Rectangle,
 	staticTexts []*canvas.Text,
 	headerRefs headerUI,
@@ -404,15 +650,29 @@ func showFontSettingsDialog(
 		alphaLabel.SetText(fmt.Sprintf("%d%%", int(v)))
 	}
 	alphaRow := container.NewBorder(nil, nil, nil, alphaLabel, alphaSlider)
+	intervalEntry := widget.NewEntry()
+	interval, stopEnabled, stopAt, _ := pollCfg.Snapshot()
+	intervalEntry.SetText(strconv.Itoa(int(interval / time.Second)))
+
+	stopTimeEntry := widget.NewEntry()
+	stopTimeEntry.SetPlaceHolder("YYYY-MM-DD HH:MM")
+	if stopEnabled {
+		stopTimeEntry.SetText(stopAt.Format("2006-01-02 15:04"))
+	} else {
+		now := time.Now()
+		stopTimeEntry.SetText(fmt.Sprintf("%s 00:00", now.Format("2006-01-02")))
+	}
 
 	items := []*widget.FormItem{
 		widget.NewFormItem("Font Size", sizeEntry),
 		widget.NewFormItem("Font Color", colorSelect),
 		widget.NewFormItem("Font Type", typeSelect),
-		widget.NewFormItem("Background Transparency", alphaRow),
+		widget.NewFormItem("BG Transparency", alphaRow),
+		widget.NewFormItem("Polling Interval(m)", intervalEntry),
+		widget.NewFormItem("Stop Time", stopTimeEntry),
 	}
 
-	dialog.NewForm("Settings", "", "", items, func(ok bool) {
+	formDlg := dialog.NewForm("Settings", "", "", items, func(ok bool) {
 		if !ok {
 			return
 		}
@@ -433,18 +693,51 @@ func showFontSettingsDialog(
 			FontType:        selectedType,
 			BackgroundAlpha: alphaFromTransparencyPercent(uint8(alphaSlider.Value)),
 		}
+		intervalSec, err := strconv.Atoi(strings.TrimSpace(intervalEntry.Text))
+		if err != nil || intervalSec < 1 || intervalSec > 3600 {
+			dialog.ShowError(errors.New("polling interval must be between 1 and 3600 seconds"), win)
+			return
+		}
+		stopText := strings.TrimSpace(stopTimeEntry.Text)
+		nextStopEnabled := false
+		nextStopAt := time.Time{}
+		if stopText != "" {
+			parsed, parseErr := time.ParseInLocation("2006-01-02 15:04", stopText, time.Now().Location())
+			if parseErr != nil {
+				dialog.ShowError(errors.New("stop time format must be YYYY-MM-DD HH:MM"), win)
+				return
+			}
+			if !parsed.After(time.Now()) {
+				dialog.ShowError(errors.New("stop time must be later than now"), win)
+				return
+			}
+			nextStopAt = parsed
+			nextStopEnabled = true
+		}
 		settings.Update(next)
 		saveUISettingsToPrefs(prefs, next)
+		pollCfg.Update(time.Duration(intervalSec)*time.Second, nextStopEnabled, nextStopAt)
+		savePollSettingsToPrefs(prefs, time.Duration(intervalSec)*time.Second, nextStopEnabled, nextStopAt)
 		applyTypography(next, staticTexts, headerRefs, rowUIs)
 		backgroundRect.FillColor = color.NRGBA{R: 15, G: 23, B: 42, A: next.BackgroundAlpha}
 		backgroundRect.Refresh()
-	}, win).Show()
+	}, win)
+	sizeEntry.OnSubmitted = func(_ string) {
+		formDlg.Submit()
+	}
+	intervalEntry.OnSubmitted = func(_ string) {
+		formDlg.Submit()
+	}
+	stopTimeEntry.OnSubmitted = func(_ string) {
+		formDlg.Submit()
+	}
+	formDlg.Show()
 }
 
 func applyTypography(s uiSettingsSnapshot, staticTexts []*canvas.Text, headerRefs headerUI, rowUIs []*rowUI) {
 	bodySize := s.FontSize
 	headerSize := maxFloat32(10, bodySize-2)
-	footerSize := maxFloat32(10, bodySize-2)
+	footerSize := maxFloat32(9, bodySize-3)
 
 	bodyStyle := styleByType(s.FontType)
 	headerStyle := bodyStyle
@@ -553,6 +846,137 @@ func maxFloat32(a, b float32) float32 {
 	return b
 }
 
+func initAPILogger(path string) error {
+	f, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
+	if err != nil {
+		return err
+	}
+	apiLoggerMu.Lock()
+	apiLogger = log.New(f, "", log.LstdFlags|log.Lmicroseconds)
+	apiLoggerMu.Unlock()
+	return nil
+}
+
+func logAPIFetch(format string, args ...any) {
+	apiLoggerMu.RLock()
+	l := apiLogger
+	apiLoggerMu.RUnlock()
+	if l == nil {
+		return
+	}
+	l.Printf(format, args...)
+}
+
+func showAPILogDialog(win fyne.Window, logPath string) {
+	content, err := readLastLines(logPath, 100)
+	if err != nil {
+		dialog.ShowError(fmt.Errorf("failed to read log file: %w", err), win)
+		return
+	}
+	if strings.TrimSpace(content) == "" {
+		content = "(log is empty)"
+	}
+	grid := widget.NewTextGridFromString(content)
+	grid.ShowLineNumbers = false
+	applyWhiteStyleForGrid(grid, content)
+	scroll := container.NewVScroll(grid)
+
+	var d dialog.Dialog
+	stopRefresh := make(chan struct{})
+	var stopOnce sync.Once
+	stop := func() {
+		stopOnce.Do(func() {
+			close(stopRefresh)
+		})
+	}
+	closeBtn := widget.NewButton("关闭", func() {
+		stop()
+		// Clear UI-held content on close to avoid retaining log text in memory.
+		grid.SetText("")
+		d.Hide()
+	})
+	body := container.NewBorder(nil, closeBtn, nil, nil, scroll)
+	d = dialog.NewCustomWithoutButtons("API日志", body, win)
+	d.SetOnClosed(func() {
+		stop()
+		// Ensure closed dialog does not keep large text content.
+		grid.SetText("")
+	})
+	d.Resize(fyne.NewSize(760, 480))
+	d.Show()
+	fyne.Do(func() {
+		scroll.ScrollToBottom()
+	})
+
+	go func() {
+		ticker := time.NewTicker(time.Second)
+		defer ticker.Stop()
+		lastContent := content
+		for {
+			select {
+			case <-stopRefresh:
+				return
+			case <-ticker.C:
+				next, err := readLastLines(logPath, 100)
+				if err != nil {
+					continue
+				}
+				if strings.TrimSpace(next) == "" {
+					next = "(log is empty)"
+				}
+				if next == lastContent {
+					continue
+				}
+				lastContent = next
+				fyne.Do(func() {
+					grid.SetText(next)
+					applyWhiteStyleForGrid(grid, next)
+					scroll.ScrollToBottom()
+				})
+			}
+		}
+	}()
+}
+
+func applyWhiteStyleForGrid(grid *widget.TextGrid, content string) {
+	lines := strings.Split(content, "\n")
+	lastRow := len(lines) - 1
+	lastCol := 0
+	if lastRow >= 0 {
+		lastCol = len([]rune(lines[lastRow]))
+	}
+	grid.SetStyleRange(0, 0, lastRow, lastCol, &widget.CustomTextGridStyle{
+		FGColor: color.White,
+		BGColor: color.Transparent,
+	})
+}
+
+func readLastLines(path string, maxLines int) (string, error) {
+	if maxLines <= 0 {
+		maxLines = 100
+	}
+	f, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	lines := make([]string, 0, maxLines)
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		if len(lines) == maxLines {
+			copy(lines, lines[1:])
+			lines[maxLines-1] = scanner.Text()
+		} else {
+			lines = append(lines, scanner.Text())
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return "", err
+	}
+	return strings.Join(lines, "\n"), nil
+}
+
 func pollLoop(
 	rows []*playerState,
 	rowUIs []*rowUI,
@@ -560,9 +984,13 @@ func pollLoop(
 	rowsMu *sync.RWMutex,
 	statusDot *canvas.Circle,
 	updatedText *canvas.Text,
+	countdownText *canvas.Text,
 	stopCh <-chan struct{},
 	cfg apiConfig,
 	settings *uiSettings,
+	pollCfg *pollControl,
+	prefs fyne.Preferences,
+	win fyne.Window,
 ) {
 	setIdle := func(ts string) {
 		anyOK := anyRowOK(rows, rowsMu)
@@ -583,20 +1011,106 @@ func pollLoop(
 
 	runCycle := func() {
 		refreshRows(rows, rowsMu, cfg)
-		applySortAndRender(rows, rowUIs, listVBox, rowsMu, settings)
+		saveHistoryScoresToPrefs(prefs, rows, rowsMu)
+		applySortAndRender(rows, rowUIs, listVBox, rowsMu, settings, shouldShowBadges(pollCfg))
 		setIdle(time.Now().Format("2006-01-02 15:04:05"))
 	}
-
-	runCycle()
-
-	ticker := time.NewTicker(fetchInterval)
+	_, stopEnabledAtStart, stopAtStart, stoppedAtStart := pollCfg.Snapshot()
+	if stopEnabledAtStart && !time.Now().Before(stopAtStart) {
+		if !stoppedAtStart {
+			pollCfg.MarkStopped()
+		}
+		applySortAndRender(rows, rowUIs, listVBox, rowsMu, settings, true)
+		fyne.Do(func() {
+			statusDot.FillColor = colorRed
+			statusDot.Refresh()
+			updatedText.Text = "Polling stopped"
+			updatedText.Refresh()
+			countdownText.Color = colorRed
+			countdownText.Text = "00:00:00"
+			countdownText.Refresh()
+		})
+	} else {
+		runCycle()
+	}
+	nextPollAt := time.Now()
+	ticker := time.NewTicker(time.Second)
 	defer ticker.Stop()
+	var cycleMu sync.Mutex
+	cycleRunning := false
 	for {
 		select {
 		case <-stopCh:
 			return
 		case <-ticker.C:
-			runCycle()
+			interval, stopEnabled, stopAt, stopped := pollCfg.Snapshot()
+			now := time.Now()
+			if interval < time.Second {
+				interval = time.Second
+			}
+			if stopEnabled {
+				remain := time.Until(stopAt)
+				if remain <= 0 {
+					if !stopped && pollCfg.MarkStopped() {
+						applySortAndRender(rows, rowUIs, listVBox, rowsMu, settings, true)
+						fyne.Do(func() {
+							statusDot.FillColor = colorRed
+							statusDot.Refresh()
+							updatedText.Text = "Polling stopped"
+							updatedText.Refresh()
+							countdownText.Color = colorRed
+							countdownText.Text = "00:00:00"
+							countdownText.Refresh()
+							dialog.ShowInformation("已停止", "到达截止时间", win)
+						})
+					}
+					continue
+				}
+				h := int(remain.Hours())
+				m := int(remain.Minutes()) % 60
+				s := int(remain.Seconds()) % 60
+				fyne.Do(func() {
+					if remain < 30*time.Minute {
+						if remain > 5*time.Minute {
+							countdownText.Color = colorGreen
+						} else {
+							countdownText.Color = colorRed
+						}
+						countdownText.Text = fmt.Sprintf("%02d:%02d:%02d", h, m, s)
+					} else {
+						countdownText.Color = colorHeaderText
+						countdownText.Text = ""
+					}
+					countdownText.Refresh()
+				})
+			} else {
+				fyne.Do(func() {
+					countdownText.Color = colorHeaderText
+					countdownText.Text = ""
+					countdownText.Refresh()
+				})
+			}
+			if stopped {
+				continue
+			}
+			if now.Before(nextPollAt) {
+				continue
+			}
+			cycleMu.Lock()
+			if cycleRunning {
+				cycleMu.Unlock()
+				continue
+			}
+			cycleRunning = true
+			nextPollAt = now.Add(interval)
+			cycleMu.Unlock()
+
+			go func() {
+				runCycle()
+				cycleMu.Lock()
+				cycleRunning = false
+				cycleMu.Unlock()
+			}()
 		}
 	}
 }
@@ -623,7 +1137,11 @@ func refreshRows(rows []*playerState, rowsMu *sync.RWMutex, cfg apiConfig) {
 			rowsMu.Lock()
 			defer rowsMu.Unlock()
 			if err != nil {
+				if r.hasManual {
+					r.LastError = ""
+				} else {
 				r.LastError = err.Error()
+				}
 				return
 			}
 
@@ -645,6 +1163,7 @@ func refreshRows(rows []*playerState, rowsMu *sync.RWMutex, cfg apiConfig) {
 
 			r.LiveScore = result.Rating
 			r.LastError = ""
+			r.hasManual = false
 		}(row)
 	}
 	wg.Wait()
@@ -652,7 +1171,7 @@ func refreshRows(rows []*playerState, rowsMu *sync.RWMutex, cfg apiConfig) {
 
 // applySortAndRender sorts rows by rating desc, updates each rowUI's text/colors,
 // reorders the list VBox, and triggers flash animation for rows whose rating changed.
-func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Container, rowsMu *sync.RWMutex, settings *uiSettings) {
+func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Container, rowsMu *sync.RWMutex, settings *uiSettings, showBadges bool) {
 	uiSnap := settings.Snapshot()
 	baseColor := uiSnap.FontColor
 	mutedColor := dimColor(baseColor, 0.62)
@@ -688,7 +1207,9 @@ func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Con
 		rank    string
 		arrow   string
 		arrowC  color.NRGBA
+		badge   fyne.Resource
 		name    string
+		bgColor color.NRGBA
 		nameC   color.NRGBA
 		rating  string
 		ratingC color.NRGBA
@@ -715,15 +1236,24 @@ func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Con
 			}
 		}
 
-		ratingStr := "—"
+		ratingStr := "-"
 		ratingC := mutedColor
+		nameStr := r.Name
 		nameC := baseColor
+		var badgeRes fyne.Resource = badgeResourceNone
+		bgColor := color.NRGBA{}
 		if r.LastError == "" {
 			ratingStr = strconv.Itoa(r.LiveScore)
-			ratingC = baseColor
+			ratingC = ratingColorByScore(r.LiveScore, baseColor)
+			if showBadges {
+				badgeRes = badgeResourceByRank(pos)
+			}
+			if pos < 8 {
+				bgColor = colorTop8Row
+			}
 		} else {
 			nameC = mutedColor
-			rankStr = "—"
+			rankStr = "-"
 		}
 
 		snapshots[pos] = rowSnapshot{
@@ -731,7 +1261,9 @@ func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Con
 			rank:    rankStr,
 			arrow:   arrowStr,
 			arrowC:  arrowC,
-			name:    r.Name,
+			badge:   badgeRes,
+			name:    nameStr,
+			bgColor: bgColor,
 			nameC:   nameC,
 			rating:  ratingStr,
 			ratingC: ratingC,
@@ -753,10 +1285,15 @@ func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Con
 		for _, s := range snapshots {
 			s.ui.rankText.Text = s.rank
 			s.ui.rankText.Refresh()
+			s.ui.background.FillColor = s.bgColor
+			s.ui.background.Refresh()
 
 			s.ui.arrowText.Text = s.arrow
 			s.ui.arrowText.Color = s.arrowC
 			s.ui.arrowText.Refresh()
+
+			s.ui.badgeIcon.Resource = s.badge
+			s.ui.badgeIcon.Refresh()
 
 			s.ui.nameText.Text = s.name
 			s.ui.nameText.Color = s.nameC
@@ -779,6 +1316,78 @@ func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Con
 		for _, f := range flashes {
 			startColorFlash(f.text, f.from, baseColor)
 		}
+	})
+}
+
+func badgeResourceByRank(rankIndex int) fyne.Resource {
+	switch {
+	case rankIndex == 0:
+		return badgeResourceChampion
+	case rankIndex == 1:
+		return badgeResourceRunnerUp
+	case rankIndex == 2:
+		return badgeResourceThird
+	default:
+		return badgeResourceNone
+	}
+}
+
+func ratingColorByScore(score int, fallback color.NRGBA) color.NRGBA {
+	switch {
+	case score >= 2400:
+		return colorRating2400
+	case score >= 2300:
+		return colorRating2300
+	case score >= 2200:
+		return colorRating2200
+	default:
+		return fallback
+	}
+}
+
+func showManualScoreDialog(win fyne.Window, row *playerState, rowsMu *sync.RWMutex, onSaved func()) {
+	entry := widget.NewEntry()
+	rowsMu.RLock()
+	current := row.LiveScore
+	name := row.Name
+	rowsMu.RUnlock()
+	if current > 0 {
+		entry.SetText(strconv.Itoa(current))
+	}
+	formDlg := dialog.NewForm(
+		"Manual Rating",
+		"Save",
+		"Cancel",
+		[]*widget.FormItem{widget.NewFormItem(fmt.Sprintf("%s score", name), entry)},
+		func(ok bool) {
+			if !ok {
+				return
+			}
+			v, err := strconv.Atoi(strings.TrimSpace(entry.Text))
+			if err != nil || v < 0 || v > 4000 {
+				dialog.ShowError(errors.New("score must be a number between 0 and 4000"), win)
+				return
+			}
+			rowsMu.Lock()
+			row.LiveScore = v
+			row.LastError = ""
+			row.hasManual = true
+			row.prevScore = v
+			row.hasPrev = true
+			row.trend = 0
+			rowsMu.Unlock()
+			if onSaved != nil {
+				onSaved()
+			}
+		},
+		win,
+	)
+	entry.OnSubmitted = func(_ string) {
+		formDlg.Submit()
+	}
+	formDlg.Show()
+	fyne.Do(func() {
+		win.Canvas().Focus(entry)
 	})
 }
 
@@ -814,7 +1423,9 @@ type profileResult struct {
 }
 
 func fetchPlayerProfile(cwalID string, cfg apiConfig) (profileResult, error) {
+	start := time.Now()
 	if err := triggerPlayerUpdate(cwalID, cfg); err != nil {
+		logAPIFetch("alias=%s stage=trigger_update status=error err=%v", cwalID, err)
 		return profileResult{}, fmt.Errorf("trigger update failed: %w", err)
 	}
 	time.Sleep(updateRequestWait)
@@ -823,13 +1434,16 @@ func fetchPlayerProfile(cwalID string, cfg apiConfig) (profileResult, error) {
 	for attempt := 1; attempt <= profileRetryMaxAttempt; attempt++ {
 		result, err := queryProfile(cwalID, cfg)
 		if err == nil {
+			logAPIFetch("alias=%s stage=query_profile status=ok rating=%d elapsed_ms=%d attempts=%d", cwalID, result.Rating, time.Since(start).Milliseconds(), attempt)
 			return result, nil
 		}
 		lastErr = err
+		logAPIFetch("alias=%s stage=query_profile status=retry attempt=%d err=%v", cwalID, attempt, err)
 		if attempt < profileRetryMaxAttempt {
 			time.Sleep(profileRetryInterval)
 		}
 	}
+	logAPIFetch("alias=%s stage=query_profile status=failed elapsed_ms=%d err=%v", cwalID, time.Since(start).Milliseconds(), lastErr)
 	return profileResult{}, fmt.Errorf("query profile failed: %w", lastErr)
 }
 
@@ -859,14 +1473,17 @@ func triggerPlayerUpdate(cwalID string, cfg apiConfig) error {
 	client := &http.Client{Timeout: requestTimeout}
 	resp, err := client.Do(req)
 	if err != nil {
+		logAPIFetch("alias=%s endpoint=player-update status=network_error err=%v", cwalID, err)
 		return err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		body, _ := io.ReadAll(resp.Body)
+		logAPIFetch("alias=%s endpoint=player-update status=http_%d body=%s", cwalID, resp.StatusCode, truncateText(string(body), 120))
 		return fmt.Errorf("HTTP %d: %s", resp.StatusCode, truncateText(string(body), 120))
 	}
+	logAPIFetch("alias=%s endpoint=player-update status=ok code=%d", cwalID, resp.StatusCode)
 	return nil
 }
 
@@ -893,12 +1510,14 @@ func queryProfile(cwalID string, cfg apiConfig) (profileResult, error) {
 	client := &http.Client{Timeout: requestTimeout}
 	resp, err := client.Do(req)
 	if err != nil {
+		logAPIFetch("alias=%s endpoint=profile_view status=network_error err=%v", cwalID, err)
 		return profileResult{}, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		body, _ := io.ReadAll(resp.Body)
+		logAPIFetch("alias=%s endpoint=profile_view status=http_%d body=%s", cwalID, resp.StatusCode, truncateText(string(body), 120))
 		return profileResult{}, fmt.Errorf("HTTP %d: %s", resp.StatusCode, truncateText(string(body), 120))
 	}
 
