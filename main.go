@@ -18,6 +18,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode/utf16"
+	"unicode/utf8"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -27,6 +29,7 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
+	"golang.org/x/text/encoding/simplifiedchinese"
 )
 
 const (
@@ -1586,17 +1589,11 @@ func truncateText(s string, max int) string {
 }
 
 func loadPlayersFromCSV(path string) ([]player, error) {
-	file, err := os.Open(path)
+	raw, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
-
-	reader := csv.NewReader(bufio.NewReader(file))
-	reader.FieldsPerRecord = -1
-	reader.TrimLeadingSpace = true
-
-	records, err := reader.ReadAll()
+	records, err := parseCSVRecordsWithEncodingFallback(raw)
 	if err != nil {
 		return nil, err
 	}
@@ -1623,6 +1620,60 @@ func loadPlayersFromCSV(path string) ([]player, error) {
 		return nil, errors.New("no players parsed from users.csv (need two columns: name,cwal_gg_id)")
 	}
 	return players, nil
+}
+
+func parseCSVRecordsWithEncodingFallback(raw []byte) ([][]string, error) {
+	// UTF-8 BOM
+	raw = bytes.TrimPrefix(raw, []byte{0xEF, 0xBB, 0xBF})
+
+	if records, err := readCSVRecords(raw); err == nil && utf8.Valid(raw) {
+		return records, nil
+	}
+
+	// UTF-16 LE/BE BOM (Windows editors may save this way)
+	if len(raw) >= 2 {
+		if raw[0] == 0xFF && raw[1] == 0xFE {
+			if records, err := readCSVRecords([]byte(decodeUTF16(raw[2:], true))); err == nil {
+				return records, nil
+			}
+		}
+		if raw[0] == 0xFE && raw[1] == 0xFF {
+			if records, err := readCSVRecords([]byte(decodeUTF16(raw[2:], false))); err == nil {
+				return records, nil
+			}
+		}
+	}
+
+	// GBK fallback for Excel/Windows ANSI save.
+	decoded, err := simplifiedchinese.GBK.NewDecoder().Bytes(raw)
+	if err == nil {
+		if records, csvErr := readCSVRecords(decoded); csvErr == nil {
+			return records, nil
+		}
+	}
+	return nil, errors.New("failed to parse users.csv with UTF-8/UTF-16/GBK")
+}
+
+func readCSVRecords(data []byte) ([][]string, error) {
+	reader := csv.NewReader(bytes.NewReader(data))
+	reader.FieldsPerRecord = -1
+	reader.TrimLeadingSpace = true
+	return reader.ReadAll()
+}
+
+func decodeUTF16(data []byte, littleEndian bool) string {
+	if len(data)%2 == 1 {
+		data = data[:len(data)-1]
+	}
+	u16 := make([]uint16, 0, len(data)/2)
+	for i := 0; i+1 < len(data); i += 2 {
+		if littleEndian {
+			u16 = append(u16, uint16(data[i])|uint16(data[i+1])<<8)
+		} else {
+			u16 = append(u16, uint16(data[i])<<8|uint16(data[i+1]))
+		}
+	}
+	return string(utf16.Decode(u16))
 }
 
 func loadAPIConfigFromReadme(path string) (apiConfig, error) {
