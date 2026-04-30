@@ -46,14 +46,15 @@ const (
 	flashDuration = 1200 * time.Millisecond
 
 	// Column widths – kept tight so that every column stays visible when the
-	// window is resized narrow. The middle PLAYER column always takes the
-	// remaining space via Border layout.
-	colRankWidth   = 22
-	colArrowWidth  = 12
-	colBadgeWidth  = 16
-	colRatingWidth = 50
-	rowHeight      = 26
-	headerHeight   = 18
+	// window is resized narrow. Rank / badge / name sit in one row (CustomPaddedHBox);
+	// rating + badge sit on the Border right with extra padding (ratingColPadRight).
+	colRankWidth      = 22
+	colBadgeWidth     = 16
+	colRatingWidth    = 50
+	ratingColPadRight float32 = 14 // gutter so scores don't hug the window edge
+	rowHeight         = 26
+	headerHeight      = 18
+	listRowSpacing    float32 = 10 // gap between leaderboard rows for clearer stripes
 
 	prefFontSizeKey        = "ui.font_size"
 	prefFontColorRKey      = "ui.font_color_r"
@@ -77,12 +78,17 @@ const (
 var (
 	colorRed        = color.NRGBA{R: 220, G: 38, B: 38, A: 255}
 	colorGreen      = color.NRGBA{R: 34, G: 197, B: 94, A: 255}
-	colorUp         = color.NRGBA{R: 34, G: 197, B: 94, A: 255}
-	colorDown       = color.NRGBA{R: 239, G: 68, B: 68, A: 255}
+	// Ranking trend flashes (replacing arrows): red — score/mark up; green — score down.
+	// «紫铜» mixed into the flash starter for a warm metallic hint.
+	colorFlashCopperPurple  = color.NRGBA{R: 176, G: 124, B: 148, A: 255}
+	colorFlashRankingUp   = color.NRGBA{R: 235, G: 72, B: 90, A: 255}  // rise — red (排名上升感)
+	colorFlashRankingDown = color.NRGBA{R: 34, G: 197, B: 130, A: 255} // fall — green
 	colorMuted      = color.NRGBA{R: 148, G: 163, B: 184, A: 255}
 	colorText       = color.NRGBA{R: 255, G: 255, B: 255, A: 255}
 	colorHeaderText = color.NRGBA{R: 148, G: 163, B: 184, A: 255}
-	colorTop8Row    = color.NRGBA{R: 51, G: 65, B: 85, A: 125}
+	// Row panels: translucent milky overlays (real frosted blur is not supported by Fyne).
+	colorRowGlass     = color.NRGBA{R: 241, G: 245, B: 249, A: 40} // default row frost
+	colorTop8RowGlass = color.NRGBA{R: 226, G: 232, B: 240, A: 72} // slightly brighter strip for top 8
 	colorRating2200 = color.NRGBA{R: 110, G: 178, B: 238, A: 255} // blue
 	colorRating2300 = color.NRGBA{R: 152, G: 176, B: 234, A: 255} // blue-violet
 	colorRating2400 = color.NRGBA{R: 188, G: 172, B: 232, A: 255} // violet
@@ -136,7 +142,6 @@ type apiConfig struct {
 type rowUI struct {
 	background *canvas.Rectangle
 	rankText   *canvas.Text
-	arrowText  *canvas.Text
 	badgeIcon  *canvas.Image
 	nameText   *canvas.Text
 	ratingText *canvas.Text
@@ -456,14 +461,14 @@ func main() {
 	pollCfg := loadPollSettingsFromPrefs(myApp.Preferences())
 	loadHistoryScoresFromPrefs(myApp.Preferences(), rows)
 
-	// ---- Header ----
+	// ---- Header (countdown top-right; status dot is in footer by last-updated) ----
 	statusDot := canvas.NewCircle(colorRed)
 	statusDotBox := container.NewGridWrap(fyne.NewSize(10, 10), statusDot)
 	updatedText := canvas.NewText("", colorHeaderText)
-	updatedText.TextSize = 11
-	countdownText := canvas.NewText("", colorHeaderText)
-	countdownText.TextSize = 10
-	leftTimePane := container.NewHBox(container.NewCenter(statusDotBox), updatedText)
+	updatedText.TextSize = 10
+	countdownText := canvas.NewText("--:--:--", colorHeaderText)
+	countdownText.TextSize = 12
+	countdownText.Alignment = fyne.TextAlignCenter
 	settingsBtn := widget.NewButtonWithIcon("", theme.SettingsIcon(), nil)
 	settingsBtn.Importance = widget.LowImportance
 	settingsBtnBox := container.NewGridWrap(fyne.NewSize(20, 20), settingsBtn)
@@ -471,7 +476,7 @@ func main() {
 	logBtn.Importance = widget.LowImportance
 	logBtnBox := container.NewGridWrap(fyne.NewSize(20, 20), logBtn)
 
-	headerBar := container.NewBorder(nil, nil, leftTimePane, countdownText)
+	headerBar := container.New(layout.NewCenterLayout(), countdownText)
 	headerPadded := container.NewPadded(headerBar)
 
 	// ---- Column header ----
@@ -491,7 +496,7 @@ func main() {
 		})
 	}
 
-	listVBox = container.NewVBox()
+	listVBox = container.New(layout.NewCustomPaddedVBoxLayout(listRowSpacing))
 	for _, ru := range rowUIs {
 		listVBox.Add(ru.container)
 	}
@@ -499,12 +504,15 @@ func main() {
 
 	// ---- Footer ----
 	footer := canvas.NewText(
-		fmt.Sprintf("%d P  •  cwal.gg  •  %s  •  秋天的树", len(rows), appVersion),
+		fmt.Sprintf("%dP • %s ", len(rows), appVersion),
 		colorHeaderText,
 	)
 	footer.TextSize = 10
 	leftFooterBtns := container.NewHBox(settingsBtnBox, logBtnBox)
-	footerBox := container.NewBorder(nil, nil, leftFooterBtns, nil, container.New(layout.NewCenterLayout(), footer))
+	footerStatsRow := container.NewBorder(nil, nil, leftFooterBtns, nil, container.New(layout.NewCenterLayout(), footer))
+	updatedRow := container.New(layout.NewCustomPaddedHBoxLayout(4),
+		container.NewCenter(statusDotBox), updatedText)
+	footerBox := container.NewVBox(footerStatsRow, updatedRow)
 
 	backgroundRect := canvas.NewRectangle(color.NRGBA{R: 15, G: 23, B: 42, A: settings.Snapshot().BackgroundAlpha})
 	settingsBtn.OnTapped = func() {
@@ -560,7 +568,7 @@ func buildHeaderRow() (*fyne.Container, headerUI) {
 	player := canvas.NewText("PLAYER", colorHeaderText)
 	player.TextStyle = fyne.TextStyle{Bold: true}
 	player.TextSize = 11
-	player.Alignment = fyne.TextAlignCenter
+	player.Alignment = fyne.TextAlignLeading
 
 	rating := canvas.NewText("RATING", colorHeaderText)
 	rating.TextStyle = fyne.TextStyle{Bold: true, Monospace: true}
@@ -570,7 +578,14 @@ func buildHeaderRow() (*fyne.Container, headerUI) {
 	rankBox := container.NewGridWrap(fyne.NewSize(colRankWidth, headerHeight), rank)
 	ratingBox := container.NewGridWrap(fyne.NewSize(colRatingWidth, headerHeight), rating)
 
-	return container.NewBorder(nil, nil, rankBox, ratingBox, player), headerUI{
+	badgeHeaderSlot := canvas.NewRectangle(color.Transparent)
+	titleHBox := container.New(layout.NewCustomPaddedHBoxLayout(2), rankBox, player)
+	ratingHeaderCluster := container.New(layout.NewCustomPaddedHBoxLayout(2),
+		container.NewGridWrap(fyne.NewSize(colBadgeWidth, headerHeight), badgeHeaderSlot),
+		ratingBox,
+	)
+	ratingHeaderPadded := container.New(layout.NewCustomPaddedLayout(0, 0, 0, ratingColPadRight), ratingHeaderCluster)
+	return container.NewBorder(nil, nil, nil, ratingHeaderPadded, titleHBox), headerUI{
 		rank:   rank,
 		player: player,
 		rating: rating,
@@ -583,10 +598,6 @@ func buildRowUI(onDoubleTap func()) *rowUI {
 	rank.TextStyle = fyne.TextStyle{Monospace: true, Bold: true}
 	rank.TextSize = 13
 	rank.Alignment = fyne.TextAlignLeading
-
-	arrow := canvas.NewText(" ", colorMuted)
-	arrow.TextStyle = fyne.TextStyle{Bold: true, Monospace: true}
-	arrow.TextSize = 13
 
 	name := canvas.NewText("", colorText)
 	name.TextSize = 13
@@ -601,19 +612,19 @@ func buildRowUI(onDoubleTap func()) *rowUI {
 	rating.Alignment = fyne.TextAlignTrailing
 
 	rankBox := container.NewGridWrap(fyne.NewSize(colRankWidth, rowHeight), rank)
-	arrowBox := container.NewGridWrap(fyne.NewSize(colArrowWidth, rowHeight), arrow)
 	badgeBox := container.NewGridWrap(fyne.NewSize(colBadgeWidth, rowHeight), container.NewCenter(badge))
 	ratingBox := container.NewGridWrap(fyne.NewSize(colRatingWidth, rowHeight), rating)
 
-	playerBox := container.NewHBox(arrowBox, badgeBox, name)
+	playerBox := container.New(layout.NewCustomPaddedHBoxLayout(1), rankBox, name)
+	ratingCluster := container.New(layout.NewCustomPaddedHBoxLayout(2), badgeBox, ratingBox)
+	ratingClusterPadded := container.New(layout.NewCustomPaddedLayout(0, 0, 0, ratingColPadRight), ratingCluster)
 
-	rowContent := container.NewBorder(nil, nil, rankBox, ratingBox, playerBox)
+	rowContent := container.NewBorder(nil, nil, nil, ratingClusterPadded, playerBox)
 	row := container.NewMax(bg, rowContent, newDoubleTapBox(rowContent, onDoubleTap))
 
 	return &rowUI{
 		background: bg,
 		rankText:   rank,
-		arrowText:  arrow,
 		badgeIcon:  badge,
 		nameText:   name,
 		ratingText: rating,
@@ -748,12 +759,15 @@ func applyTypography(s uiSettingsSnapshot, staticTexts []*canvas.Text, headerRef
 
 	for i, t := range staticTexts {
 		t.Color = s.FontColor
-		if i == len(staticTexts)-1 { // footer
-			t.TextStyle = bodyStyle
-			t.TextSize = footerSize
+		// [0]=last-updated (footer strip), [1]=countdown (header), [2]=footer stats
+		if i == 1 {
+			clockStyle := styleByType(s.FontType)
+			clockStyle.Monospace = true
+			t.TextStyle = clockStyle
+			t.TextSize = bodySize // larger than surrounding header-strip text
 		} else {
 			t.TextStyle = bodyStyle
-			t.TextSize = headerSize
+			t.TextSize = footerSize
 		}
 		t.Refresh()
 	}
@@ -774,18 +788,15 @@ func applyTypography(s uiSettingsSnapshot, staticTexts []*canvas.Text, headerRef
 	for _, row := range rowUIs {
 		row.rankText.TextSize = bodySize
 		row.nameText.TextSize = bodySize
-		row.arrowText.TextSize = bodySize
 		row.ratingText.TextSize = bodySize
 		row.rankText.TextStyle = headerStyle
 		row.nameText.TextStyle = bodyStyle
-		row.arrowText.TextStyle = headerStyle
 		row.ratingText.TextStyle = headerStyle
 		row.rankText.Color = dimColor(s.FontColor, 0.62)
 		row.nameText.Color = s.FontColor
 		row.ratingText.Color = s.FontColor
 		row.rankText.Refresh()
 		row.nameText.Refresh()
-		row.arrowText.Refresh()
 		row.ratingText.Refresh()
 	}
 }
@@ -980,6 +991,15 @@ func readLastLines(path string, maxLines int) (string, error) {
 	return strings.Join(lines, "\n"), nil
 }
 
+// formatDurationHMS renders a non‑negative duration as HH:MM:SS (for countdown display).
+func formatDurationHMS(d time.Duration) string {
+	if d < 0 {
+		d = 0
+	}
+	sec := int(d.Round(time.Second).Seconds())
+	return fmt.Sprintf("%02d:%02d:%02d", sec/3600, (sec%3600)/60, sec%60)
+}
+
 func pollLoop(
 	rows []*playerState,
 	rowUIs []*rowUI,
@@ -1051,7 +1071,9 @@ func pollLoop(
 			if interval < time.Second {
 				interval = time.Second
 			}
-			if stopEnabled {
+			if stopped {
+				// keep 00:00:00 (or last stopped display)
+			} else if stopEnabled {
 				remain := time.Until(stopAt)
 				if remain <= 0 {
 					if !stopped && pollCfg.MarkStopped() {
@@ -1069,27 +1091,27 @@ func pollLoop(
 					}
 					continue
 				}
-				h := int(remain.Hours())
-				m := int(remain.Minutes()) % 60
-				s := int(remain.Seconds()) % 60
+				txt := formatDurationHMS(remain)
 				fyne.Do(func() {
-					if remain < 30*time.Minute {
-						if remain > 5*time.Minute {
-							countdownText.Color = colorGreen
-						} else {
-							countdownText.Color = colorRed
-						}
-						countdownText.Text = fmt.Sprintf("%02d:%02d:%02d", h, m, s)
-					} else {
+					if remain > 30*time.Minute {
 						countdownText.Color = colorHeaderText
-						countdownText.Text = ""
+					} else if remain > 5*time.Minute {
+						countdownText.Color = colorGreen
+					} else {
+						countdownText.Color = colorRed
 					}
+					countdownText.Text = txt
 					countdownText.Refresh()
 				})
 			} else {
+				untilPoll := time.Duration(0)
+				if now.Before(nextPollAt) {
+					untilPoll = nextPollAt.Sub(now)
+				}
+				txt := formatDurationHMS(untilPoll)
 				fyne.Do(func() {
 					countdownText.Color = colorHeaderText
-					countdownText.Text = ""
+					countdownText.Text = txt
 					countdownText.Refresh()
 				})
 			}
@@ -1172,8 +1194,20 @@ func refreshRows(rows []*playerState, rowsMu *sync.RWMutex, cfg apiConfig) {
 	wg.Wait()
 }
 
+// flashToneForRankingTrend mixes directional colour with purple-copper tint (no triangles).
+func flashToneForRankingTrend(trend int) color.NRGBA {
+	switch {
+	case trend > 0:
+		return lerpNRGBA(colorFlashRankingUp, colorFlashCopperPurple, 0.28)
+	case trend < 0:
+		return lerpNRGBA(colorFlashRankingDown, colorFlashCopperPurple, 0.28)
+	default:
+		return colorFlashCopperPurple
+	}
+}
+
 // applySortAndRender sorts rows by rating desc, updates each rowUI's text/colors,
-// reorders the list VBox, and triggers flash animation for rows whose rating changed.
+// reorders the list VBox, and flashes player names briefly when ratings move (colour = direction).
 func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Container, rowsMu *sync.RWMutex, settings *uiSettings, showBadges bool) {
 	uiSnap := settings.Snapshot()
 	baseColor := uiSnap.FontColor
@@ -1208,8 +1242,6 @@ func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Con
 	type rowSnapshot struct {
 		ui      *rowUI
 		rank    string
-		arrow   string
-		arrowC  color.NRGBA
 		badge   fyne.Resource
 		name    string
 		bgColor color.NRGBA
@@ -1225,19 +1257,6 @@ func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Con
 		ui := rowUIs[idx]
 
 		rankStr := strconv.Itoa(pos + 1)
-		arrowStr := " "
-		arrowC := mutedColor
-
-		if r.LastError == "" {
-			switch r.trend {
-			case 1:
-				arrowStr = "▲"
-				arrowC = colorUp
-			case -1:
-				arrowStr = "▼"
-				arrowC = colorDown
-			}
-		}
 
 		ratingStr := "-"
 		ratingC := mutedColor
@@ -1252,7 +1271,9 @@ func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Con
 				badgeRes = badgeResourceByRank(pos)
 			}
 			if pos < 8 {
-				bgColor = colorTop8Row
+				bgColor = colorTop8RowGlass
+			} else {
+				bgColor = colorRowGlass
 			}
 		} else {
 			nameC = mutedColor
@@ -1262,8 +1283,6 @@ func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Con
 		snapshots[pos] = rowSnapshot{
 			ui:      ui,
 			rank:    rankStr,
-			arrow:   arrowStr,
-			arrowC:  arrowC,
 			badge:   badgeRes,
 			name:    nameStr,
 			bgColor: bgColor,
@@ -1274,11 +1293,10 @@ func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Con
 		}
 
 		if r.LastError == "" && r.trend != 0 {
-			flashFrom := colorUp
-			if r.trend == -1 {
-				flashFrom = colorDown
-			}
-			flashes = append(flashes, flashTarget{text: ui.ratingText, from: flashFrom})
+			flashes = append(flashes, flashTarget{
+				text: ui.nameText,
+				from: flashToneForRankingTrend(r.trend),
+			})
 		}
 	}
 	rowsMu.RUnlock()
@@ -1290,10 +1308,6 @@ func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Con
 			s.ui.rankText.Refresh()
 			s.ui.background.FillColor = s.bgColor
 			s.ui.background.Refresh()
-
-			s.ui.arrowText.Text = s.arrow
-			s.ui.arrowText.Color = s.arrowC
-			s.ui.arrowText.Refresh()
 
 			s.ui.badgeIcon.Resource = s.badge
 			s.ui.badgeIcon.Refresh()
