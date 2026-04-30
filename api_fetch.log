@@ -15195,3 +15195,1568 @@
 2026/04/30 22:19:19.838567 alias=scgotoboy endpoint=player-update status=ok code=202
 2026/04/30 22:19:19.838626 alias=TIMING3M endpoint=player-update status=ok code=202
 2026/04/30 22:19:19.838818 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:49:57.990853 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:49:57.997429 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:49:58.000563 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:49:58.147388 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:49:58.147481 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:49:58.147525 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:49:58.147569 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:49:58.147638 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:49:58.147766 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:49:58.147862 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:49:58.148017 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:49:58.148113 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:49:58.148230 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:49:58.148237 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:49:58.148414 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:49:58.284531 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:49:58.284570 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:50:00.765926 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=5321 attempts=1
+2026/04/30 22:50:00.921357 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:00.921435 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=5476 attempts=1
+2026/04/30 22:50:00.921436 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=5476 attempts=1
+2026/04/30 22:50:00.935245 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:00.935400 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=5490 attempts=1
+2026/04/30 22:50:00.935448 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=5490 attempts=1
+2026/04/30 22:50:01.101707 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:01.101851 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:01.101869 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:01.101960 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=5657 attempts=1
+2026/04/30 22:50:01.102168 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=5657 attempts=1
+2026/04/30 22:50:01.112531 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:01.112698 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:01.112754 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:01.112804 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=5668 attempts=1
+2026/04/30 22:50:01.112932 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=5668 attempts=1
+2026/04/30 22:50:02.047821 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:02.048021 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:02.124755 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:02.125572 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:02.134559 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:02.134602 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:02.134670 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:02.134704 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:03.280698 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:03.280696 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:03.280929 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:03.281110 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:03.281189 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:03.295947 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:03.296014 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:03.296092 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:04.379346 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:04.379418 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=8934 err=invalid JSON: []
+2026/04/30 22:50:04.396481 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:04.396554 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=8951 err=invalid JSON: []
+2026/04/30 22:50:04.427632 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:04.427700 alias=kele+bing stage=query_profile status=failed elapsed_ms=8982 err=invalid JSON: []
+2026/04/30 22:50:04.470963 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:04.471098 alias=unkown stage=query_profile status=failed elapsed_ms=9026 err=invalid JSON: []
+2026/04/30 22:50:04.474504 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:04.474556 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=9029 err=invalid JSON: []
+2026/04/30 22:50:04.527761 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:04.527839 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=9083 err=invalid JSON: []
+2026/04/30 22:50:04.602094 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:04.602182 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=9157 err=invalid JSON: []
+2026/04/30 22:50:05.018759 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:05.018845 alias=saikohero stage=query_profile status=failed elapsed_ms=9573 err=invalid JSON: []
+2026/04/30 22:50:06.454137 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:50:06.455025 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:50:06.455161 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:50:06.455361 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:50:06.455546 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:50:06.476009 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:50:06.476093 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:50:06.476264 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:50:06.476331 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:50:06.476463 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:50:06.476531 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:50:06.476552 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:50:06.476679 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:50:06.476814 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:50:06.476892 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:50:07.475354 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:50:07.475400 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:50:09.474457 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:09.474708 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=3449 attempts=1
+2026/04/30 22:50:11.012822 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:11.012986 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:11.669308 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=5644 attempts=1
+2026/04/30 22:50:11.669374 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:11.669635 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=5645 attempts=1
+2026/04/30 22:50:11.669712 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=5644 attempts=1
+2026/04/30 22:50:12.291627 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=6267 attempts=1
+2026/04/30 22:50:12.291664 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=6267 attempts=1
+2026/04/30 22:50:12.403789 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=6378 attempts=1
+2026/04/30 22:50:12.435138 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=6410 attempts=1
+2026/04/30 22:50:12.514865 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:12.802366 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=6777 attempts=1
+2026/04/30 22:50:13.282961 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:13.827092 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:13.827124 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:13.938396 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:13.994191 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:13.999292 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:15.263300 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:15.263337 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:15.975432 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:16.123280 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:17.205502 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:17.205608 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=11181 err=invalid JSON: []
+2026/04/30 22:50:17.205530 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:18.335458 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:18.347833 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:18.347916 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:18.347962 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=12323 err=invalid JSON: []
+2026/04/30 22:50:21.939256 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:22.632917 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:22.633017 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=16608 err=invalid JSON: []
+2026/04/30 22:50:23.054787 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:23.462412 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:23.612809 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:24.218443 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:24.218521 alias=saikohero stage=query_profile status=failed elapsed_ms=18193 err=invalid JSON: []
+2026/04/30 22:50:24.374443 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:24.374478 alias=unkown stage=query_profile status=failed elapsed_ms=18349 err=invalid JSON: []
+2026/04/30 22:50:25.089089 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:25.398726 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:25.398816 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=19373 err=invalid JSON: []
+2026/04/30 22:50:26.026837 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:26.507882 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:26.507951 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=20482 err=invalid JSON: []
+2026/04/30 22:50:27.348371 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:27.348450 alias=kele+bing stage=query_profile status=failed elapsed_ms=21323 err=invalid JSON: []
+2026/04/30 22:50:28.339427 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:50:28.339498 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:50:28.343498 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:50:28.345407 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:50:28.347117 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:50:28.353597 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:50:28.353668 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:50:28.353706 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:50:28.355013 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:50:28.356239 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:50:28.357589 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:50:28.364869 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:50:28.373566 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:50:28.378014 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:50:28.386753 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:50:28.389113 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:50:28.408398 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:50:33.096553 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:33.096689 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:33.096735 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:33.111624 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=5086 attempts=1
+2026/04/30 22:50:33.114767 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:33.142985 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=5117 attempts=1
+2026/04/30 22:50:33.327240 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:33.946937 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:34.351679 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=6325 attempts=1
+2026/04/30 22:50:34.635627 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:34.635700 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:35.163274 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=7137 attempts=1
+2026/04/30 22:50:35.538398 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=7512 attempts=1
+2026/04/30 22:50:35.541164 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=7515 attempts=1
+2026/04/30 22:50:37.216364 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:37.244308 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:37.256025 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:37.256194 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:37.256271 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:37.294694 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:37.506365 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=9480 attempts=1
+2026/04/30 22:50:37.508794 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=9483 attempts=1
+2026/04/30 22:50:37.534618 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:37.572346 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=9547 attempts=1
+2026/04/30 22:50:37.623539 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:38.843269 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:38.843342 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:39.046573 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:39.046676 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:39.046718 alias=unkown stage=query_profile status=failed elapsed_ms=11021 err=invalid JSON: []
+2026/04/30 22:50:39.046735 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:39.059458 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:39.077757 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:39.605819 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:39.840938 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:39.841017 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=11815 err=invalid JSON: []
+2026/04/30 22:50:39.844851 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:39.844944 alias=saikohero stage=query_profile status=failed elapsed_ms=11819 err=invalid JSON: []
+2026/04/30 22:50:40.071964 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:40.072091 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=12046 err=invalid JSON: []
+2026/04/30 22:50:40.072095 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:40.072178 alias=kele+bing stage=query_profile status=failed elapsed_ms=12046 err=invalid JSON: []
+2026/04/30 22:50:40.083806 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:40.083892 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=12058 err=invalid JSON: []
+2026/04/30 22:50:40.129425 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:40.129516 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=12103 err=invalid JSON: []
+2026/04/30 22:50:40.687688 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:41.715570 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:41.715659 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=13690 err=invalid JSON: []
+2026/04/30 22:50:42.435128 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:50:42.435223 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:50:42.435334 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:50:42.436351 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:50:42.436460 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:50:42.436458 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:50:42.436825 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:50:42.436870 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:50:42.454076 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:50:42.454168 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:50:42.454312 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:50:42.454390 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:50:42.454524 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:50:42.454598 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:50:42.454660 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:50:42.454719 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:50:42.454849 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:50:43.971970 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:43.972147 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:43.972526 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=1947 attempts=1
+2026/04/30 22:50:43.991369 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:43.991477 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=1966 attempts=1
+2026/04/30 22:50:43.991859 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:43.991909 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=1966 attempts=1
+2026/04/30 22:50:43.991936 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:43.991926 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=1966 attempts=1
+2026/04/30 22:50:43.992136 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=1966 attempts=1
+2026/04/30 22:50:44.017073 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:44.017392 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=1992 attempts=1
+2026/04/30 22:50:44.186237 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:44.194530 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:44.216940 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=2191 attempts=1
+2026/04/30 22:50:44.217030 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=2191 attempts=1
+2026/04/30 22:50:44.217434 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=2192 attempts=1
+2026/04/30 22:50:44.970657 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:44.974771 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:45.015594 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:45.020930 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:45.057901 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:45.058287 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:45.183328 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:45.196751 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:45.981777 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:45.981808 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:46.009735 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:46.048124 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:46.056306 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:46.073945 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:46.222260 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:46.225360 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:47.004730 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:47.004811 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=4979 err=invalid JSON: []
+2026/04/30 22:50:47.004885 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:47.004932 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=4979 err=invalid JSON: []
+2026/04/30 22:50:47.015837 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:47.015921 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=4990 err=invalid JSON: []
+2026/04/30 22:50:47.087007 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:47.087151 alias=unkown stage=query_profile status=failed elapsed_ms=5062 err=invalid JSON: []
+2026/04/30 22:50:47.088507 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:47.088570 alias=saikohero stage=query_profile status=failed elapsed_ms=5063 err=invalid JSON: []
+2026/04/30 22:50:47.121355 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:47.121453 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=5096 err=invalid JSON: []
+2026/04/30 22:50:47.654748 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:47.654848 alias=kele+bing stage=query_profile status=failed elapsed_ms=5629 err=invalid JSON: []
+2026/04/30 22:50:47.654766 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:47.654890 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=5629 err=invalid JSON: []
+2026/04/30 22:50:48.349665 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:50:48.353258 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:50:48.355768 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:50:48.357302 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:50:48.371444 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:50:48.374031 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:50:48.374145 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:50:48.374242 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:50:48.374857 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:50:48.376739 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:50:48.379491 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:50:48.382606 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:50:48.382681 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:50:48.385952 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:50:48.386016 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:50:48.386065 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:50:48.400703 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:50:49.864738 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:49.870189 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=1844 attempts=1
+2026/04/30 22:50:49.873301 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=1848 attempts=1
+2026/04/30 22:50:49.879811 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:49.880058 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=1854 attempts=1
+2026/04/30 22:50:49.888816 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=1863 attempts=1
+2026/04/30 22:50:49.888911 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:49.889000 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:49.898434 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=1872 attempts=1
+2026/04/30 22:50:49.907550 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:49.907806 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=1882 attempts=1
+2026/04/30 22:50:49.914632 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:50.063148 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:50.075847 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=2050 attempts=1
+2026/04/30 22:50:50.075941 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=2050 attempts=1
+2026/04/30 22:50:50.077791 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:50.077874 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=2052 attempts=1
+2026/04/30 22:50:50.862256 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:50.887289 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:50.926782 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:50.932798 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:50.932948 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:50.935264 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:51.225199 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:51.225337 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:51.938095 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:51.941741 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:51.941781 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:51.961304 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:51.966759 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:51.977741 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:52.508574 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:52.508665 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:53.085803 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:53.085923 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=5060 err=invalid JSON: []
+2026/04/30 22:50:53.085995 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:53.085891 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:53.086150 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=5060 err=invalid JSON: []
+2026/04/30 22:50:53.086086 alias=saikohero stage=query_profile status=failed elapsed_ms=5060 err=invalid JSON: []
+2026/04/30 22:50:53.096538 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:53.096654 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:53.096694 alias=unkown stage=query_profile status=failed elapsed_ms=5071 err=invalid JSON: []
+2026/04/30 22:50:53.096736 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=5071 err=invalid JSON: []
+2026/04/30 22:50:53.096866 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:53.096931 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=5071 err=invalid JSON: []
+2026/04/30 22:50:53.598398 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:53.598502 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=5572 err=invalid JSON: []
+2026/04/30 22:50:53.598428 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:53.598570 alias=kele+bing stage=query_profile status=failed elapsed_ms=5572 err=invalid JSON: []
+2026/04/30 22:50:54.519349 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:50:54.519528 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:50:54.519607 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:50:54.519665 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:50:54.519715 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:50:54.519789 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:50:54.519846 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:50:54.855036 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:50:54.855197 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:50:54.855253 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:50:54.855403 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:50:54.855463 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:50:54.855524 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:50:54.855582 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:50:54.855752 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:50:54.855781 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:50:54.855945 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:50:56.025106 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=1999 attempts=1
+2026/04/30 22:50:56.028772 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=2003 attempts=1
+2026/04/30 22:50:56.030071 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:56.030204 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:56.030330 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:56.033210 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:56.036143 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=2010 attempts=1
+2026/04/30 22:50:56.468499 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:56.468632 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=2443 attempts=1
+2026/04/30 22:50:56.468695 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=2443 attempts=1
+2026/04/30 22:50:56.578151 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:56.579543 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:56.579584 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:50:56.579775 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=2554 attempts=1
+2026/04/30 22:50:56.586680 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=2561 attempts=1
+2026/04/30 22:50:56.586756 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=2561 attempts=1
+2026/04/30 22:50:57.356544 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:57.356621 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:57.356779 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:57.356861 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=3331 attempts=1
+2026/04/30 22:50:57.356870 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:57.489861 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:57.589372 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:57.591258 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:58.222659 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:50:58.376256 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:58.389316 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:58.390569 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:58.430830 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:58.724604 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:58.724794 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:58.724882 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:59.295910 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:50:59.544782 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:59.544911 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=5519 err=invalid JSON: []
+2026/04/30 22:50:59.545110 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:59.545187 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=5519 err=invalid JSON: []
+2026/04/30 22:50:59.545274 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:59.545318 alias=unkown stage=query_profile status=failed elapsed_ms=5520 err=invalid JSON: []
+2026/04/30 22:50:59.545362 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:59.545429 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=5520 err=invalid JSON: []
+2026/04/30 22:50:59.772735 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:59.772882 alias=saikohero stage=query_profile status=failed elapsed_ms=5747 err=invalid JSON: []
+2026/04/30 22:50:59.779304 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:59.779421 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=5754 err=invalid JSON: []
+2026/04/30 22:50:59.796138 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:50:59.796256 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=5770 err=invalid JSON: []
+2026/04/30 22:51:00.295018 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:00.295143 alias=kele+bing stage=query_profile status=failed elapsed_ms=6269 err=invalid JSON: []
+2026/04/30 22:51:01.355987 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:51:01.356119 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:51:01.356177 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:51:01.368985 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:51:01.369071 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:51:01.369083 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:51:01.369099 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:51:01.369117 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:51:01.369197 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:51:01.369221 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:51:01.369244 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:51:01.369226 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:51:01.369258 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:51:01.369271 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:51:01.369318 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:51:01.378507 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:51:01.378547 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:51:02.855958 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=1830 attempts=1
+2026/04/30 22:51:02.859000 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:02.859078 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=1833 attempts=1
+2026/04/30 22:51:02.873875 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:02.873929 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:02.875827 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:02.875864 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:02.885473 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:02.887694 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:02.887703 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=1862 attempts=1
+2026/04/30 22:51:02.887842 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=1862 attempts=1
+2026/04/30 22:51:02.897414 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=1871 attempts=1
+2026/04/30 22:51:03.120551 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:03.120839 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=2095 attempts=1
+2026/04/30 22:51:03.131790 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=2106 attempts=1
+2026/04/30 22:51:03.132113 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=2106 attempts=1
+2026/04/30 22:51:03.134035 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=2108 attempts=1
+2026/04/30 22:51:03.887213 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:03.917007 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:03.917261 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:03.917700 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:03.917661 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:03.921650 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:03.930135 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:04.220836 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:04.911475 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:04.924367 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:05.244165 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:05.244030 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:05.367463 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:05.367876 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:05.367964 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:05.368019 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:05.956125 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:05.956207 alias=unkown stage=query_profile status=failed elapsed_ms=4930 err=invalid JSON: []
+2026/04/30 22:51:05.967384 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:05.967482 alias=kele+bing stage=query_profile status=failed elapsed_ms=4941 err=invalid JSON: []
+2026/04/30 22:51:06.263982 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:06.264107 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=5238 err=invalid JSON: []
+2026/04/30 22:51:06.264199 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:06.264253 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=5238 err=invalid JSON: []
+2026/04/30 22:51:06.411592 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:06.411683 alias=saikohero stage=query_profile status=failed elapsed_ms=5386 err=invalid JSON: []
+2026/04/30 22:51:06.414826 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:06.414908 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=5389 err=invalid JSON: []
+2026/04/30 22:51:06.443482 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:06.443530 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:06.443642 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=5418 err=invalid JSON: []
+2026/04/30 22:51:06.443564 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=5418 err=invalid JSON: []
+2026/04/30 22:51:07.774886 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:51:07.775136 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:51:07.775232 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:51:07.800777 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:51:07.800874 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:51:07.800935 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:51:07.800965 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:51:07.801174 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:51:07.801247 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:51:07.801414 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:51:07.801490 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:51:07.845235 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:51:07.845320 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:51:07.845454 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:51:07.845543 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:51:07.845862 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:51:07.846004 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:51:09.290594 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:09.423674 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=2398 attempts=1
+2026/04/30 22:51:09.423984 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:09.424366 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=2398 attempts=1
+2026/04/30 22:51:09.424371 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:09.424030 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:09.424900 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=2399 attempts=1
+2026/04/30 22:51:09.424903 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:09.444468 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=2418 attempts=1
+2026/04/30 22:51:09.461600 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=2436 attempts=1
+2026/04/30 22:51:09.461862 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=2436 attempts=1
+2026/04/30 22:51:09.594745 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:09.595384 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=2569 attempts=1
+2026/04/30 22:51:09.617123 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:09.617462 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=2591 attempts=1
+2026/04/30 22:51:09.642846 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:09.643205 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=2617 attempts=1
+2026/04/30 22:51:10.328624 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:10.519114 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:10.519789 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:10.520764 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:10.520796 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:10.679112 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:10.686430 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:11.303826 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:11.459941 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:11.555622 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:11.784890 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:11.785003 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:11.785164 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:11.896369 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:12.052868 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:12.464461 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:12.529163 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:12.529263 alias=kele+bing stage=query_profile status=failed elapsed_ms=5503 err=invalid JSON: []
+2026/04/30 22:51:12.770199 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:12.770286 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=5744 err=invalid JSON: []
+2026/04/30 22:51:13.009613 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:13.009741 alias=saikohero stage=query_profile status=failed elapsed_ms=5983 err=invalid JSON: []
+2026/04/30 22:51:13.009785 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:13.009846 alias=unkown stage=query_profile status=failed elapsed_ms=5984 err=invalid JSON: []
+2026/04/30 22:51:13.021750 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:13.022086 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=5996 err=invalid JSON: []
+2026/04/30 22:51:13.021615 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:13.022419 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=5996 err=invalid JSON: []
+2026/04/30 22:51:13.119656 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:13.119731 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=6094 err=invalid JSON: []
+2026/04/30 22:51:13.486995 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:13.487035 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=6461 err=invalid JSON: []
+2026/04/30 22:51:14.350012 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:51:14.355820 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:51:14.355926 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:51:14.364840 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:51:14.371654 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:51:14.406084 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:51:14.409944 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:51:14.414168 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:51:14.414830 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:51:14.424709 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:51:14.424848 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:51:14.424999 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:51:14.433921 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:51:14.441646 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:51:14.443127 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:51:14.447690 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:51:14.456084 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:51:16.002942 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:16.003180 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=1977 attempts=1
+2026/04/30 22:51:16.003220 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=1977 attempts=1
+2026/04/30 22:51:16.003524 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:16.020860 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:16.021109 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:16.021153 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:16.135966 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=2110 attempts=1
+2026/04/30 22:51:16.136292 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=2110 attempts=1
+2026/04/30 22:51:16.136366 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:16.136597 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=2110 attempts=1
+2026/04/30 22:51:16.202114 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:16.202165 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=2176 attempts=1
+2026/04/30 22:51:16.202194 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:16.202309 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=2176 attempts=1
+2026/04/30 22:51:16.202361 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=2176 attempts=1
+2026/04/30 22:51:16.249274 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=2223 attempts=1
+2026/04/30 22:51:17.029623 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:17.057429 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:17.068432 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:17.068554 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:17.068579 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:17.152702 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:17.220640 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:17.236129 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:18.023233 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:18.047852 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:18.068578 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:18.069292 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:18.091294 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:18.156826 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:18.231611 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:18.242212 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:19.031548 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:19.031697 alias=kele+bing stage=query_profile status=failed elapsed_ms=5005 err=invalid JSON: []
+2026/04/30 22:51:19.166966 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:19.167641 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=5142 err=invalid JSON: []
+2026/04/30 22:51:19.168229 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:19.168387 alias=unkown stage=query_profile status=failed elapsed_ms=5143 err=invalid JSON: []
+2026/04/30 22:51:19.168268 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:19.168412 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=5142 err=invalid JSON: []
+2026/04/30 22:51:19.168310 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:19.168430 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=5142 err=invalid JSON: []
+2026/04/30 22:51:19.178197 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:19.178266 alias=saikohero stage=query_profile status=failed elapsed_ms=5152 err=invalid JSON: []
+2026/04/30 22:51:19.257200 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:19.259182 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=5233 err=invalid JSON: []
+2026/04/30 22:51:19.269350 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:19.269413 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=5243 err=invalid JSON: []
+2026/04/30 22:51:20.575524 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:51:20.575544 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:51:20.575559 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:51:20.575573 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:51:20.575583 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:51:20.575610 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:51:20.610199 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:51:20.610271 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:51:20.610304 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:51:20.610333 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:51:20.610700 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:51:20.610758 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:51:20.610783 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:51:20.610832 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:51:20.610902 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:51:20.679302 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:51:20.679380 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:51:22.095785 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=2070 attempts=1
+2026/04/30 22:51:22.103268 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:22.110654 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=2085 attempts=1
+2026/04/30 22:51:22.110654 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=2085 attempts=1
+2026/04/30 22:51:22.154262 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=2129 attempts=1
+2026/04/30 22:51:22.154688 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=2129 attempts=1
+2026/04/30 22:51:22.155028 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=2129 attempts=1
+2026/04/30 22:51:22.155128 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=2129 attempts=1
+2026/04/30 22:51:22.157457 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:22.163415 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:22.290605 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=2265 attempts=1
+2026/04/30 22:51:22.290764 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:22.321219 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:22.321333 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:22.340777 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=2315 attempts=1
+2026/04/30 22:51:22.357199 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:22.456392 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:23.117650 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:23.154737 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:23.166418 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:23.302118 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:23.363260 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:23.363383 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:23.376006 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:23.458928 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:24.136952 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:24.170916 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:24.181846 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:24.380476 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:24.381446 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:24.391146 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:24.391182 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:25.175035 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:25.208033 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:25.208189 alias=kele+bing stage=query_profile status=failed elapsed_ms=5183 err=invalid JSON: []
+2026/04/30 22:51:25.210606 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:25.210737 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=5185 err=invalid JSON: []
+2026/04/30 22:51:25.210685 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:25.210813 alias=unkown stage=query_profile status=failed elapsed_ms=5186 err=invalid JSON: []
+2026/04/30 22:51:25.395720 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:25.395801 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=5370 err=invalid JSON: []
+2026/04/30 22:51:25.401113 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:25.401231 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=5376 err=invalid JSON: []
+2026/04/30 22:51:25.421565 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:25.421630 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:25.421746 alias=saikohero stage=query_profile status=failed elapsed_ms=5396 err=invalid JSON: []
+2026/04/30 22:51:25.421666 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=5396 err=invalid JSON: []
+2026/04/30 22:51:26.308115 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:26.308175 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=6282 err=invalid JSON: []
+2026/04/30 22:51:27.365152 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:51:27.373481 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:51:27.373557 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:51:27.456613 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:51:27.456780 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:51:27.456827 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:51:27.459431 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:51:27.459696 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:51:27.459765 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:51:27.459818 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:51:27.459870 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:51:27.623400 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:51:27.623468 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:51:27.623485 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:51:27.623504 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:51:27.623514 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:51:27.623554 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:51:28.871036 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:28.885603 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=1860 attempts=1
+2026/04/30 22:51:28.891938 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:28.975803 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:28.985242 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:28.989357 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=1964 attempts=1
+2026/04/30 22:51:28.989362 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=1964 attempts=1
+2026/04/30 22:51:29.008875 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:29.008913 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:29.008889 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:29.008990 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=1983 attempts=1
+2026/04/30 22:51:29.122739 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:29.123103 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=2097 attempts=1
+2026/04/30 22:51:29.128752 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=2103 attempts=1
+2026/04/30 22:51:29.128865 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=2103 attempts=1
+2026/04/30 22:51:29.131574 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=2106 attempts=1
+2026/04/30 22:51:29.139625 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=2114 attempts=1
+2026/04/30 22:51:29.893677 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:29.909767 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:29.972404 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:29.979922 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:30.006244 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:30.014729 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:30.021516 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:30.129718 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:30.909668 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:30.918473 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:30.972930 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:31.019252 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:31.020173 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:31.022760 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:31.033747 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:31.139268 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:31.922149 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:31.922259 alias=unkown stage=query_profile status=failed elapsed_ms=4897 err=invalid JSON: []
+2026/04/30 22:51:32.068219 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:32.068349 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=5043 err=invalid JSON: []
+2026/04/30 22:51:32.068486 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:32.068516 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=5043 err=invalid JSON: []
+2026/04/30 22:51:32.068625 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:32.068650 alias=kele+bing stage=query_profile status=failed elapsed_ms=5043 err=invalid JSON: []
+2026/04/30 22:51:32.068727 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:32.068772 alias=saikohero stage=query_profile status=failed elapsed_ms=5043 err=invalid JSON: []
+2026/04/30 22:51:32.068820 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:32.068874 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=5043 err=invalid JSON: []
+2026/04/30 22:51:32.078698 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:32.078815 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=5053 err=invalid JSON: []
+2026/04/30 22:51:32.185849 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:32.185985 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=5160 err=invalid JSON: []
+2026/04/30 22:51:33.361303 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:51:33.361399 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:51:33.362509 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:51:33.376981 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:51:33.377107 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:51:33.377175 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:51:33.377022 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:51:33.377251 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:51:33.377441 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:51:33.377536 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:51:33.377586 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:51:33.377732 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:51:33.377815 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:51:33.377871 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:51:33.377899 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:51:33.378029 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:51:33.456955 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:51:34.864186 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:34.879621 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=1855 attempts=1
+2026/04/30 22:51:34.884848 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:34.904570 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:34.918167 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=1893 attempts=1
+2026/04/30 22:51:34.918295 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=1893 attempts=1
+2026/04/30 22:51:34.930756 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:34.931241 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=1906 attempts=1
+2026/04/30 22:51:34.948817 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=1924 attempts=1
+2026/04/30 22:51:34.948934 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:34.948997 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=1924 attempts=1
+2026/04/30 22:51:34.949021 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=1923 attempts=1
+2026/04/30 22:51:34.950107 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:34.950209 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=1925 attempts=1
+2026/04/30 22:51:34.950159 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:34.950262 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=1925 attempts=1
+2026/04/30 22:51:34.973589 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:35.891534 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:35.913533 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:35.918360 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:35.937263 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:35.946844 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:35.954696 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:35.954929 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:36.049446 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:36.939496 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:37.015804 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:37.016010 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:37.017019 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:37.017827 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:37.050796 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:37.051093 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:37.061865 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:38.015181 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:38.015302 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=4990 err=invalid JSON: []
+2026/04/30 22:51:38.015392 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:38.015417 alias=kele+bing stage=query_profile status=failed elapsed_ms=4990 err=invalid JSON: []
+2026/04/30 22:51:38.015498 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:38.015522 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=4990 err=invalid JSON: []
+2026/04/30 22:51:38.015585 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:38.015608 alias=unkown stage=query_profile status=failed elapsed_ms=4991 err=invalid JSON: []
+2026/04/30 22:51:38.077114 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:38.077198 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=5052 err=invalid JSON: []
+2026/04/30 22:51:38.113581 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:38.113664 alias=saikohero stage=query_profile status=failed elapsed_ms=5088 err=invalid JSON: []
+2026/04/30 22:51:38.143283 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:38.143826 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=5118 err=invalid JSON: []
+2026/04/30 22:51:38.188490 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:38.188574 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=5163 err=invalid JSON: []
+2026/04/30 22:51:39.325876 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:51:39.348396 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:51:39.348535 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:51:39.348584 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:51:39.348627 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:51:39.348627 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:51:39.361713 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:51:39.361910 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:51:39.361838 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:51:39.362011 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:51:39.361774 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:51:39.362113 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:51:39.362183 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:51:39.362353 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:51:39.362370 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:51:39.372257 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:51:39.372287 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:51:41.089337 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=2064 attempts=1
+2026/04/30 22:51:41.089953 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:41.090086 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=2064 attempts=1
+2026/04/30 22:51:41.091362 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=2065 attempts=1
+2026/04/30 22:51:41.096981 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:41.097348 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=2071 attempts=1
+2026/04/30 22:51:41.096979 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:41.097075 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:41.097693 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=2072 attempts=1
+2026/04/30 22:51:41.097692 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:41.097728 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=2071 attempts=1
+2026/04/30 22:51:41.097807 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=2072 attempts=1
+2026/04/30 22:51:41.097923 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:41.106410 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:41.106455 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:41.106841 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=2080 attempts=1
+2026/04/30 22:51:41.107301 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=2081 attempts=1
+2026/04/30 22:51:42.095789 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:42.097216 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:42.099894 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:42.099975 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:42.100828 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:42.103120 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:42.115647 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:42.254950 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:43.240715 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:43.240903 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:43.240902 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:43.240946 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:43.240962 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:43.241023 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:43.241111 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:43.408807 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:44.305303 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:44.305356 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=5279 err=invalid JSON: []
+2026/04/30 22:51:44.310916 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:44.310987 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=5285 err=invalid JSON: []
+2026/04/30 22:51:44.310925 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:44.311020 alias=saikohero stage=query_profile status=failed elapsed_ms=5285 err=invalid JSON: []
+2026/04/30 22:51:44.656001 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:44.656123 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=5630 err=invalid JSON: []
+2026/04/30 22:51:44.656167 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:44.656229 alias=unkown stage=query_profile status=failed elapsed_ms=5630 err=invalid JSON: []
+2026/04/30 22:51:44.660245 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:44.660399 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=5634 err=invalid JSON: []
+2026/04/30 22:51:44.660306 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:44.660542 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=5635 err=invalid JSON: []
+2026/04/30 22:51:44.660322 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:44.660595 alias=kele+bing stage=query_profile status=failed elapsed_ms=5634 err=invalid JSON: []
+2026/04/30 22:51:45.341471 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:51:45.347848 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:51:45.352559 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:51:45.361615 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:51:45.361740 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:51:45.361771 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:51:45.361657 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:51:45.361631 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:51:45.365800 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:51:45.379749 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:51:45.379875 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:51:45.379926 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:51:45.380085 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:51:45.384212 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:51:45.420433 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:51:45.583920 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:51:45.583997 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:51:46.912777 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:46.913141 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:46.913171 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:46.913734 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=1888 attempts=1
+2026/04/30 22:51:47.098757 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=2073 attempts=1
+2026/04/30 22:51:47.098759 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:47.098769 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:47.099010 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=2073 attempts=1
+2026/04/30 22:51:47.099064 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=2073 attempts=1
+2026/04/30 22:51:47.099085 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:47.099140 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=2073 attempts=1
+2026/04/30 22:51:47.099162 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=2073 attempts=1
+2026/04/30 22:51:47.099188 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:47.099210 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:47.099276 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=2073 attempts=1
+2026/04/30 22:51:47.099291 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=2073 attempts=1
+2026/04/30 22:51:47.102655 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=2077 attempts=1
+2026/04/30 22:51:48.002436 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:48.002518 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:48.004925 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:48.617435 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:48.617444 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:48.638922 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:48.639081 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:48.639106 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:49.093391 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:49.093581 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:49.093637 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:49.667990 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:49.675950 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:49.681880 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:49.688106 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:49.700518 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:50.380312 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:50.380377 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:50.380455 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=5354 err=invalid JSON: []
+2026/04/30 22:51:50.380399 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=5354 err=invalid JSON: []
+2026/04/30 22:51:50.380493 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:50.380546 alias=unkown stage=query_profile status=failed elapsed_ms=5355 err=invalid JSON: []
+2026/04/30 22:51:51.050343 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:51.050425 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=6024 err=invalid JSON: []
+2026/04/30 22:51:51.050439 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:51.050502 alias=saikohero stage=query_profile status=failed elapsed_ms=6024 err=invalid JSON: []
+2026/04/30 22:51:51.081694 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:51.081783 alias=kele+bing stage=query_profile status=failed elapsed_ms=6056 err=invalid JSON: []
+2026/04/30 22:51:51.359081 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:51.359217 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=6333 err=invalid JSON: []
+2026/04/30 22:51:51.359233 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:51.359279 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=6333 err=invalid JSON: []
+2026/04/30 22:51:52.337226 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:51:52.340798 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:51:52.340841 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:51:52.340871 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:51:52.375947 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:51:52.376241 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:51:52.382283 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:51:52.382385 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:51:52.387738 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:51:52.393314 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:51:52.393481 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:51:52.441753 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:51:52.441898 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:51:52.441868 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:51:52.443794 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:51:52.444003 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:51:52.463069 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:51:54.112112 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:54.124875 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=2100 attempts=1
+2026/04/30 22:51:54.136522 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=2111 attempts=1
+2026/04/30 22:51:54.136886 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=2112 attempts=1
+2026/04/30 22:51:54.219974 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=2195 attempts=1
+2026/04/30 22:51:54.227137 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:54.251581 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:54.289146 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=2264 attempts=1
+2026/04/30 22:51:54.294928 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:54.300144 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:54.300410 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=2275 attempts=1
+2026/04/30 22:51:54.507516 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=2483 attempts=1
+2026/04/30 22:51:54.507645 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:54.507741 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:54.508083 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=2483 attempts=1
+2026/04/30 22:51:54.508315 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=2483 attempts=1
+2026/04/30 22:51:54.508484 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:51:55.118936 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:55.328160 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:55.328319 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:55.339680 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:55.339681 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:55.655201 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:55.660583 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:55.660664 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:51:56.808901 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:56.808929 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:56.808907 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:56.893472 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:56.936888 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:56.948416 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:57.017426 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:57.083534 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:51:57.822380 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:57.822702 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=5798 err=invalid JSON: []
+2026/04/30 22:51:57.827471 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:57.827565 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=5802 err=invalid JSON: []
+2026/04/30 22:51:57.835687 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:57.835782 alias=unkown stage=query_profile status=failed elapsed_ms=5811 err=invalid JSON: []
+2026/04/30 22:51:58.047916 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:58.048036 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=6023 err=invalid JSON: []
+2026/04/30 22:51:58.063400 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:58.063536 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=6038 err=invalid JSON: []
+2026/04/30 22:51:58.063558 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:58.063613 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:58.063672 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=6038 err=invalid JSON: []
+2026/04/30 22:51:58.063619 alias=kele+bing stage=query_profile status=failed elapsed_ms=6038 err=invalid JSON: []
+2026/04/30 22:51:58.693734 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:51:58.693863 alias=saikohero stage=query_profile status=failed elapsed_ms=6669 err=invalid JSON: []
+2026/04/30 22:51:59.327480 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:51:59.330995 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:51:59.333650 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:51:59.340805 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:51:59.340898 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:51:59.349770 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:51:59.350200 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:51:59.351728 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:51:59.351802 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:51:59.354573 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:51:59.354921 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:51:59.354993 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:51:59.365059 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:51:59.369868 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:51:59.389403 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:51:59.389763 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:51:59.463082 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:52:01.019310 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:01.044597 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=2019 attempts=1
+2026/04/30 22:52:01.111907 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=2086 attempts=1
+2026/04/30 22:52:01.142293 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=2116 attempts=1
+2026/04/30 22:52:01.162427 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=2136 attempts=1
+2026/04/30 22:52:01.186261 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:01.367921 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:01.405732 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=2380 attempts=1
+2026/04/30 22:52:01.520358 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:01.564239 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:01.564239 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:01.633542 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=2608 attempts=1
+2026/04/30 22:52:01.790680 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=2765 attempts=1
+2026/04/30 22:52:01.895753 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=2870 attempts=1
+2026/04/30 22:52:02.072800 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:02.376767 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:02.376767 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:03.244619 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:03.256543 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:03.620239 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=4594 attempts=1
+2026/04/30 22:52:04.124287 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:04.195341 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:04.370705 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:04.482087 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:04.482165 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:04.490733 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:04.690922 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:04.714325 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:05.118019 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:05.212410 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:05.367867 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:05.367910 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=6342 err=invalid JSON: []
+2026/04/30 22:52:05.808491 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:05.808550 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:05.808747 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:05.808793 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:05.808861 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=6783 err=invalid JSON: []
+2026/04/30 22:52:05.808879 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:05.808809 alias=saikohero stage=query_profile status=failed elapsed_ms=6783 err=invalid JSON: []
+2026/04/30 22:52:07.048484 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:07.048590 alias=kele+bing stage=query_profile status=failed elapsed_ms=8022 err=invalid JSON: []
+2026/04/30 22:52:08.054439 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:08.054587 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=9029 err=invalid JSON: []
+2026/04/30 22:52:10.494316 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:10.494433 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=11468 err=invalid JSON: []
+2026/04/30 22:52:12.150504 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:12.150590 alias=unkown stage=query_profile status=failed elapsed_ms=13125 err=invalid JSON: []
+2026/04/30 22:52:17.914527 alias=wwwwwwww endpoint=profile_view status=network_error err=Get "https://xmploueumzkrdvapbyfs.supabase.co/rest/v1/player_profile_view?select=*&alias=eq.wwwwwwww&gateway=eq.30": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2026/04/30 22:52:17.914655 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=Get "https://xmploueumzkrdvapbyfs.supabase.co/rest/v1/player_profile_view?select=*&alias=eq.wwwwwwww&gateway=eq.30": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2026/04/30 22:52:17.914698 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=18889 err=Get "https://xmploueumzkrdvapbyfs.supabase.co/rest/v1/player_profile_view?select=*&alias=eq.wwwwwwww&gateway=eq.30": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2026/04/30 22:52:18.364750 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:52:18.364852 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:52:18.369381 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:52:18.369471 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:52:18.369513 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:52:18.369671 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:52:18.373656 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:52:18.379356 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:52:18.379399 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:52:18.380064 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:52:18.380178 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:52:18.380676 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:52:18.383999 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:52:18.391255 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:52:18.396639 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:52:18.396741 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:52:18.454433 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:52:20.110761 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=2085 attempts=1
+2026/04/30 22:52:20.120281 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=2094 attempts=1
+2026/04/30 22:52:20.211169 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:20.211613 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=2186 attempts=1
+2026/04/30 22:52:20.363421 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:20.363544 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:20.364242 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=2338 attempts=1
+2026/04/30 22:52:20.580231 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:20.589341 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:20.591325 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=2566 attempts=1
+2026/04/30 22:52:20.902295 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:20.902522 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=2877 attempts=1
+2026/04/30 22:52:20.920796 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=2895 attempts=1
+2026/04/30 22:52:20.942284 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=2916 attempts=1
+2026/04/30 22:52:22.217236 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:22.846576 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:23.239264 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:23.361683 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=5336 attempts=1
+2026/04/30 22:52:24.566782 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:25.233518 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:25.435630 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:33.039589 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:52:33.042246 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:52:33.042268 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:52:33.059798 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:52:33.082548 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:52:33.082573 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:52:33.082563 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:52:33.083286 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:52:33.087932 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:52:33.100659 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:52:33.100718 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:52:33.100738 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:52:33.100815 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:52:33.100823 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:52:33.104996 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:52:33.109598 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:52:33.124705 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:52:36.110452 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:36.159246 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=5050 attempts=1
+2026/04/30 22:52:36.159270 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=5050 attempts=1
+2026/04/30 22:52:36.162181 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=5052 attempts=1
+2026/04/30 22:52:36.163818 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=5054 attempts=1
+2026/04/30 22:52:36.171179 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=5062 attempts=1
+2026/04/30 22:52:36.523862 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:36.523866 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:36.809855 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:36.809876 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=5700 attempts=1
+2026/04/30 22:52:36.809966 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:36.809992 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:36.809973 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:36.810152 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=5700 attempts=1
+2026/04/30 22:52:36.838775 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:37.446974 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:37.447189 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=6337 attempts=1
+2026/04/30 22:52:38.475562 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:38.502308 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:38.515660 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=7406 attempts=1
+2026/04/30 22:52:38.527172 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:38.537737 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:38.778144 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:38.778225 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:38.778300 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:40.589014 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:40.598540 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:40.645163 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:40.702234 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:40.902941 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:41.437305 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:41.744537 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:41.744610 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:41.744646 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:41.744711 alias=saikohero stage=query_profile status=failed elapsed_ms=10635 err=invalid JSON: []
+2026/04/30 22:52:41.921568 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:41.921663 alias=unkown stage=query_profile status=failed elapsed_ms=10812 err=invalid JSON: []
+2026/04/30 22:52:42.612807 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:42.612908 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=11503 err=invalid JSON: []
+2026/04/30 22:52:42.685956 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:42.686096 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=11576 err=invalid JSON: []
+2026/04/30 22:52:42.938267 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:42.938365 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=11829 err=invalid JSON: []
+2026/04/30 22:52:42.974308 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:42.974424 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=11865 err=invalid JSON: []
+2026/04/30 22:52:42.975766 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:42.975832 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=11866 err=invalid JSON: []
+2026/04/30 22:52:43.990326 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:43.990412 alias=kele+bing stage=query_profile status=failed elapsed_ms=12881 err=invalid JSON: []
+2026/04/30 22:52:45.330255 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:52:45.330342 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:52:45.330421 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:52:45.330481 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:52:45.330577 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:52:45.330680 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:52:45.594653 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:52:45.594681 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:52:45.594708 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:52:45.595951 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:52:45.595991 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:52:45.610816 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:52:45.610859 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:52:45.610841 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:52:45.612838 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:52:45.612918 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:52:45.612954 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:52:46.840231 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=1849 attempts=1
+2026/04/30 22:52:46.842135 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=1850 attempts=1
+2026/04/30 22:52:46.845887 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=1854 attempts=1
+2026/04/30 22:52:46.856584 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:46.856691 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=1865 attempts=1
+2026/04/30 22:52:46.864669 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=1873 attempts=1
+2026/04/30 22:52:47.104741 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:47.171616 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:47.177547 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=2186 attempts=1
+2026/04/30 22:52:47.197210 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:47.214935 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:47.260581 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=2269 attempts=1
+2026/04/30 22:52:47.306271 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=2315 attempts=1
+2026/04/30 22:52:47.320484 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:47.338925 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:47.410019 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=2418 attempts=1
+2026/04/30 22:52:47.441548 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:47.859310 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:48.114458 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:48.169339 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:48.202804 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:48.526623 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:48.526668 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:48.526734 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:48.526776 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:48.869904 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:49.123948 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:49.574677 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:49.836478 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:49.837593 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:49.860989 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:50.564751 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:51.402528 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:51.402622 alias=saikohero stage=query_profile status=failed elapsed_ms=6411 err=invalid JSON: []
+2026/04/30 22:52:51.569207 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:51.569307 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=6578 err=invalid JSON: []
+2026/04/30 22:52:51.569466 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:51.569519 alias=unkown stage=query_profile status=failed elapsed_ms=6578 err=invalid JSON: []
+2026/04/30 22:52:51.574961 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:51.575022 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=6583 err=invalid JSON: []
+2026/04/30 22:52:52.087836 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:52.087913 alias=kele+bing stage=query_profile status=failed elapsed_ms=7096 err=invalid JSON: []
+2026/04/30 22:52:52.159195 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:52.280748 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:52.280843 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=7289 err=invalid JSON: []
+2026/04/30 22:52:53.437723 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:53.437812 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=8446 err=invalid JSON: []
+2026/04/30 22:52:53.829401 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:52:53.829488 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=8838 err=invalid JSON: []
+2026/04/30 22:52:54.294534 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:52:54.303764 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:52:54.307706 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:52:54.307713 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:52:54.309097 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:52:54.309738 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:52:54.310899 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:52:54.313853 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:52:54.315312 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:52:54.317143 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:52:54.318829 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:52:54.329662 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:52:54.339818 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:52:54.340622 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:52:54.391112 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:52:54.398858 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:52:54.399826 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:52:55.954119 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=1962 attempts=1
+2026/04/30 22:52:55.954152 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=1962 attempts=1
+2026/04/30 22:52:55.978636 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:55.981476 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=1989 attempts=1
+2026/04/30 22:52:56.261240 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:56.261388 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=2269 attempts=1
+2026/04/30 22:52:56.308939 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=2317 attempts=1
+2026/04/30 22:52:56.683948 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:56.684088 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:56.781617 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:56.781979 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=2790 attempts=1
+2026/04/30 22:52:56.783918 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:56.819035 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=2827 attempts=1
+2026/04/30 22:52:58.345288 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:58.465296 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=4473 attempts=1
+2026/04/30 22:52:58.520084 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:58.667032 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:58.736437 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:58.736458 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:58.969601 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:52:58.969827 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:58.969964 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:58.970435 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=4978 attempts=1
+2026/04/30 22:52:59.351763 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:59.609752 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:59.685735 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:59.751259 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:52:59.770894 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:59.975091 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:52:59.983314 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:00.006878 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:00.364693 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:00.364774 alias=kele+bing stage=query_profile status=failed elapsed_ms=6372 err=invalid JSON: []
+2026/04/30 22:53:00.635300 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:00.635385 alias=unkown stage=query_profile status=failed elapsed_ms=6643 err=invalid JSON: []
+2026/04/30 22:53:00.817739 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:00.817907 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=6825 err=invalid JSON: []
+2026/04/30 22:53:00.915550 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:00.920314 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:00.920386 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=6928 err=invalid JSON: []
+2026/04/30 22:53:01.511275 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:01.511363 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=7519 err=invalid JSON: []
+2026/04/30 22:53:01.614294 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:01.614377 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=7622 err=invalid JSON: []
+2026/04/30 22:53:01.679022 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:02.253266 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:02.253345 alias=saikohero stage=query_profile status=failed elapsed_ms=8261 err=invalid JSON: []
+2026/04/30 22:53:02.706083 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:02.706174 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=8714 err=invalid JSON: []
+2026/04/30 22:53:03.352379 alias=C9_flash!!!!!!!! endpoint=player-update status=http_429 body={"message":"Too Many Requests"}
+2026/04/30 22:53:03.352446 alias=IILLIILioII endpoint=player-update status=http_429 body={"message":"Too Many Requests"}
+2026/04/30 22:53:03.352526 alias=lIlIlIIIllII112 endpoint=player-update status=http_429 body={"message":"Too Many Requests"}
+2026/04/30 22:53:03.352542 alias=IILLIILioII stage=trigger_update status=error err=HTTP 429: {"message":"Too Many Requests"}
+2026/04/30 22:53:03.352529 alias=C9_flash!!!!!!!! stage=trigger_update status=error err=HTTP 429: {"message":"Too Many Requests"}
+2026/04/30 22:53:03.352605 alias=lIlIlIIIllII112 stage=trigger_update status=error err=HTTP 429: {"message":"Too Many Requests"}
+2026/04/30 22:53:03.618599 alias=32323GDFDGDF344 endpoint=player-update status=http_429 body={"message":"Too Many Requests"}
+2026/04/30 22:53:03.618765 alias=32323GDFDGDF344 stage=trigger_update status=error err=HTTP 429: {"message":"Too Many Requests"}
+2026/04/30 22:53:03.618767 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:53:03.618857 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:53:03.618907 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:53:03.619013 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:53:03.619183 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:53:03.619209 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:53:03.619327 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:53:03.619452 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:53:03.619507 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:53:03.619817 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:53:03.619860 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:53:03.619911 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:53:03.620099 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:53:05.121425 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=2129 attempts=1
+2026/04/30 22:53:05.253172 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:05.253493 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:05.253740 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:05.253953 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:05.254156 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=2262 attempts=1
+2026/04/30 22:53:05.254198 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=2261 attempts=1
+2026/04/30 22:53:05.254852 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=2262 attempts=1
+2026/04/30 22:53:05.255023 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:05.255131 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:05.255199 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=2262 attempts=1
+2026/04/30 22:53:05.255407 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=2262 attempts=1
+2026/04/30 22:53:05.255886 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=2263 attempts=1
+2026/04/30 22:53:06.321896 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:06.321981 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:06.322091 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:06.322095 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:06.345763 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:06.346111 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:07.532344 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:07.532661 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:07.532707 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:07.532747 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:07.532886 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:07.532925 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:08.574284 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:08.574351 alias=kele+bing stage=query_profile status=failed elapsed_ms=5582 err=invalid JSON: []
+2026/04/30 22:53:08.574281 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:08.574392 alias=saikohero stage=query_profile status=failed elapsed_ms=5582 err=invalid JSON: []
+2026/04/30 22:53:08.584738 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:08.584798 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=5592 err=invalid JSON: []
+2026/04/30 22:53:08.584964 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:08.585002 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=5592 err=invalid JSON: []
+2026/04/30 22:53:08.585070 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:08.585106 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=5592 err=invalid JSON: []
+2026/04/30 22:53:08.585108 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:08.585139 alias=unkown stage=query_profile status=failed elapsed_ms=5593 err=invalid JSON: []
+2026/04/30 22:53:09.322624 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:53:09.330668 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:53:09.330723 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:53:09.335694 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:53:09.339586 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:53:09.350769 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:53:09.352601 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:53:09.358725 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:53:09.362127 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:53:09.362221 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:53:09.599324 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:53:09.599451 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:53:09.599488 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:53:09.599630 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:53:09.599664 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:53:09.599794 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:53:09.600119 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:53:10.827730 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:10.852455 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=1861 attempts=1
+2026/04/30 22:53:10.874584 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=1883 attempts=1
+2026/04/30 22:53:10.874875 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=1883 attempts=1
+2026/04/30 22:53:10.899022 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:10.899796 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=1907 attempts=1
+2026/04/30 22:53:10.899908 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=1908 attempts=1
+2026/04/30 22:53:10.900035 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:10.900114 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:10.900202 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:11.109977 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=2118 attempts=1
+2026/04/30 22:53:11.114107 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=2122 attempts=1
+2026/04/30 22:53:11.116829 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:11.116858 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:11.121539 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=2130 attempts=1
+2026/04/30 22:53:11.126672 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:11.142643 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=2151 attempts=1
+2026/04/30 22:53:11.838408 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:12.003625 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:12.003676 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:12.013925 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:12.019826 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:12.151178 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:12.159067 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:12.162375 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:12.848606 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:13.016870 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:13.018705 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:13.023906 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:13.039706 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:13.157019 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:13.162453 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:13.432625 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:13.846301 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:13.846378 alias=unkown stage=query_profile status=failed elapsed_ms=4855 err=invalid JSON: []
+2026/04/30 22:53:14.038416 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:14.038497 alias=kele+bing stage=query_profile status=failed elapsed_ms=5046 err=invalid JSON: []
+2026/04/30 22:53:14.046598 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:14.046697 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=5055 err=invalid JSON: []
+2026/04/30 22:53:14.046594 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:14.046835 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=5054 err=invalid JSON: []
+2026/04/30 22:53:14.058214 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:14.058454 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=5066 err=invalid JSON: []
+2026/04/30 22:53:14.164537 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:14.164581 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=5172 err=invalid JSON: []
+2026/04/30 22:53:14.175542 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:14.175585 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=5183 err=invalid JSON: []
+2026/04/30 22:53:14.438268 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:14.439011 alias=saikohero stage=query_profile status=failed elapsed_ms=5447 err=invalid JSON: []
+2026/04/30 22:53:15.346731 alias=unkown endpoint=player-update status=http_429 body={"message":"Too Many Requests"}
+2026/04/30 22:53:15.346893 alias=unkown stage=trigger_update status=error err=HTTP 429: {"message":"Too Many Requests"}
+2026/04/30 22:53:15.346926 alias=lIIIlIlIIIll endpoint=player-update status=http_429 body={"message":"Too Many Requests"}
+2026/04/30 22:53:15.347436 alias=lIIIlIlIIIll stage=trigger_update status=error err=HTTP 429: {"message":"Too Many Requests"}
+2026/04/30 22:53:15.346989 alias=Naiqoug_FnuS endpoint=player-update status=http_429 body={"message":"Too Many Requests"}
+2026/04/30 22:53:15.347493 alias=Naiqoug_FnuS stage=trigger_update status=error err=HTTP 429: {"message":"Too Many Requests"}
+2026/04/30 22:53:15.347231 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:53:15.347279 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:53:15.347585 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:53:15.347630 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:53:15.347707 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:53:15.347735 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:53:15.347714 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:53:15.374464 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:53:15.374513 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:53:15.374509 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:53:15.380546 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:53:15.380680 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:53:15.380763 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:53:15.984725 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:53:28.749028 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:53:28.749191 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:53:28.749227 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:53:28.751510 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:53:28.751605 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:53:28.751625 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:53:28.751873 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:53:28.751960 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:53:28.752099 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:53:28.752174 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:53:28.752298 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:53:28.752436 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:53:28.752472 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:53:28.752526 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:53:28.752573 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:53:28.762263 alias=saikohero endpoint=player-update status=ok code=202
+2026/04/30 22:53:28.768961 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:53:31.487203 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:31.488407 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=4383 attempts=1
+2026/04/30 22:53:31.488697 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=4383 attempts=1
+2026/04/30 22:53:31.489535 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:31.489758 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=4384 attempts=1
+2026/04/30 22:53:31.493440 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=4388 attempts=1
+2026/04/30 22:53:31.493470 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:31.493622 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=4388 attempts=1
+2026/04/30 22:53:31.493751 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=4389 attempts=1
+2026/04/30 22:53:31.767516 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:31.767700 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:31.767716 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=4662 attempts=1
+2026/04/30 22:53:31.767874 alias=saikohero stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:31.767939 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:31.768024 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:31.768175 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=4663 attempts=1
+2026/04/30 22:53:31.768499 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=4663 attempts=1
+2026/04/30 22:53:32.491080 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:32.491366 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:32.500447 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:32.949468 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:32.949575 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:32.949650 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:32.949462 alias=saikohero stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:32.949692 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:33.499206 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:33.533823 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:33.533831 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:34.098612 alias=saikohero stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:34.098815 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:34.098866 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:34.301175 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:34.301447 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:34.609757 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:34.609845 alias=kele+bing stage=query_profile status=failed elapsed_ms=7505 err=invalid JSON: []
+2026/04/30 22:53:34.610655 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:34.610707 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=7506 err=invalid JSON: []
+2026/04/30 22:53:34.615607 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:34.615660 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=7510 err=invalid JSON: []
+2026/04/30 22:53:35.224825 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:35.224928 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=8120 err=invalid JSON: []
+2026/04/30 22:53:35.224928 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:35.224994 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=8120 err=invalid JSON: []
+2026/04/30 22:53:35.225074 alias=saikohero stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:35.225131 alias=saikohero stage=query_profile status=failed elapsed_ms=8120 err=invalid JSON: []
+2026/04/30 22:53:35.327927 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:35.328078 alias=unkown stage=query_profile status=failed elapsed_ms=8223 err=invalid JSON: []
+2026/04/30 22:53:35.334341 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:35.334417 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=8229 err=invalid JSON: []
+2026/04/30 22:53:36.888877 alias=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/04/30 22:53:36.888998 alias=unkown endpoint=player-update status=ok code=202
+2026/04/30 22:53:36.889164 alias=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/04/30 22:53:36.889192 alias=saikohero endpoint=player-update status=http_429 body={"message":"Too Many Requests"}
+2026/04/30 22:53:36.889230 alias=kukuboy1 endpoint=player-update status=ok code=202
+2026/04/30 22:53:36.889234 alias=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/04/30 22:53:36.889250 alias=saikohero stage=trigger_update status=error err=HTTP 429: {"message":"Too Many Requests"}
+2026/04/30 22:53:36.889320 alias=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/04/30 22:53:36.889567 alias=kele+bing endpoint=player-update status=ok code=202
+2026/04/30 22:53:36.889576 alias=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/04/30 22:53:36.889620 alias=TIMING3M endpoint=player-update status=ok code=202
+2026/04/30 22:53:36.889692 alias=wwwwwwww endpoint=player-update status=ok code=202
+2026/04/30 22:53:36.889760 alias=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/04/30 22:53:36.889928 alias=scgotoboy endpoint=player-update status=ok code=202
+2026/04/30 22:53:36.889972 alias=needbigass endpoint=player-update status=ok code=202
+2026/04/30 22:53:36.890093 alias=lliillii1111l endpoint=player-update status=ok code=202
+2026/04/30 22:53:36.890140 alias=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/04/30 22:53:36.890180 alias=IILLIILioII endpoint=player-update status=ok code=202
+2026/04/30 22:53:38.478541 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:38.479066 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:38.479147 alias=CCZ_MagouTerran stage=query_profile status=ok rating=1542 elapsed_ms=2143 attempts=1
+2026/04/30 22:53:38.479191 alias=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2555 elapsed_ms=2143 attempts=1
+2026/04/30 22:53:38.479254 alias=kukuboy1 stage=query_profile status=ok rating=2284 elapsed_ms=2143 attempts=1
+2026/04/30 22:53:38.479548 alias=kele+bing stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:38.479612 alias=TIMING3M stage=query_profile status=ok rating=2274 elapsed_ms=2143 attempts=1
+2026/04/30 22:53:38.479664 alias=unkown stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:38.500149 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:38.500148 alias=lIIIlIlIIIll stage=query_profile status=ok rating=2304 elapsed_ms=2164 attempts=1
+2026/04/30 22:53:38.500242 alias=wwwwwwww stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:38.500253 alias=needbigass stage=query_profile status=ok rating=2203 elapsed_ms=2164 attempts=1
+2026/04/30 22:53:38.500682 alias=lIlIlIIIllII112 stage=query_profile status=ok rating=2222 elapsed_ms=2165 attempts=1
+2026/04/30 22:53:38.503024 alias=IILLIILioII stage=query_profile status=ok rating=2300 elapsed_ms=2167 attempts=1
+2026/04/30 22:53:38.503303 alias=scgotoboy stage=query_profile status=ok rating=2193 elapsed_ms=2167 attempts=1
+2026/04/30 22:53:38.506933 alias=lliillii1111l stage=query_profile status=retry attempt=1 err=invalid JSON: []
+2026/04/30 22:53:39.601931 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:39.602135 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:39.602397 alias=unkown stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:39.602439 alias=kele+bing stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:39.602578 alias=wwwwwwww stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:39.602614 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:39.618674 alias=lliillii1111l stage=query_profile status=retry attempt=2 err=invalid JSON: []
+2026/04/30 22:53:40.729927 alias=unkown stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:40.730121 alias=wwwwwwww stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:40.730212 alias=kele+bing stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:40.730258 alias=lliillii1111l stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:40.730406 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:40.730536 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:40.730679 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=3 err=invalid JSON: []
+2026/04/30 22:53:41.856820 alias=kele+bing stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:41.856906 alias=kele+bing stage=query_profile status=failed elapsed_ms=5521 err=invalid JSON: []
+2026/04/30 22:53:41.925831 alias=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:41.925902 alias=C9_flash!!!!!!!! stage=query_profile status=failed elapsed_ms=5590 err=invalid JSON: []
+2026/04/30 22:53:41.929405 alias=32323GDFDGDF344 stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:41.929468 alias=32323GDFDGDF344 stage=query_profile status=failed elapsed_ms=5593 err=invalid JSON: []
+2026/04/30 22:53:42.005530 alias=lliillii1111l stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:42.005604 alias=lliillii1111l stage=query_profile status=failed elapsed_ms=5669 err=invalid JSON: []
+2026/04/30 22:53:42.005628 alias=wwwwwwww stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:42.005670 alias=wwwwwwww stage=query_profile status=failed elapsed_ms=5669 err=invalid JSON: []
+2026/04/30 22:53:42.039142 alias=Naiqoug_FnuS stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:42.039349 alias=Naiqoug_FnuS stage=query_profile status=failed elapsed_ms=5703 err=invalid JSON: []
+2026/04/30 22:53:42.135787 alias=unkown stage=query_profile status=retry attempt=4 err=invalid JSON: []
+2026/04/30 22:53:42.135855 alias=unkown stage=query_profile status=failed elapsed_ms=5800 err=invalid JSON: []

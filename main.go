@@ -54,7 +54,7 @@ const (
 	ratingColPadRight float32 = 14 // gutter so scores don't hug the window edge
 	rowHeight         = 26
 	headerHeight      = 18
-	listRowSpacing    float32 = 10 // gap between leaderboard rows for clearer stripes
+	listRowSpacing    float32 = 1 // gap between leaderboard rows (0 = no vertical gutter)
 
 	prefFontSizeKey        = "ui.font_size"
 	prefFontColorRKey      = "ui.font_color_r"
