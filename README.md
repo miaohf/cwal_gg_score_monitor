@@ -62,7 +62,9 @@ Messiah 2000
 - 程序会先调用 `https://v2.api.cwal.gg/player-update` 触发更新，再调用 `player_profile_view` 读取最新分数。
 - 分数读取响应中的 `rating` 字段（不做其他字段兜底）。
 - 当前 GUI 继续使用 `Fyne`。
-- `Fyne` 在 Windows 下不支持真正的原生透明窗口背景，因此“背景透明”无法做到桌面透出，只能调整应用内部绘制的背景效果。
+- Windows 构建会优先启用原生透明窗模式（不走 Fyne 窗口层），可实现桌面透出。
+- `BG Transparency` 现在会作为 Windows 原生透明窗的初始透明度设置（同一偏好键）。
+- Windows 原生透明窗支持快捷键调节透明度：`+` / `↑` 提高不透明度，`-` / `↓` 降低不透明度；调整后会保存到 `BG Transparency`。
 
 ### 构建 Windows 可执行文件
 

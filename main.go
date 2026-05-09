@@ -45,17 +45,23 @@ const (
 
 	flashDuration = 1200 * time.Millisecond
 
-	// Column widths: one HBox row with fixed-width cells so # / PLAYER / badge / RATING align vertically.
-	// colPlayerWidth: keep close to longest display name so there is little empty space before the badge.
-	colRankWidth      = 20
-	colPlayerWidth    = 76
-	colBadgeWidth     = 14
-	colRatingWidth    = 40
-	ratingColPadRight float32 = 4
-	colHBoxPad        float32 = 1 // horizontal gap between fixed columns
-	rowHeight         = 26
-	headerHeight      = 18
-	listRowSpacing    float32 = 1 // gap between leaderboard rows (0 = no vertical gutter)
+	// Column widths: fixed minima + adaptive player column.
+	// Wide window: player column expands; narrow window: columns fall back to minima.
+	colRankWidth                          = 20  // 排名列宽度（#）
+	colPlayerWidthHardMin                 = 46  // 玩家列“硬下限”：窗口拖到很窄时可压到这个值
+	colPlayerWidthMin                     = 50  // 玩家列参考最小宽度（会结合实际文字宽度动态计算）
+	colPlayerWidthMax                     = 120 // 玩家列最大宽度（限制中间空白，避免名字和分数离太远）
+	colRatingRightAlignStartWidth         = 260 // 窗口超过该宽度后，RATING 列贴近右侧
+	colBadgeWidth                         = 10  // 徽章列宽度（冠军/亚军/季军图标列）
+	colRatingWidth                        = 54  // 分数列宽度（需容纳 RATING 表头和 4 位分数）
+	colPlayerTextPad                      = 6   // 玩家列文字右侧留白（避免名字贴近下一列）
+	ratingColPadRight             float32 = 0   // RATING 右侧留白（0=尽量贴右）
+	colHBoxPad                    float32 = 1   // horizontal gap between fixed columns
+	rowHeight                             = 26
+	headerHeight                          = 18
+	listRowSpacing                float32 = 1 // gap between leaderboard rows (0 = no vertical gutter)
+	footerUpdatedTimeMinSize              = 8 // 底部状态时间最小字号
+	footerUpdatedTimeBelowFooter          = 2 // 相对 footer 统计行再小一档
 
 	prefFontSizeKey        = "ui.font_size"
 	prefFontColorRKey      = "ui.font_color_r"
@@ -77,22 +83,22 @@ const (
 )
 
 var (
-	colorRed        = color.NRGBA{R: 220, G: 38, B: 38, A: 255}
-	colorGreen      = color.NRGBA{R: 34, G: 197, B: 94, A: 255}
+	colorRed   = color.NRGBA{R: 220, G: 38, B: 38, A: 255}
+	colorGreen = color.NRGBA{R: 34, G: 197, B: 94, A: 255}
 	// Ranking trend flashes (replacing arrows): red — score/mark up; green — score down.
 	// «紫铜» mixed into the flash starter for a warm metallic hint.
-	colorFlashCopperPurple  = color.NRGBA{R: 176, G: 124, B: 148, A: 255}
-	colorFlashRankingUp   = color.NRGBA{R: 235, G: 72, B: 90, A: 255}  // rise — red (排名上升感)
-	colorFlashRankingDown = color.NRGBA{R: 34, G: 197, B: 130, A: 255} // fall — green
-	colorMuted      = color.NRGBA{R: 148, G: 163, B: 184, A: 255}
-	colorText       = color.NRGBA{R: 255, G: 255, B: 255, A: 255}
-	colorHeaderText = color.NRGBA{R: 148, G: 163, B: 184, A: 255}
+	colorFlashCopperPurple = color.NRGBA{R: 176, G: 124, B: 148, A: 255}
+	colorFlashRankingUp    = color.NRGBA{R: 235, G: 72, B: 90, A: 255}  // rise — red (排名上升感)
+	colorFlashRankingDown  = color.NRGBA{R: 34, G: 197, B: 130, A: 255} // fall — green
+	colorMuted             = color.NRGBA{R: 148, G: 163, B: 184, A: 255}
+	colorText              = color.NRGBA{R: 255, G: 255, B: 255, A: 255}
+	colorHeaderText        = color.NRGBA{R: 148, G: 163, B: 184, A: 255}
 	// Row panels: translucent milky overlays (real frosted blur is not supported by Fyne).
-	colorRowGlass     = color.NRGBA{R: 241, G: 245, B: 249, A: 40} // default row frost
-	colorTop8RowGlass = color.NRGBA{R: 226, G: 232, B: 240, A: 72} // slightly brighter strip for top 8
-	colorRating2200 = color.NRGBA{R: 110, G: 178, B: 238, A: 255} // blue
-	colorRating2300 = color.NRGBA{R: 152, G: 176, B: 234, A: 255} // blue-violet
-	colorRating2400 = color.NRGBA{R: 188, G: 172, B: 232, A: 255} // violet
+	colorRowGlass     = color.NRGBA{R: 241, G: 245, B: 249, A: 40}  // default row frost
+	colorTop8RowGlass = color.NRGBA{R: 226, G: 232, B: 240, A: 72}  // slightly brighter strip for top 8
+	colorRating2200   = color.NRGBA{R: 110, G: 178, B: 238, A: 255} // blue
+	colorRating2300   = color.NRGBA{R: 152, G: 176, B: 234, A: 255} // blue-violet
+	colorRating2400   = color.NRGBA{R: 188, G: 172, B: 232, A: 255} // violet
 
 	badgeResourceNone = fyne.NewStaticResource("badge-none.svg", []byte(`
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
@@ -342,6 +348,108 @@ func (d *doubleTapBox) CreateRenderer() fyne.WidgetRenderer {
 	return widget.NewSimpleRenderer(d.content)
 }
 
+type leaderboardColumnLayout struct {
+	playerHardMin float32
+	playerMin     float32
+	playerMax     float32
+}
+
+func newLeaderboardColumnLayout(playerHardMin, playerMin, playerMax float32) fyne.Layout {
+	return &leaderboardColumnLayout{
+		playerHardMin: playerHardMin,
+		playerMin:     playerMin,
+		playerMax:     playerMax,
+	}
+}
+
+func computePlayerColumnWidth(rows []*playerState) float32 {
+	maxTextWidth := canvas.NewText("PLAYER", colorHeaderText).MinSize().Width
+	for _, r := range rows {
+		txt := canvas.NewText(strings.TrimSpace(r.Name), colorText)
+		txt.TextSize = defaultFontSize
+		w := txt.MinSize().Width
+		if w > maxTextWidth {
+			maxTextWidth = w
+		}
+	}
+
+	preferred := maxTextWidth + colPlayerTextPad
+	if preferred < colPlayerWidthMin {
+		preferred = colPlayerWidthMin
+	}
+	if preferred < colPlayerWidthHardMin {
+		preferred = colPlayerWidthHardMin
+	}
+	if preferred > colPlayerWidthMax {
+		preferred = colPlayerWidthMax
+	}
+	return preferred
+}
+
+func (l *leaderboardColumnLayout) Layout(objects []fyne.CanvasObject, size fyne.Size) {
+	if len(objects) < 4 {
+		return
+	}
+	rankW := float32(colRankWidth)
+	badgeW := float32(colBadgeWidth)
+	ratingW := float32(colRatingWidth)
+	gap := colHBoxPad
+
+	fixedW := rankW + badgeW + ratingW
+	minTotalWithGap := fixedW + l.playerMin + gap*3
+	playerW := l.playerMin
+	if size.Width > minTotalWithGap {
+		if size.Width >= colRatingRightAlignStartWidth {
+			// Wide mode: let PLAYER absorb the remaining width so RATING stays right aligned.
+			playerW = size.Width - fixedW - gap*3
+		} else {
+			// Compact mode: only use part of the extra room to keep names close to ratings.
+			playerW += (size.Width - minTotalWithGap) * 0.35
+		}
+	}
+	if playerW < l.playerMin {
+		playerW = l.playerMin
+	}
+	if playerW < l.playerHardMin {
+		playerW = l.playerHardMin
+	}
+	if size.Width < colRatingRightAlignStartWidth && playerW > l.playerMax {
+		playerW = l.playerMax
+	}
+
+	widths := []float32{rankW, playerW, badgeW, ratingW}
+	x := float32(0)
+	for i := 0; i < 4; i++ {
+		obj := objects[i]
+		if obj == nil || !obj.Visible() {
+			x += widths[i]
+			if i < 3 {
+				x += gap
+			}
+			continue
+		}
+		obj.Move(fyne.NewPos(x, 0))
+		obj.Resize(fyne.NewSize(widths[i], size.Height))
+		x += widths[i]
+		if i < 3 {
+			x += gap
+		}
+	}
+}
+
+func (l *leaderboardColumnLayout) MinSize(objects []fyne.CanvasObject) fyne.Size {
+	height := float32(0)
+	for _, obj := range objects {
+		if obj == nil || !obj.Visible() {
+			continue
+		}
+		height = fyne.Max(height, obj.MinSize().Height)
+	}
+	// Enforce a practical minimum width: keep normal gaps and player min width to avoid overlap/truncation.
+	width := float32(colRankWidth) + l.playerMin + float32(colBadgeWidth) + float32(colRatingWidth) + colHBoxPad*3
+	return fyne.NewSize(width, height)
+}
+
 func defaultUISettings() *uiSettings {
 	return &uiSettings{
 		FontSize:        defaultFontSize,
@@ -451,6 +559,9 @@ func main() {
 			LastError: "pending",
 		})
 	}
+	if runWindowsTransparentMode(rows, cfg) {
+		return
+	}
 
 	myApp := app.NewWithID("cwalgg.score.monitor")
 	win := myApp.NewWindow("Score Monitor")
@@ -466,7 +577,7 @@ func main() {
 	statusDot := canvas.NewCircle(colorRed)
 	statusDotBox := container.NewGridWrap(fyne.NewSize(10, 10), statusDot)
 	updatedText := canvas.NewText("", colorHeaderText)
-	updatedText.TextSize = 10
+	updatedText.TextSize = float32(footerUpdatedTimeMinSize)
 	countdownText := canvas.NewText("--:--:--", colorHeaderText)
 	countdownText.TextSize = 12
 	countdownText.Alignment = fyne.TextAlignCenter
@@ -481,7 +592,8 @@ func main() {
 	headerPadded := container.NewPadded(headerBar)
 
 	// ---- Column header ----
-	colHeader, headerRefs := buildHeaderRow()
+	playerColWidth := computePlayerColumnWidth(rows)
+	colHeader, headerRefs := buildHeaderRow(playerColWidth)
 
 	// ---- Rows ----
 	rowUIs := make([]*rowUI, len(rows))
@@ -489,7 +601,7 @@ func main() {
 	var rowsMu sync.RWMutex
 	for i := range rows {
 		idx := i
-		rowUIs[i] = buildRowUI(func() {
+		rowUIs[i] = buildRowUI(playerColWidth, func() {
 			showManualScoreDialog(win, rows[idx], &rowsMu, func() {
 				saveHistoryScoresToPrefs(myApp.Preferences(), rows, &rowsMu)
 				applySortAndRender(rows, rowUIs, listVBox, &rowsMu, settings, shouldShowBadges(pollCfg))
@@ -560,7 +672,7 @@ func main() {
 	win.ShowAndRun()
 }
 
-func buildHeaderRow() (*fyne.Container, headerUI) {
+func buildHeaderRow(playerColWidth float32) (*fyne.Container, headerUI) {
 	rank := canvas.NewText("#", colorHeaderText)
 	rank.TextStyle = fyne.TextStyle{Bold: true, Monospace: true}
 	rank.TextSize = 11
@@ -577,12 +689,12 @@ func buildHeaderRow() (*fyne.Container, headerUI) {
 	rating.Alignment = fyne.TextAlignCenter
 
 	rankBox := container.NewGridWrap(fyne.NewSize(colRankWidth, headerHeight), rank)
-	playerBox := container.NewGridWrap(fyne.NewSize(colPlayerWidth, headerHeight), player)
+	playerBox := container.NewGridWrap(fyne.NewSize(playerColWidth, headerHeight), player)
 	ratingBox := container.NewGridWrap(fyne.NewSize(colRatingWidth, headerHeight), rating)
 
 	badgeHeaderSlot := canvas.NewRectangle(color.Transparent)
 	badgeHeaderBox := container.NewGridWrap(fyne.NewSize(colBadgeWidth, headerHeight), badgeHeaderSlot)
-	headerRow := container.New(layout.NewCustomPaddedHBoxLayout(colHBoxPad),
+	headerRow := container.New(newLeaderboardColumnLayout(colPlayerWidthHardMin, playerColWidth, colPlayerWidthMax),
 		rankBox, playerBox, badgeHeaderBox, ratingBox,
 	)
 	headerPadded := container.New(layout.NewCustomPaddedLayout(0, 0, 0, ratingColPadRight), headerRow)
@@ -593,7 +705,7 @@ func buildHeaderRow() (*fyne.Container, headerUI) {
 	}
 }
 
-func buildRowUI(onDoubleTap func()) *rowUI {
+func buildRowUI(playerColWidth float32, onDoubleTap func()) *rowUI {
 	bg := canvas.NewRectangle(color.Transparent)
 	rank := canvas.NewText("", colorMuted)
 	rank.TextStyle = fyne.TextStyle{Monospace: true, Bold: true}
@@ -614,11 +726,11 @@ func buildRowUI(onDoubleTap func()) *rowUI {
 	rating.Alignment = fyne.TextAlignTrailing
 
 	rankBox := container.NewGridWrap(fyne.NewSize(colRankWidth, rowHeight), rank)
-	nameBox := container.NewGridWrap(fyne.NewSize(colPlayerWidth, rowHeight), name)
+	nameBox := container.NewGridWrap(fyne.NewSize(playerColWidth, rowHeight), name)
 	badgeBox := container.NewGridWrap(fyne.NewSize(colBadgeWidth, rowHeight), container.NewCenter(badge))
 	ratingBox := container.NewGridWrap(fyne.NewSize(colRatingWidth, rowHeight), rating)
 
-	rowInner := container.New(layout.NewCustomPaddedHBoxLayout(colHBoxPad), rankBox, nameBox, badgeBox, ratingBox)
+	rowInner := container.New(newLeaderboardColumnLayout(colPlayerWidthHardMin, playerColWidth, colPlayerWidthMax), rankBox, nameBox, badgeBox, ratingBox)
 	rowContent := container.New(layout.NewCustomPaddedLayout(0, 0, 0, ratingColPadRight), rowInner)
 	row := container.NewMax(bg, rowContent, newDoubleTapBox(rowContent, onDoubleTap))
 
@@ -757,6 +869,7 @@ func applyTypography(s uiSettingsSnapshot, staticTexts []*canvas.Text, headerRef
 	headerStyle := bodyStyle
 	headerStyle.Bold = true
 
+	footerUpdatedSize := maxFloat32(float32(footerUpdatedTimeMinSize), footerSize-float32(footerUpdatedTimeBelowFooter))
 	for i, t := range staticTexts {
 		t.Color = s.FontColor
 		// [0]=last-updated (footer strip), [1]=countdown (header), [2]=footer stats
@@ -765,6 +878,9 @@ func applyTypography(s uiSettingsSnapshot, staticTexts []*canvas.Text, headerRef
 			clockStyle.Monospace = true
 			t.TextStyle = clockStyle
 			t.TextSize = bodySize // larger than surrounding header-strip text
+		} else if i == 0 {
+			t.TextStyle = bodyStyle
+			t.TextSize = footerUpdatedSize
 		} else {
 			t.TextStyle = bodyStyle
 			t.TextSize = footerSize
@@ -1165,7 +1281,7 @@ func refreshRows(rows []*playerState, rowsMu *sync.RWMutex, cfg apiConfig) {
 				if r.hasManual {
 					r.LastError = ""
 				} else {
-				r.LastError = err.Error()
+					r.LastError = err.Error()
 				}
 				return
 			}
