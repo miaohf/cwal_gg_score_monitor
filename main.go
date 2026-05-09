@@ -45,13 +45,14 @@ const (
 
 	flashDuration = 1200 * time.Millisecond
 
-	// Column widths – kept tight so that every column stays visible when the
-	// window is resized narrow. Rank / badge / name sit in one row (CustomPaddedHBox);
-	// rating + badge sit on the Border right with extra padding (ratingColPadRight).
-	colRankWidth      = 22
-	colBadgeWidth     = 16
-	colRatingWidth    = 50
-	ratingColPadRight float32 = 14 // gutter so scores don't hug the window edge
+	// Column widths: one HBox row with fixed-width cells so # / PLAYER / badge / RATING align vertically.
+	// colPlayerWidth: keep close to longest display name so there is little empty space before the badge.
+	colRankWidth      = 20
+	colPlayerWidth    = 76
+	colBadgeWidth     = 14
+	colRatingWidth    = 40
+	ratingColPadRight float32 = 4
+	colHBoxPad        float32 = 1 // horizontal gap between fixed columns
 	rowHeight         = 26
 	headerHeight      = 18
 	listRowSpacing    float32 = 1 // gap between leaderboard rows (0 = no vertical gutter)
@@ -576,16 +577,16 @@ func buildHeaderRow() (*fyne.Container, headerUI) {
 	rating.Alignment = fyne.TextAlignCenter
 
 	rankBox := container.NewGridWrap(fyne.NewSize(colRankWidth, headerHeight), rank)
+	playerBox := container.NewGridWrap(fyne.NewSize(colPlayerWidth, headerHeight), player)
 	ratingBox := container.NewGridWrap(fyne.NewSize(colRatingWidth, headerHeight), rating)
 
 	badgeHeaderSlot := canvas.NewRectangle(color.Transparent)
-	titleHBox := container.New(layout.NewCustomPaddedHBoxLayout(2), rankBox, player)
-	ratingHeaderCluster := container.New(layout.NewCustomPaddedHBoxLayout(2),
-		container.NewGridWrap(fyne.NewSize(colBadgeWidth, headerHeight), badgeHeaderSlot),
-		ratingBox,
+	badgeHeaderBox := container.NewGridWrap(fyne.NewSize(colBadgeWidth, headerHeight), badgeHeaderSlot)
+	headerRow := container.New(layout.NewCustomPaddedHBoxLayout(colHBoxPad),
+		rankBox, playerBox, badgeHeaderBox, ratingBox,
 	)
-	ratingHeaderPadded := container.New(layout.NewCustomPaddedLayout(0, 0, 0, ratingColPadRight), ratingHeaderCluster)
-	return container.NewBorder(nil, nil, nil, ratingHeaderPadded, titleHBox), headerUI{
+	headerPadded := container.New(layout.NewCustomPaddedLayout(0, 0, 0, ratingColPadRight), headerRow)
+	return headerPadded, headerUI{
 		rank:   rank,
 		player: player,
 		rating: rating,
@@ -601,6 +602,7 @@ func buildRowUI(onDoubleTap func()) *rowUI {
 
 	name := canvas.NewText("", colorText)
 	name.TextSize = 13
+	name.Alignment = fyne.TextAlignLeading
 
 	badge := canvas.NewImageFromResource(badgeResourceNone)
 	badge.FillMode = canvas.ImageFillContain
@@ -612,14 +614,12 @@ func buildRowUI(onDoubleTap func()) *rowUI {
 	rating.Alignment = fyne.TextAlignTrailing
 
 	rankBox := container.NewGridWrap(fyne.NewSize(colRankWidth, rowHeight), rank)
+	nameBox := container.NewGridWrap(fyne.NewSize(colPlayerWidth, rowHeight), name)
 	badgeBox := container.NewGridWrap(fyne.NewSize(colBadgeWidth, rowHeight), container.NewCenter(badge))
 	ratingBox := container.NewGridWrap(fyne.NewSize(colRatingWidth, rowHeight), rating)
 
-	playerBox := container.New(layout.NewCustomPaddedHBoxLayout(1), rankBox, name)
-	ratingCluster := container.New(layout.NewCustomPaddedHBoxLayout(2), badgeBox, ratingBox)
-	ratingClusterPadded := container.New(layout.NewCustomPaddedLayout(0, 0, 0, ratingColPadRight), ratingCluster)
-
-	rowContent := container.NewBorder(nil, nil, nil, ratingClusterPadded, playerBox)
+	rowInner := container.New(layout.NewCustomPaddedHBoxLayout(colHBoxPad), rankBox, nameBox, badgeBox, ratingBox)
+	rowContent := container.New(layout.NewCustomPaddedLayout(0, 0, 0, ratingColPadRight), rowInner)
 	row := container.NewMax(bg, rowContent, newDoubleTapBox(rowContent, onDoubleTap))
 
 	return &rowUI{
