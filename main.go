@@ -35,7 +35,7 @@ import (
 const (
 	readmePath             = "README.md"
 	usersCSVPath           = "users.csv"
-	fetchInterval          = 5 * time.Second
+	fetchInterval          = 300 * time.Second // 默认轮询间隔（秒）
 	requestTimeout         = 12 * time.Second
 	updateRequestWait      = 1200 * time.Millisecond
 	profileRetryInterval   = 700 * time.Millisecond
@@ -43,19 +43,26 @@ const (
 	updateAPIURL           = "https://v2.api.cwal.gg/player-update"
 	apiLogPath             = "api_fetch.log"
 
-	flashDuration = 1200 * time.Millisecond
+	flashDuration             = 1200 * time.Millisecond
+	manualHoldDefaultDuration = 300 * time.Second // 手工分数默认保留时长（秒）
 
-	// Column widths: one HBox row with fixed-width cells so # / PLAYER / badge / RATING align vertically.
-	// colPlayerWidth: keep close to longest display name so there is little empty space before the badge.
-	colRankWidth      = 20
-	colPlayerWidth    = 76
-	colBadgeWidth     = 14
-	colRatingWidth    = 40
-	ratingColPadRight float32 = 4
-	colHBoxPad        float32 = 1 // horizontal gap between fixed columns
-	rowHeight         = 26
-	headerHeight      = 18
-	listRowSpacing    float32 = 1 // gap between leaderboard rows (0 = no vertical gutter)
+	// Column widths: fixed minima + adaptive player column.
+	// Wide window: player column expands; narrow window: columns fall back to minima.
+	colRankWidth                          = 20  // 排名列宽度（#）
+	colPlayerWidthHardMin                 = 46  // 玩家列“硬下限”：窗口拖到很窄时可压到这个值
+	colPlayerWidthMin                     = 50  // 玩家列参考最小宽度（会结合实际文字宽度动态计算）
+	colPlayerWidthMax                     = 120 // 玩家列最大宽度（限制中间空白，避免名字和分数离太远）
+	colRatingRightAlignStartWidth         = 260 // 窗口超过该宽度后，RATING 列贴近右侧
+	colBadgeWidth                         = 10  // 徽章列宽度（冠军/亚军/季军图标列）
+	colRatingWidth                        = 54  // 分数列宽度（需容纳 RATING 表头和 4 位分数）
+	colPlayerTextPad                      = 6   // 玩家列文字右侧留白（避免名字贴近下一列）
+	ratingColPadRight             float32 = 0   // RATING 右侧留白（0=尽量贴右）
+	colHBoxPad                    float32 = 1   // horizontal gap between fixed columns
+	rowHeight                             = 26
+	headerHeight                          = 18
+	listRowSpacing                float32 = 1 // gap between leaderboard rows (0 = no vertical gutter)
+	footerUpdatedTimeMinSize              = 8 // 底部状态时间最小字号
+	footerUpdatedTimeBelowFooter          = 2 // 相对 footer 统计行再小一档
 
 	prefFontSizeKey        = "ui.font_size"
 	prefFontColorRKey      = "ui.font_color_r"
@@ -67,32 +74,33 @@ const (
 	prefSettingsSavedKey   = "ui.settings_saved"
 	prefPollSettingsSaved  = "poll.settings_saved"
 	prefPollIntervalSecKey = "poll.interval_sec"
+	prefManualHoldSecKey   = "poll.manual_hold_sec"
 	prefPollStopEnabledKey = "poll.stop_enabled"
 	prefPollStopAtKey      = "poll.stop_at"
 	prefHistoryScoresKey   = "history.scores_json"
 	defaultWindowOpacity   = 0
 	defaultFontSize        = 13
 	defaultFontType        = "Regular"
-	appVersion             = "v1.1.0"
+	appVersion             = "v2.0"
 )
 
 var (
-	colorRed        = color.NRGBA{R: 220, G: 38, B: 38, A: 255}
-	colorGreen      = color.NRGBA{R: 34, G: 197, B: 94, A: 255}
+	colorRed   = color.NRGBA{R: 220, G: 38, B: 38, A: 255}
+	colorGreen = color.NRGBA{R: 34, G: 197, B: 94, A: 255}
 	// Ranking trend flashes (replacing arrows): red — score/mark up; green — score down.
 	// «紫铜» mixed into the flash starter for a warm metallic hint.
-	colorFlashCopperPurple  = color.NRGBA{R: 176, G: 124, B: 148, A: 255}
-	colorFlashRankingUp   = color.NRGBA{R: 235, G: 72, B: 90, A: 255}  // rise — red (排名上升感)
-	colorFlashRankingDown = color.NRGBA{R: 34, G: 197, B: 130, A: 255} // fall — green
-	colorMuted      = color.NRGBA{R: 148, G: 163, B: 184, A: 255}
-	colorText       = color.NRGBA{R: 255, G: 255, B: 255, A: 255}
-	colorHeaderText = color.NRGBA{R: 148, G: 163, B: 184, A: 255}
+	colorFlashCopperPurple = color.NRGBA{R: 176, G: 124, B: 148, A: 255}
+	colorFlashRankingUp    = color.NRGBA{R: 235, G: 72, B: 90, A: 255}  // rise — red (排名上升感)
+	colorFlashRankingDown  = color.NRGBA{R: 34, G: 197, B: 130, A: 255} // fall — green
+	colorMuted             = color.NRGBA{R: 148, G: 163, B: 184, A: 255}
+	colorText              = color.NRGBA{R: 255, G: 255, B: 255, A: 255}
+	colorHeaderText        = color.NRGBA{R: 148, G: 163, B: 184, A: 255}
 	// Row panels: translucent milky overlays (real frosted blur is not supported by Fyne).
-	colorRowGlass     = color.NRGBA{R: 241, G: 245, B: 249, A: 40} // default row frost
-	colorTop8RowGlass = color.NRGBA{R: 226, G: 232, B: 240, A: 72} // slightly brighter strip for top 8
-	colorRating2200 = color.NRGBA{R: 110, G: 178, B: 238, A: 255} // blue
-	colorRating2300 = color.NRGBA{R: 152, G: 176, B: 234, A: 255} // blue-violet
-	colorRating2400 = color.NRGBA{R: 188, G: 172, B: 232, A: 255} // violet
+	colorRowGlass     = color.NRGBA{R: 241, G: 245, B: 249, A: 40}  // default row frost
+	colorTop8RowGlass = color.NRGBA{R: 226, G: 232, B: 240, A: 72}  // slightly brighter strip for top 8
+	colorRating2200   = color.NRGBA{R: 110, G: 178, B: 238, A: 255} // blue
+	colorRating2300   = color.NRGBA{R: 152, G: 176, B: 234, A: 255} // blue-violet
+	colorRating2400   = color.NRGBA{R: 188, G: 172, B: 232, A: 255} // violet
 
 	badgeResourceNone = fyne.NewStaticResource("badge-none.svg", []byte(`
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
@@ -125,9 +133,10 @@ type player struct {
 
 type playerState struct {
 	player
-	LiveScore int
-	LastError string
-	hasManual bool
+	LiveScore   int
+	LastError   string
+	hasManual   bool
+	manualUntil time.Time
 
 	hasPrev   bool
 	prevScore int
@@ -152,9 +161,12 @@ type rowUI struct {
 type pollControl struct {
 	mu          sync.RWMutex
 	interval    time.Duration
+	manualHold  time.Duration
 	stopEnabled bool
 	stopAt      time.Time
 	stopped     bool
+	resetCh     chan struct{} // signals poll loop to reschedule nextPollAt immediately
+	kickCh      chan struct{} // signals poll loop to run one cycle ASAP
 }
 
 type savedScore struct {
@@ -163,19 +175,55 @@ type savedScore struct {
 }
 
 func newPollControl() *pollControl {
-	return &pollControl{interval: fetchInterval}
+	return &pollControl{
+		interval:   fetchInterval,
+		manualHold: manualHoldDefaultDuration,
+		resetCh:    make(chan struct{}, 1),
+		kickCh:     make(chan struct{}, 1),
+	}
 }
 
-func (p *pollControl) Snapshot() (time.Duration, bool, time.Time, bool) {
+// Reset signals the poll loop to reschedule nextPollAt to now+newInterval.
+func (p *pollControl) Reset() {
+	select {
+	case p.resetCh <- struct{}{}:
+	default:
+	}
+}
+
+// Kick requests one immediate polling cycle (best effort).
+func (p *pollControl) Kick() {
+	select {
+	case p.kickCh <- struct{}{}:
+	default:
+	}
+}
+
+// KickAfter schedules one best-effort immediate cycle after d.
+func (p *pollControl) KickAfter(d time.Duration) {
+	if d <= 0 {
+		p.Kick()
+		return
+	}
+	go func() {
+		timer := time.NewTimer(d)
+		defer timer.Stop()
+		<-timer.C
+		p.Kick()
+	}()
+}
+
+func (p *pollControl) Snapshot() (time.Duration, bool, time.Time, bool, time.Duration) {
 	p.mu.RLock()
 	defer p.mu.RUnlock()
-	return p.interval, p.stopEnabled, p.stopAt, p.stopped
+	return p.interval, p.stopEnabled, p.stopAt, p.stopped, p.manualHold
 }
 
-func (p *pollControl) Update(interval time.Duration, stopEnabled bool, stopAt time.Time) {
+func (p *pollControl) Update(interval time.Duration, stopEnabled bool, stopAt time.Time, manualHold time.Duration) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	p.interval = interval
+	p.manualHold = manualHold
 	p.stopEnabled = stopEnabled
 	p.stopAt = stopAt
 	p.stopped = false
@@ -195,7 +243,7 @@ func shouldShowBadges(p *pollControl) bool {
 	if p == nil {
 		return false
 	}
-	_, stopEnabled, stopAt, stopped := p.Snapshot()
+	_, stopEnabled, stopAt, stopped, _ := p.Snapshot()
 	if stopped {
 		return true
 	}
@@ -212,8 +260,12 @@ func loadPollSettingsFromPrefs(p fyne.Preferences) *pollControl {
 	}
 
 	intervalSec := p.Int(prefPollIntervalSecKey)
-	if intervalSec < 1 || intervalSec > 3600 {
+	if intervalSec < 60 || intervalSec > 86400 {
 		intervalSec = int(fetchInterval / time.Second)
+	}
+	manualHoldSec := p.Int(prefManualHoldSecKey)
+	if manualHoldSec < 0 || manualHoldSec > 86400 {
+		manualHoldSec = int(manualHoldDefaultDuration / time.Second)
 	}
 
 	stopEnabled := p.Bool(prefPollStopEnabledKey)
@@ -230,13 +282,19 @@ func loadPollSettingsFromPrefs(p fyne.Preferences) *pollControl {
 	if stopEnabled && stopAt.IsZero() {
 		stopEnabled = false
 	}
-	pc.Update(time.Duration(intervalSec)*time.Second, stopEnabled, stopAt)
+	pc.Update(
+		time.Duration(intervalSec)*time.Second,
+		stopEnabled,
+		stopAt,
+		time.Duration(manualHoldSec)*time.Second,
+	)
 	return pc
 }
 
-func savePollSettingsToPrefs(p fyne.Preferences, interval time.Duration, stopEnabled bool, stopAt time.Time) {
+func savePollSettingsToPrefs(p fyne.Preferences, interval time.Duration, stopEnabled bool, stopAt time.Time, manualHold time.Duration) {
 	p.SetBool(prefPollSettingsSaved, true)
 	p.SetInt(prefPollIntervalSecKey, int(interval/time.Second))
+	p.SetInt(prefManualHoldSecKey, int(manualHold/time.Second))
 	p.SetBool(prefPollStopEnabledKey, stopEnabled)
 	if stopEnabled && !stopAt.IsZero() {
 		p.SetString(prefPollStopAtKey, stopAt.Format(time.RFC3339))
@@ -340,6 +398,108 @@ func (d *doubleTapBox) TappedSecondary(_ *fyne.PointEvent) {}
 
 func (d *doubleTapBox) CreateRenderer() fyne.WidgetRenderer {
 	return widget.NewSimpleRenderer(d.content)
+}
+
+type leaderboardColumnLayout struct {
+	playerHardMin float32
+	playerMin     float32
+	playerMax     float32
+}
+
+func newLeaderboardColumnLayout(playerHardMin, playerMin, playerMax float32) fyne.Layout {
+	return &leaderboardColumnLayout{
+		playerHardMin: playerHardMin,
+		playerMin:     playerMin,
+		playerMax:     playerMax,
+	}
+}
+
+func computePlayerColumnWidth(rows []*playerState) float32 {
+	maxTextWidth := canvas.NewText("PLAYER", colorHeaderText).MinSize().Width
+	for _, r := range rows {
+		txt := canvas.NewText(strings.TrimSpace(r.Name), colorText)
+		txt.TextSize = defaultFontSize
+		w := txt.MinSize().Width
+		if w > maxTextWidth {
+			maxTextWidth = w
+		}
+	}
+
+	preferred := maxTextWidth + colPlayerTextPad
+	if preferred < colPlayerWidthMin {
+		preferred = colPlayerWidthMin
+	}
+	if preferred < colPlayerWidthHardMin {
+		preferred = colPlayerWidthHardMin
+	}
+	if preferred > colPlayerWidthMax {
+		preferred = colPlayerWidthMax
+	}
+	return preferred
+}
+
+func (l *leaderboardColumnLayout) Layout(objects []fyne.CanvasObject, size fyne.Size) {
+	if len(objects) < 4 {
+		return
+	}
+	rankW := float32(colRankWidth)
+	badgeW := float32(colBadgeWidth)
+	ratingW := float32(colRatingWidth)
+	gap := colHBoxPad
+
+	fixedW := rankW + badgeW + ratingW
+	minTotalWithGap := fixedW + l.playerMin + gap*3
+	playerW := l.playerMin
+	if size.Width > minTotalWithGap {
+		if size.Width >= colRatingRightAlignStartWidth {
+			// Wide mode: let PLAYER absorb the remaining width so RATING stays right aligned.
+			playerW = size.Width - fixedW - gap*3
+		} else {
+			// Compact mode: only use part of the extra room to keep names close to ratings.
+			playerW += (size.Width - minTotalWithGap) * 0.35
+		}
+	}
+	if playerW < l.playerMin {
+		playerW = l.playerMin
+	}
+	if playerW < l.playerHardMin {
+		playerW = l.playerHardMin
+	}
+	if size.Width < colRatingRightAlignStartWidth && playerW > l.playerMax {
+		playerW = l.playerMax
+	}
+
+	widths := []float32{rankW, playerW, badgeW, ratingW}
+	x := float32(0)
+	for i := 0; i < 4; i++ {
+		obj := objects[i]
+		if obj == nil || !obj.Visible() {
+			x += widths[i]
+			if i < 3 {
+				x += gap
+			}
+			continue
+		}
+		obj.Move(fyne.NewPos(x, 0))
+		obj.Resize(fyne.NewSize(widths[i], size.Height))
+		x += widths[i]
+		if i < 3 {
+			x += gap
+		}
+	}
+}
+
+func (l *leaderboardColumnLayout) MinSize(objects []fyne.CanvasObject) fyne.Size {
+	height := float32(0)
+	for _, obj := range objects {
+		if obj == nil || !obj.Visible() {
+			continue
+		}
+		height = fyne.Max(height, obj.MinSize().Height)
+	}
+	// Enforce a practical minimum width: keep normal gaps and player min width to avoid overlap/truncation.
+	width := float32(colRankWidth) + l.playerMin + float32(colBadgeWidth) + float32(colRatingWidth) + colHBoxPad*3
+	return fyne.NewSize(width, height)
 }
 
 func defaultUISettings() *uiSettings {
@@ -451,6 +611,9 @@ func main() {
 			LastError: "pending",
 		})
 	}
+	if runWindowsTransparentMode(rows, cfg) {
+		return
+	}
 
 	myApp := app.NewWithID("cwalgg.score.monitor")
 	win := myApp.NewWindow("Score Monitor")
@@ -466,7 +629,7 @@ func main() {
 	statusDot := canvas.NewCircle(colorRed)
 	statusDotBox := container.NewGridWrap(fyne.NewSize(10, 10), statusDot)
 	updatedText := canvas.NewText("", colorHeaderText)
-	updatedText.TextSize = 10
+	updatedText.TextSize = float32(footerUpdatedTimeMinSize)
 	countdownText := canvas.NewText("--:--:--", colorHeaderText)
 	countdownText.TextSize = 12
 	countdownText.Alignment = fyne.TextAlignCenter
@@ -481,7 +644,8 @@ func main() {
 	headerPadded := container.NewPadded(headerBar)
 
 	// ---- Column header ----
-	colHeader, headerRefs := buildHeaderRow()
+	playerColWidth := computePlayerColumnWidth(rows)
+	colHeader, headerRefs := buildHeaderRow(playerColWidth)
 
 	// ---- Rows ----
 	rowUIs := make([]*rowUI, len(rows))
@@ -489,10 +653,15 @@ func main() {
 	var rowsMu sync.RWMutex
 	for i := range rows {
 		idx := i
-		rowUIs[i] = buildRowUI(func() {
-			showManualScoreDialog(win, rows[idx], &rowsMu, func() {
+		rowUIs[i] = buildRowUI(playerColWidth, func() {
+			_, _, _, _, manualHold := pollCfg.Snapshot()
+			showManualScoreDialog(win, rows[idx], manualHold, &rowsMu, func() {
 				saveHistoryScoresToPrefs(myApp.Preferences(), rows, &rowsMu)
 				applySortAndRender(rows, rowUIs, listVBox, &rowsMu, settings, shouldShowBadges(pollCfg))
+				// Manual hold is per-row; kick one cycle so other rows can refresh immediately.
+				pollCfg.Kick()
+				// And kick once after hold expires so the edited row refreshes promptly.
+				pollCfg.KickAfter(manualHold)
 			})
 		})
 	}
@@ -560,7 +729,7 @@ func main() {
 	win.ShowAndRun()
 }
 
-func buildHeaderRow() (*fyne.Container, headerUI) {
+func buildHeaderRow(playerColWidth float32) (*fyne.Container, headerUI) {
 	rank := canvas.NewText("#", colorHeaderText)
 	rank.TextStyle = fyne.TextStyle{Bold: true, Monospace: true}
 	rank.TextSize = 11
@@ -577,12 +746,12 @@ func buildHeaderRow() (*fyne.Container, headerUI) {
 	rating.Alignment = fyne.TextAlignCenter
 
 	rankBox := container.NewGridWrap(fyne.NewSize(colRankWidth, headerHeight), rank)
-	playerBox := container.NewGridWrap(fyne.NewSize(colPlayerWidth, headerHeight), player)
+	playerBox := container.NewGridWrap(fyne.NewSize(playerColWidth, headerHeight), player)
 	ratingBox := container.NewGridWrap(fyne.NewSize(colRatingWidth, headerHeight), rating)
 
 	badgeHeaderSlot := canvas.NewRectangle(color.Transparent)
 	badgeHeaderBox := container.NewGridWrap(fyne.NewSize(colBadgeWidth, headerHeight), badgeHeaderSlot)
-	headerRow := container.New(layout.NewCustomPaddedHBoxLayout(colHBoxPad),
+	headerRow := container.New(newLeaderboardColumnLayout(colPlayerWidthHardMin, playerColWidth, colPlayerWidthMax),
 		rankBox, playerBox, badgeHeaderBox, ratingBox,
 	)
 	headerPadded := container.New(layout.NewCustomPaddedLayout(0, 0, 0, ratingColPadRight), headerRow)
@@ -593,7 +762,7 @@ func buildHeaderRow() (*fyne.Container, headerUI) {
 	}
 }
 
-func buildRowUI(onDoubleTap func()) *rowUI {
+func buildRowUI(playerColWidth float32, onDoubleTap func()) *rowUI {
 	bg := canvas.NewRectangle(color.Transparent)
 	rank := canvas.NewText("", colorMuted)
 	rank.TextStyle = fyne.TextStyle{Monospace: true, Bold: true}
@@ -614,11 +783,11 @@ func buildRowUI(onDoubleTap func()) *rowUI {
 	rating.Alignment = fyne.TextAlignTrailing
 
 	rankBox := container.NewGridWrap(fyne.NewSize(colRankWidth, rowHeight), rank)
-	nameBox := container.NewGridWrap(fyne.NewSize(colPlayerWidth, rowHeight), name)
+	nameBox := container.NewGridWrap(fyne.NewSize(playerColWidth, rowHeight), name)
 	badgeBox := container.NewGridWrap(fyne.NewSize(colBadgeWidth, rowHeight), container.NewCenter(badge))
 	ratingBox := container.NewGridWrap(fyne.NewSize(colRatingWidth, rowHeight), rating)
 
-	rowInner := container.New(layout.NewCustomPaddedHBoxLayout(colHBoxPad), rankBox, nameBox, badgeBox, ratingBox)
+	rowInner := container.New(newLeaderboardColumnLayout(colPlayerWidthHardMin, playerColWidth, colPlayerWidthMax), rankBox, nameBox, badgeBox, ratingBox)
 	rowContent := container.New(layout.NewCustomPaddedLayout(0, 0, 0, ratingColPadRight), rowInner)
 	row := container.NewMax(bg, rowContent, newDoubleTapBox(rowContent, onDoubleTap))
 
@@ -665,8 +834,10 @@ func showFontSettingsDialog(
 	}
 	alphaRow := container.NewBorder(nil, nil, nil, alphaLabel, alphaSlider)
 	intervalEntry := widget.NewEntry()
-	interval, stopEnabled, stopAt, _ := pollCfg.Snapshot()
+	interval, stopEnabled, stopAt, _, manualHold := pollCfg.Snapshot()
 	intervalEntry.SetText(strconv.Itoa(int(interval / time.Second)))
+	manualHoldEntry := widget.NewEntry()
+	manualHoldEntry.SetText(strconv.Itoa(int(manualHold / time.Second)))
 
 	stopTimeEntry := widget.NewEntry()
 	stopTimeEntry.SetPlaceHolder("YYYY-MM-DD HH:MM")
@@ -682,7 +853,8 @@ func showFontSettingsDialog(
 		widget.NewFormItem("Font Color", colorSelect),
 		widget.NewFormItem("Font Type", typeSelect),
 		widget.NewFormItem("BG Transparency", alphaRow),
-		widget.NewFormItem("Polling Interval(m)", intervalEntry),
+		widget.NewFormItem("Polling Interval(s)", intervalEntry),
+		widget.NewFormItem("Manual Hold(s)", manualHoldEntry),
 		widget.NewFormItem("Stop Time", stopTimeEntry),
 	}
 
@@ -708,8 +880,13 @@ func showFontSettingsDialog(
 			BackgroundAlpha: alphaFromTransparencyPercent(uint8(alphaSlider.Value)),
 		}
 		intervalSec, err := strconv.Atoi(strings.TrimSpace(intervalEntry.Text))
-		if err != nil || intervalSec < 1 || intervalSec > 3600 {
-			dialog.ShowError(errors.New("polling interval must be between 1 and 3600 seconds"), win)
+		if err != nil || intervalSec < 60 || intervalSec > 86400 {
+			dialog.ShowError(errors.New("polling interval must be between 60 and 86400 seconds"), win)
+			return
+		}
+		manualHoldSec, err := strconv.Atoi(strings.TrimSpace(manualHoldEntry.Text))
+		if err != nil || manualHoldSec < 0 || manualHoldSec > 86400 {
+			dialog.ShowError(errors.New("manual hold must be between 0 and 86400 seconds"), win)
 			return
 		}
 		stopText := strings.TrimSpace(stopTimeEntry.Text)
@@ -730,8 +907,11 @@ func showFontSettingsDialog(
 		}
 		settings.Update(next)
 		saveUISettingsToPrefs(prefs, next)
-		pollCfg.Update(time.Duration(intervalSec)*time.Second, nextStopEnabled, nextStopAt)
-		savePollSettingsToPrefs(prefs, time.Duration(intervalSec)*time.Second, nextStopEnabled, nextStopAt)
+		nextInterval := time.Duration(intervalSec) * time.Second
+		nextManualHold := time.Duration(manualHoldSec) * time.Second
+		pollCfg.Update(nextInterval, nextStopEnabled, nextStopAt, nextManualHold)
+		pollCfg.Reset()
+		savePollSettingsToPrefs(prefs, nextInterval, nextStopEnabled, nextStopAt, nextManualHold)
 		applyTypography(next, staticTexts, headerRefs, rowUIs)
 		backgroundRect.FillColor = color.NRGBA{R: 15, G: 23, B: 42, A: next.BackgroundAlpha}
 		backgroundRect.Refresh()
@@ -740,6 +920,9 @@ func showFontSettingsDialog(
 		formDlg.Submit()
 	}
 	intervalEntry.OnSubmitted = func(_ string) {
+		formDlg.Submit()
+	}
+	manualHoldEntry.OnSubmitted = func(_ string) {
 		formDlg.Submit()
 	}
 	stopTimeEntry.OnSubmitted = func(_ string) {
@@ -757,6 +940,7 @@ func applyTypography(s uiSettingsSnapshot, staticTexts []*canvas.Text, headerRef
 	headerStyle := bodyStyle
 	headerStyle.Bold = true
 
+	footerUpdatedSize := maxFloat32(float32(footerUpdatedTimeMinSize), footerSize-float32(footerUpdatedTimeBelowFooter))
 	for i, t := range staticTexts {
 		t.Color = s.FontColor
 		// [0]=last-updated (footer strip), [1]=countdown (header), [2]=footer stats
@@ -765,6 +949,9 @@ func applyTypography(s uiSettingsSnapshot, staticTexts []*canvas.Text, headerRef
 			clockStyle.Monospace = true
 			t.TextStyle = clockStyle
 			t.TextSize = bodySize // larger than surrounding header-strip text
+		} else if i == 0 {
+			t.TextStyle = bodyStyle
+			t.TextSize = footerUpdatedSize
 		} else {
 			t.TextStyle = bodyStyle
 			t.TextSize = footerSize
@@ -1038,7 +1225,7 @@ func pollLoop(
 		applySortAndRender(rows, rowUIs, listVBox, rowsMu, settings, shouldShowBadges(pollCfg))
 		setIdle(time.Now().Format("2006-01-02 15:04:05"))
 	}
-	_, stopEnabledAtStart, stopAtStart, stoppedAtStart := pollCfg.Snapshot()
+	_, stopEnabledAtStart, stopAtStart, stoppedAtStart, _ := pollCfg.Snapshot()
 	if stopEnabledAtStart && !time.Now().Before(stopAtStart) {
 		if !stoppedAtStart {
 			pollCfg.MarkStopped()
@@ -1065,8 +1252,17 @@ func pollLoop(
 		select {
 		case <-stopCh:
 			return
+		case <-pollCfg.resetCh:
+			// Interval changed: reschedule next poll to now+newInterval.
+			interval, _, _, _, _ := pollCfg.Snapshot()
+			nextPollAt = time.Now().Add(interval)
+			continue
+		case <-pollCfg.kickCh:
+			// Trigger one immediate cycle (manual edit should not block other players).
+			nextPollAt = time.Now()
+			continue
 		case <-ticker.C:
-			interval, stopEnabled, stopAt, stopped := pollCfg.Snapshot()
+			interval, stopEnabled, stopAt, stopped, _ := pollCfg.Snapshot()
 			now := time.Now()
 			if interval < time.Second {
 				interval = time.Second
@@ -1157,15 +1353,29 @@ func refreshRows(rows []*playerState, rowsMu *sync.RWMutex, cfg apiConfig) {
 		wg.Add(1)
 		go func(r *playerState) {
 			defer wg.Done()
-			result, err := fetchPlayerProfile(r.CwalID, cfg)
+			now := time.Now()
+			rowsMu.Lock()
+			if r.hasManual {
+				if r.manualUntil.After(now) {
+					// Manual score is still in hold period, skip API overwrite.
+					r.LastError = ""
+					rowsMu.Unlock()
+					return
+				}
+				r.hasManual = false
+				r.manualUntil = time.Time{}
+			}
+			rowsMu.Unlock()
+
+			result, err := fetchPlayerProfile(r.Name, r.CwalID, cfg)
 
 			rowsMu.Lock()
 			defer rowsMu.Unlock()
 			if err != nil {
-				if r.hasManual {
+				if r.hasManual && r.manualUntil.After(time.Now()) {
 					r.LastError = ""
 				} else {
-				r.LastError = err.Error()
+					r.LastError = err.Error()
 				}
 				return
 			}
@@ -1189,6 +1399,7 @@ func refreshRows(rows []*playerState, rowsMu *sync.RWMutex, cfg apiConfig) {
 			r.LiveScore = result.Rating
 			r.LastError = ""
 			r.hasManual = false
+			r.manualUntil = time.Time{}
 		}(row)
 	}
 	wg.Wait()
@@ -1362,7 +1573,7 @@ func ratingColorByScore(score int, fallback color.NRGBA) color.NRGBA {
 	}
 }
 
-func showManualScoreDialog(win fyne.Window, row *playerState, rowsMu *sync.RWMutex, onSaved func()) {
+func showManualScoreDialog(win fyne.Window, row *playerState, manualHold time.Duration, rowsMu *sync.RWMutex, onSaved func()) {
 	entry := widget.NewEntry()
 	rowsMu.RLock()
 	current := row.LiveScore
@@ -1388,7 +1599,12 @@ func showManualScoreDialog(win fyne.Window, row *playerState, rowsMu *sync.RWMut
 			rowsMu.Lock()
 			row.LiveScore = v
 			row.LastError = ""
-			row.hasManual = true
+			row.hasManual = manualHold > 0
+			if manualHold > 0 {
+				row.manualUntil = time.Now().Add(manualHold)
+			} else {
+				row.manualUntil = time.Time{}
+			}
 			row.prevScore = v
 			row.hasPrev = true
 			row.trend = 0
@@ -1439,32 +1655,47 @@ type profileResult struct {
 	Rank   string
 }
 
-func fetchPlayerProfile(cwalID string, cfg apiConfig) (profileResult, error) {
+// setAPIAuthHeaders sets apikey and Authorization (Bearer + key) for Supabase-style APIs.
+func setAPIAuthHeaders(req *http.Request, apiKey string) {
+	if apiKey == "" {
+		return
+	}
+	req.Header.Set("apikey", apiKey)
+	req.Header.Set("Authorization", "Bearer "+apiKey)
+}
+
+func fetchPlayerProfile(playerName, cwalID string, cfg apiConfig) (profileResult, error) {
 	start := time.Now()
-	if err := triggerPlayerUpdate(cwalID, cfg); err != nil {
-		logAPIFetch("alias=%s stage=trigger_update status=error err=%v", cwalID, err)
+	if err := triggerPlayerUpdate(playerName, cwalID, cfg); err != nil {
+		logAPIFetch("name=%s cwal_gg_id=%s stage=trigger_update status=error err=%v", playerName, cwalID, err)
 		return profileResult{}, fmt.Errorf("trigger update failed: %w", err)
 	}
 	time.Sleep(updateRequestWait)
 
 	var lastErr error
 	for attempt := 1; attempt <= profileRetryMaxAttempt; attempt++ {
-		result, err := queryProfile(cwalID, cfg)
+		result, err := queryProfile(playerName, cwalID, cfg)
 		if err == nil {
-			logAPIFetch("alias=%s stage=query_profile status=ok rating=%d elapsed_ms=%d attempts=%d", cwalID, result.Rating, time.Since(start).Milliseconds(), attempt)
+			logAPIFetch("name=%s cwal_gg_id=%s stage=query_profile status=ok rating=%d elapsed_ms=%d attempts=%d", playerName, cwalID, result.Rating, time.Since(start).Milliseconds(), attempt)
 			return result, nil
 		}
 		lastErr = err
-		logAPIFetch("alias=%s stage=query_profile status=retry attempt=%d err=%v", cwalID, attempt, err)
 		if attempt < profileRetryMaxAttempt {
 			time.Sleep(profileRetryInterval)
 		}
 	}
-	logAPIFetch("alias=%s stage=query_profile status=failed elapsed_ms=%d err=%v", cwalID, time.Since(start).Milliseconds(), lastErr)
+	logAPIFetch(
+		"name=%s cwal_gg_id=%s stage=query_profile status=retry attempt=%d elapsed_ms=%d err=%v",
+		playerName,
+		cwalID,
+		profileRetryMaxAttempt,
+		time.Since(start).Milliseconds(),
+		lastErr,
+	)
 	return profileResult{}, fmt.Errorf("query profile failed: %w", lastErr)
 }
 
-func triggerPlayerUpdate(cwalID string, cfg apiConfig) error {
+func triggerPlayerUpdate(playerName, cwalID string, cfg apiConfig) error {
 	payload, err := json.Marshal(map[string]any{
 		"gateway": 30,
 		"alias":   cwalID,
@@ -1480,33 +1711,28 @@ func triggerPlayerUpdate(cwalID string, cfg apiConfig) error {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
-	if cfg.APIKey != "" {
-		req.Header.Set("apikey", cfg.APIKey)
-	}
-	if cfg.Authorization != "" {
-		req.Header.Set("Authorization", cfg.Authorization)
-	}
+	setAPIAuthHeaders(req, cfg.APIKey)
 
 	client := &http.Client{Timeout: requestTimeout}
 	resp, err := client.Do(req)
 	if err != nil {
-		logAPIFetch("alias=%s endpoint=player-update status=network_error err=%v", cwalID, err)
+		logAPIFetch("name=%s cwal_gg_id=%s endpoint=player-update status=network_error err=%v", playerName, cwalID, err)
 		return err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		body, _ := io.ReadAll(resp.Body)
-		logAPIFetch("alias=%s endpoint=player-update status=http_%d body=%s", cwalID, resp.StatusCode, truncateText(string(body), 120))
+		logAPIFetch("name=%s cwal_gg_id=%s endpoint=player-update status=http_%d body=%s", playerName, cwalID, resp.StatusCode, truncateText(string(body), 120))
 		return fmt.Errorf("HTTP %d: %s", resp.StatusCode, truncateText(string(body), 120))
 	}
-	logAPIFetch("alias=%s endpoint=player-update status=ok code=%d", cwalID, resp.StatusCode)
+	logAPIFetch("name=%s cwal_gg_id=%s endpoint=player-update status=ok code=%d", playerName, cwalID, resp.StatusCode)
 	return nil
 }
 
-func queryProfile(cwalID string, cfg apiConfig) (profileResult, error) {
+func queryProfile(playerName, cwalID string, cfg apiConfig) (profileResult, error) {
 	if cfg.ProfileURLTemplate == "" {
-		return profileResult{}, errors.New("api_url not configured in README")
+		return profileResult{}, errors.New("api_url not configured (set api_url in .env or README)")
 	}
 	escapedID := url.QueryEscape(cwalID)
 	targetURL := strings.Replace(cfg.ProfileURLTemplate, "{cwal_gg_id}", escapedID, 1)
@@ -1517,24 +1743,19 @@ func queryProfile(cwalID string, cfg apiConfig) (profileResult, error) {
 	}
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
-	if cfg.APIKey != "" {
-		req.Header.Set("apikey", cfg.APIKey)
-	}
-	if cfg.Authorization != "" {
-		req.Header.Set("Authorization", cfg.Authorization)
-	}
+	setAPIAuthHeaders(req, cfg.APIKey)
 
 	client := &http.Client{Timeout: requestTimeout}
 	resp, err := client.Do(req)
 	if err != nil {
-		logAPIFetch("alias=%s endpoint=profile_view status=network_error err=%v", cwalID, err)
+		logAPIFetch("name=%s cwal_gg_id=%s endpoint=profile_view status=network_error err=%v", playerName, cwalID, err)
 		return profileResult{}, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		body, _ := io.ReadAll(resp.Body)
-		logAPIFetch("alias=%s endpoint=profile_view status=http_%d body=%s", cwalID, resp.StatusCode, truncateText(string(body), 120))
+		logAPIFetch("name=%s cwal_gg_id=%s endpoint=profile_view status=http_%d body=%s", playerName, cwalID, resp.StatusCode, truncateText(string(body), 120))
 		return profileResult{}, fmt.Errorf("HTTP %d: %s", resp.StatusCode, truncateText(string(body), 120))
 	}
 
@@ -1690,44 +1911,80 @@ func decodeUTF16(data []byte, littleEndian bool) string {
 	return string(utf16.Decode(u16))
 }
 
-func loadAPIConfigFromReadme(path string) (apiConfig, error) {
-	file, err := os.Open(path)
+// loadDotEnv parses a .env file of key=value lines and returns the map.
+// Lines starting with '#' and blank lines are ignored.
+func loadDotEnv(path string) map[string]string {
+	f, err := os.Open(path)
 	if err != nil {
-		return apiConfig{}, err
+		return nil
 	}
-	defer file.Close()
-
-	cfg := apiConfig{}
-	scanner := bufio.NewScanner(file)
+	defer f.Close()
+	m := make(map[string]string)
+	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
-		if strings.HasPrefix(line, "https://") && strings.Contains(line, "player_profile_view") {
-			cfg.ProfileURLTemplate = line
+		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
-		if strings.EqualFold(line, "Apikey:") {
-			if scanner.Scan() {
-				cfg.APIKey = strings.TrimSpace(scanner.Text())
-			}
+		idx := strings.IndexByte(line, '=')
+		if idx <= 0 {
 			continue
 		}
-		if strings.EqualFold(line, "Authorization:") {
-			if scanner.Scan() {
-				cfg.Authorization = strings.TrimSpace(scanner.Text())
-			}
-		}
+		k := strings.TrimSpace(line[:idx])
+		v := strings.TrimSpace(line[idx+1:])
+		m[k] = v
 	}
-	if err := scanner.Err(); err != nil {
+	return m
+}
+
+func loadAPIConfigFromReadme(path string) (apiConfig, error) {
+	cfg := apiConfig{}
+
+	file, err := os.Open(path)
+	if err == nil {
+		defer file.Close()
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			line := strings.TrimSpace(scanner.Text())
+			if strings.HasPrefix(line, "https://") && strings.Contains(line, "player_profile_view") {
+				cfg.ProfileURLTemplate = line
+				continue
+			}
+			if strings.EqualFold(line, "Apikey:") {
+				if scanner.Scan() {
+					cfg.APIKey = strings.TrimSpace(scanner.Text())
+				}
+				continue
+			}
+		}
+		if err := scanner.Err(); err != nil {
+			return apiConfig{}, err
+		}
+	} else if !errors.Is(err, os.ErrNotExist) {
 		return apiConfig{}, err
 	}
+
+	// .env overrides README; api_url / url can supply the profile or matches endpoint template.
+	if env := loadDotEnv(".env"); env != nil {
+		if v := strings.TrimSpace(env["api_url"]); v != "" {
+			cfg.ProfileURLTemplate = v
+		} else if v := strings.TrimSpace(env["url"]); v != "" {
+			cfg.ProfileURLTemplate = v
+		}
+		if v, ok := env["api_key"]; ok {
+			v = strings.TrimSpace(v)
+			if v != "" {
+				cfg.APIKey = v
+			}
+		}
+	}
+
 	if cfg.ProfileURLTemplate == "" {
-		return apiConfig{}, errors.New("README missing player_profile_view URL")
+		return apiConfig{}, errors.New("missing API URL: set api_url in .env or add a player_profile_view https URL line in README")
 	}
 	if cfg.APIKey == "" {
-		return apiConfig{}, errors.New("README missing Apikey")
+		return apiConfig{}, errors.New("missing API key: set api_key in .env or Apikey in README")
 	}
-	if cfg.Authorization == "" {
-		return apiConfig{}, errors.New("README missing Authorization")
-	}
+	cfg.Authorization = "Bearer " + cfg.APIKey
 	return cfg, nil
 }
