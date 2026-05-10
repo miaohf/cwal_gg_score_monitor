@@ -35,7 +35,7 @@ import (
 const (
 	readmePath             = "README.md"
 	usersCSVPath           = "users.csv"
-	fetchInterval          = 5 * time.Second
+	fetchInterval          = 300 * time.Second // 默认轮询间隔（秒）
 	requestTimeout         = 12 * time.Second
 	updateRequestWait      = 1200 * time.Millisecond
 	profileRetryInterval   = 700 * time.Millisecond
@@ -43,7 +43,8 @@ const (
 	updateAPIURL           = "https://v2.api.cwal.gg/player-update"
 	apiLogPath             = "api_fetch.log"
 
-	flashDuration = 1200 * time.Millisecond
+	flashDuration             = 1200 * time.Millisecond
+	manualHoldDefaultDuration = 300 * time.Second // 手工分数默认保留时长（秒）
 
 	// Column widths: fixed minima + adaptive player column.
 	// Wide window: player column expands; narrow window: columns fall back to minima.
@@ -73,13 +74,14 @@ const (
 	prefSettingsSavedKey   = "ui.settings_saved"
 	prefPollSettingsSaved  = "poll.settings_saved"
 	prefPollIntervalSecKey = "poll.interval_sec"
+	prefManualHoldSecKey   = "poll.manual_hold_sec"
 	prefPollStopEnabledKey = "poll.stop_enabled"
 	prefPollStopAtKey      = "poll.stop_at"
 	prefHistoryScoresKey   = "history.scores_json"
 	defaultWindowOpacity   = 0
 	defaultFontSize        = 13
 	defaultFontType        = "Regular"
-	appVersion             = "v1.1.0"
+	appVersion             = "v2.0"
 )
 
 var (
@@ -131,9 +133,10 @@ type player struct {
 
 type playerState struct {
 	player
-	LiveScore int
-	LastError string
-	hasManual bool
+	LiveScore   int
+	LastError   string
+	hasManual   bool
+	manualUntil time.Time
 
 	hasPrev   bool
 	prevScore int
@@ -158,9 +161,12 @@ type rowUI struct {
 type pollControl struct {
 	mu          sync.RWMutex
 	interval    time.Duration
+	manualHold  time.Duration
 	stopEnabled bool
 	stopAt      time.Time
 	stopped     bool
+	resetCh     chan struct{} // signals poll loop to reschedule nextPollAt immediately
+	kickCh      chan struct{} // signals poll loop to run one cycle ASAP
 }
 
 type savedScore struct {
@@ -169,19 +175,55 @@ type savedScore struct {
 }
 
 func newPollControl() *pollControl {
-	return &pollControl{interval: fetchInterval}
+	return &pollControl{
+		interval:   fetchInterval,
+		manualHold: manualHoldDefaultDuration,
+		resetCh:    make(chan struct{}, 1),
+		kickCh:     make(chan struct{}, 1),
+	}
 }
 
-func (p *pollControl) Snapshot() (time.Duration, bool, time.Time, bool) {
+// Reset signals the poll loop to reschedule nextPollAt to now+newInterval.
+func (p *pollControl) Reset() {
+	select {
+	case p.resetCh <- struct{}{}:
+	default:
+	}
+}
+
+// Kick requests one immediate polling cycle (best effort).
+func (p *pollControl) Kick() {
+	select {
+	case p.kickCh <- struct{}{}:
+	default:
+	}
+}
+
+// KickAfter schedules one best-effort immediate cycle after d.
+func (p *pollControl) KickAfter(d time.Duration) {
+	if d <= 0 {
+		p.Kick()
+		return
+	}
+	go func() {
+		timer := time.NewTimer(d)
+		defer timer.Stop()
+		<-timer.C
+		p.Kick()
+	}()
+}
+
+func (p *pollControl) Snapshot() (time.Duration, bool, time.Time, bool, time.Duration) {
 	p.mu.RLock()
 	defer p.mu.RUnlock()
-	return p.interval, p.stopEnabled, p.stopAt, p.stopped
+	return p.interval, p.stopEnabled, p.stopAt, p.stopped, p.manualHold
 }
 
-func (p *pollControl) Update(interval time.Duration, stopEnabled bool, stopAt time.Time) {
+func (p *pollControl) Update(interval time.Duration, stopEnabled bool, stopAt time.Time, manualHold time.Duration) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	p.interval = interval
+	p.manualHold = manualHold
 	p.stopEnabled = stopEnabled
 	p.stopAt = stopAt
 	p.stopped = false
@@ -201,7 +243,7 @@ func shouldShowBadges(p *pollControl) bool {
 	if p == nil {
 		return false
 	}
-	_, stopEnabled, stopAt, stopped := p.Snapshot()
+	_, stopEnabled, stopAt, stopped, _ := p.Snapshot()
 	if stopped {
 		return true
 	}
@@ -218,8 +260,12 @@ func loadPollSettingsFromPrefs(p fyne.Preferences) *pollControl {
 	}
 
 	intervalSec := p.Int(prefPollIntervalSecKey)
-	if intervalSec < 1 || intervalSec > 3600 {
+	if intervalSec < 60 || intervalSec > 86400 {
 		intervalSec = int(fetchInterval / time.Second)
+	}
+	manualHoldSec := p.Int(prefManualHoldSecKey)
+	if manualHoldSec < 0 || manualHoldSec > 86400 {
+		manualHoldSec = int(manualHoldDefaultDuration / time.Second)
 	}
 
 	stopEnabled := p.Bool(prefPollStopEnabledKey)
@@ -236,13 +282,19 @@ func loadPollSettingsFromPrefs(p fyne.Preferences) *pollControl {
 	if stopEnabled && stopAt.IsZero() {
 		stopEnabled = false
 	}
-	pc.Update(time.Duration(intervalSec)*time.Second, stopEnabled, stopAt)
+	pc.Update(
+		time.Duration(intervalSec)*time.Second,
+		stopEnabled,
+		stopAt,
+		time.Duration(manualHoldSec)*time.Second,
+	)
 	return pc
 }
 
-func savePollSettingsToPrefs(p fyne.Preferences, interval time.Duration, stopEnabled bool, stopAt time.Time) {
+func savePollSettingsToPrefs(p fyne.Preferences, interval time.Duration, stopEnabled bool, stopAt time.Time, manualHold time.Duration) {
 	p.SetBool(prefPollSettingsSaved, true)
 	p.SetInt(prefPollIntervalSecKey, int(interval/time.Second))
+	p.SetInt(prefManualHoldSecKey, int(manualHold/time.Second))
 	p.SetBool(prefPollStopEnabledKey, stopEnabled)
 	if stopEnabled && !stopAt.IsZero() {
 		p.SetString(prefPollStopAtKey, stopAt.Format(time.RFC3339))
@@ -602,9 +654,14 @@ func main() {
 	for i := range rows {
 		idx := i
 		rowUIs[i] = buildRowUI(playerColWidth, func() {
-			showManualScoreDialog(win, rows[idx], &rowsMu, func() {
+			_, _, _, _, manualHold := pollCfg.Snapshot()
+			showManualScoreDialog(win, rows[idx], manualHold, &rowsMu, func() {
 				saveHistoryScoresToPrefs(myApp.Preferences(), rows, &rowsMu)
 				applySortAndRender(rows, rowUIs, listVBox, &rowsMu, settings, shouldShowBadges(pollCfg))
+				// Manual hold is per-row; kick one cycle so other rows can refresh immediately.
+				pollCfg.Kick()
+				// And kick once after hold expires so the edited row refreshes promptly.
+				pollCfg.KickAfter(manualHold)
 			})
 		})
 	}
@@ -777,8 +834,10 @@ func showFontSettingsDialog(
 	}
 	alphaRow := container.NewBorder(nil, nil, nil, alphaLabel, alphaSlider)
 	intervalEntry := widget.NewEntry()
-	interval, stopEnabled, stopAt, _ := pollCfg.Snapshot()
+	interval, stopEnabled, stopAt, _, manualHold := pollCfg.Snapshot()
 	intervalEntry.SetText(strconv.Itoa(int(interval / time.Second)))
+	manualHoldEntry := widget.NewEntry()
+	manualHoldEntry.SetText(strconv.Itoa(int(manualHold / time.Second)))
 
 	stopTimeEntry := widget.NewEntry()
 	stopTimeEntry.SetPlaceHolder("YYYY-MM-DD HH:MM")
@@ -794,7 +853,8 @@ func showFontSettingsDialog(
 		widget.NewFormItem("Font Color", colorSelect),
 		widget.NewFormItem("Font Type", typeSelect),
 		widget.NewFormItem("BG Transparency", alphaRow),
-		widget.NewFormItem("Polling Interval(m)", intervalEntry),
+		widget.NewFormItem("Polling Interval(s)", intervalEntry),
+		widget.NewFormItem("Manual Hold(s)", manualHoldEntry),
 		widget.NewFormItem("Stop Time", stopTimeEntry),
 	}
 
@@ -820,8 +880,13 @@ func showFontSettingsDialog(
 			BackgroundAlpha: alphaFromTransparencyPercent(uint8(alphaSlider.Value)),
 		}
 		intervalSec, err := strconv.Atoi(strings.TrimSpace(intervalEntry.Text))
-		if err != nil || intervalSec < 1 || intervalSec > 3600 {
-			dialog.ShowError(errors.New("polling interval must be between 1 and 3600 seconds"), win)
+		if err != nil || intervalSec < 60 || intervalSec > 86400 {
+			dialog.ShowError(errors.New("polling interval must be between 60 and 86400 seconds"), win)
+			return
+		}
+		manualHoldSec, err := strconv.Atoi(strings.TrimSpace(manualHoldEntry.Text))
+		if err != nil || manualHoldSec < 0 || manualHoldSec > 86400 {
+			dialog.ShowError(errors.New("manual hold must be between 0 and 86400 seconds"), win)
 			return
 		}
 		stopText := strings.TrimSpace(stopTimeEntry.Text)
@@ -842,8 +907,11 @@ func showFontSettingsDialog(
 		}
 		settings.Update(next)
 		saveUISettingsToPrefs(prefs, next)
-		pollCfg.Update(time.Duration(intervalSec)*time.Second, nextStopEnabled, nextStopAt)
-		savePollSettingsToPrefs(prefs, time.Duration(intervalSec)*time.Second, nextStopEnabled, nextStopAt)
+		nextInterval := time.Duration(intervalSec) * time.Second
+		nextManualHold := time.Duration(manualHoldSec) * time.Second
+		pollCfg.Update(nextInterval, nextStopEnabled, nextStopAt, nextManualHold)
+		pollCfg.Reset()
+		savePollSettingsToPrefs(prefs, nextInterval, nextStopEnabled, nextStopAt, nextManualHold)
 		applyTypography(next, staticTexts, headerRefs, rowUIs)
 		backgroundRect.FillColor = color.NRGBA{R: 15, G: 23, B: 42, A: next.BackgroundAlpha}
 		backgroundRect.Refresh()
@@ -852,6 +920,9 @@ func showFontSettingsDialog(
 		formDlg.Submit()
 	}
 	intervalEntry.OnSubmitted = func(_ string) {
+		formDlg.Submit()
+	}
+	manualHoldEntry.OnSubmitted = func(_ string) {
 		formDlg.Submit()
 	}
 	stopTimeEntry.OnSubmitted = func(_ string) {
@@ -1154,7 +1225,7 @@ func pollLoop(
 		applySortAndRender(rows, rowUIs, listVBox, rowsMu, settings, shouldShowBadges(pollCfg))
 		setIdle(time.Now().Format("2006-01-02 15:04:05"))
 	}
-	_, stopEnabledAtStart, stopAtStart, stoppedAtStart := pollCfg.Snapshot()
+	_, stopEnabledAtStart, stopAtStart, stoppedAtStart, _ := pollCfg.Snapshot()
 	if stopEnabledAtStart && !time.Now().Before(stopAtStart) {
 		if !stoppedAtStart {
 			pollCfg.MarkStopped()
@@ -1181,8 +1252,17 @@ func pollLoop(
 		select {
 		case <-stopCh:
 			return
+		case <-pollCfg.resetCh:
+			// Interval changed: reschedule next poll to now+newInterval.
+			interval, _, _, _, _ := pollCfg.Snapshot()
+			nextPollAt = time.Now().Add(interval)
+			continue
+		case <-pollCfg.kickCh:
+			// Trigger one immediate cycle (manual edit should not block other players).
+			nextPollAt = time.Now()
+			continue
 		case <-ticker.C:
-			interval, stopEnabled, stopAt, stopped := pollCfg.Snapshot()
+			interval, stopEnabled, stopAt, stopped, _ := pollCfg.Snapshot()
 			now := time.Now()
 			if interval < time.Second {
 				interval = time.Second
@@ -1273,12 +1353,26 @@ func refreshRows(rows []*playerState, rowsMu *sync.RWMutex, cfg apiConfig) {
 		wg.Add(1)
 		go func(r *playerState) {
 			defer wg.Done()
-			result, err := fetchPlayerProfile(r.CwalID, cfg)
+			now := time.Now()
+			rowsMu.Lock()
+			if r.hasManual {
+				if r.manualUntil.After(now) {
+					// Manual score is still in hold period, skip API overwrite.
+					r.LastError = ""
+					rowsMu.Unlock()
+					return
+				}
+				r.hasManual = false
+				r.manualUntil = time.Time{}
+			}
+			rowsMu.Unlock()
+
+			result, err := fetchPlayerProfile(r.Name, r.CwalID, cfg)
 
 			rowsMu.Lock()
 			defer rowsMu.Unlock()
 			if err != nil {
-				if r.hasManual {
+				if r.hasManual && r.manualUntil.After(time.Now()) {
 					r.LastError = ""
 				} else {
 					r.LastError = err.Error()
@@ -1305,6 +1399,7 @@ func refreshRows(rows []*playerState, rowsMu *sync.RWMutex, cfg apiConfig) {
 			r.LiveScore = result.Rating
 			r.LastError = ""
 			r.hasManual = false
+			r.manualUntil = time.Time{}
 		}(row)
 	}
 	wg.Wait()
@@ -1478,7 +1573,7 @@ func ratingColorByScore(score int, fallback color.NRGBA) color.NRGBA {
 	}
 }
 
-func showManualScoreDialog(win fyne.Window, row *playerState, rowsMu *sync.RWMutex, onSaved func()) {
+func showManualScoreDialog(win fyne.Window, row *playerState, manualHold time.Duration, rowsMu *sync.RWMutex, onSaved func()) {
 	entry := widget.NewEntry()
 	rowsMu.RLock()
 	current := row.LiveScore
@@ -1504,7 +1599,12 @@ func showManualScoreDialog(win fyne.Window, row *playerState, rowsMu *sync.RWMut
 			rowsMu.Lock()
 			row.LiveScore = v
 			row.LastError = ""
-			row.hasManual = true
+			row.hasManual = manualHold > 0
+			if manualHold > 0 {
+				row.manualUntil = time.Now().Add(manualHold)
+			} else {
+				row.manualUntil = time.Time{}
+			}
 			row.prevScore = v
 			row.hasPrev = true
 			row.trend = 0
@@ -1555,32 +1655,47 @@ type profileResult struct {
 	Rank   string
 }
 
-func fetchPlayerProfile(cwalID string, cfg apiConfig) (profileResult, error) {
+// setAPIAuthHeaders sets apikey and Authorization (Bearer + key) for Supabase-style APIs.
+func setAPIAuthHeaders(req *http.Request, apiKey string) {
+	if apiKey == "" {
+		return
+	}
+	req.Header.Set("apikey", apiKey)
+	req.Header.Set("Authorization", "Bearer "+apiKey)
+}
+
+func fetchPlayerProfile(playerName, cwalID string, cfg apiConfig) (profileResult, error) {
 	start := time.Now()
-	if err := triggerPlayerUpdate(cwalID, cfg); err != nil {
-		logAPIFetch("alias=%s stage=trigger_update status=error err=%v", cwalID, err)
+	if err := triggerPlayerUpdate(playerName, cwalID, cfg); err != nil {
+		logAPIFetch("name=%s cwal_gg_id=%s stage=trigger_update status=error err=%v", playerName, cwalID, err)
 		return profileResult{}, fmt.Errorf("trigger update failed: %w", err)
 	}
 	time.Sleep(updateRequestWait)
 
 	var lastErr error
 	for attempt := 1; attempt <= profileRetryMaxAttempt; attempt++ {
-		result, err := queryProfile(cwalID, cfg)
+		result, err := queryProfile(playerName, cwalID, cfg)
 		if err == nil {
-			logAPIFetch("alias=%s stage=query_profile status=ok rating=%d elapsed_ms=%d attempts=%d", cwalID, result.Rating, time.Since(start).Milliseconds(), attempt)
+			logAPIFetch("name=%s cwal_gg_id=%s stage=query_profile status=ok rating=%d elapsed_ms=%d attempts=%d", playerName, cwalID, result.Rating, time.Since(start).Milliseconds(), attempt)
 			return result, nil
 		}
 		lastErr = err
-		logAPIFetch("alias=%s stage=query_profile status=retry attempt=%d err=%v", cwalID, attempt, err)
 		if attempt < profileRetryMaxAttempt {
 			time.Sleep(profileRetryInterval)
 		}
 	}
-	logAPIFetch("alias=%s stage=query_profile status=failed elapsed_ms=%d err=%v", cwalID, time.Since(start).Milliseconds(), lastErr)
+	logAPIFetch(
+		"name=%s cwal_gg_id=%s stage=query_profile status=retry attempt=%d elapsed_ms=%d err=%v",
+		playerName,
+		cwalID,
+		profileRetryMaxAttempt,
+		time.Since(start).Milliseconds(),
+		lastErr,
+	)
 	return profileResult{}, fmt.Errorf("query profile failed: %w", lastErr)
 }
 
-func triggerPlayerUpdate(cwalID string, cfg apiConfig) error {
+func triggerPlayerUpdate(playerName, cwalID string, cfg apiConfig) error {
 	payload, err := json.Marshal(map[string]any{
 		"gateway": 30,
 		"alias":   cwalID,
@@ -1596,33 +1711,28 @@ func triggerPlayerUpdate(cwalID string, cfg apiConfig) error {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
-	if cfg.APIKey != "" {
-		req.Header.Set("apikey", cfg.APIKey)
-	}
-	if cfg.Authorization != "" {
-		req.Header.Set("Authorization", cfg.Authorization)
-	}
+	setAPIAuthHeaders(req, cfg.APIKey)
 
 	client := &http.Client{Timeout: requestTimeout}
 	resp, err := client.Do(req)
 	if err != nil {
-		logAPIFetch("alias=%s endpoint=player-update status=network_error err=%v", cwalID, err)
+		logAPIFetch("name=%s cwal_gg_id=%s endpoint=player-update status=network_error err=%v", playerName, cwalID, err)
 		return err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		body, _ := io.ReadAll(resp.Body)
-		logAPIFetch("alias=%s endpoint=player-update status=http_%d body=%s", cwalID, resp.StatusCode, truncateText(string(body), 120))
+		logAPIFetch("name=%s cwal_gg_id=%s endpoint=player-update status=http_%d body=%s", playerName, cwalID, resp.StatusCode, truncateText(string(body), 120))
 		return fmt.Errorf("HTTP %d: %s", resp.StatusCode, truncateText(string(body), 120))
 	}
-	logAPIFetch("alias=%s endpoint=player-update status=ok code=%d", cwalID, resp.StatusCode)
+	logAPIFetch("name=%s cwal_gg_id=%s endpoint=player-update status=ok code=%d", playerName, cwalID, resp.StatusCode)
 	return nil
 }
 
-func queryProfile(cwalID string, cfg apiConfig) (profileResult, error) {
+func queryProfile(playerName, cwalID string, cfg apiConfig) (profileResult, error) {
 	if cfg.ProfileURLTemplate == "" {
-		return profileResult{}, errors.New("api_url not configured in README")
+		return profileResult{}, errors.New("api_url not configured (set api_url in .env or README)")
 	}
 	escapedID := url.QueryEscape(cwalID)
 	targetURL := strings.Replace(cfg.ProfileURLTemplate, "{cwal_gg_id}", escapedID, 1)
@@ -1633,24 +1743,19 @@ func queryProfile(cwalID string, cfg apiConfig) (profileResult, error) {
 	}
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
-	if cfg.APIKey != "" {
-		req.Header.Set("apikey", cfg.APIKey)
-	}
-	if cfg.Authorization != "" {
-		req.Header.Set("Authorization", cfg.Authorization)
-	}
+	setAPIAuthHeaders(req, cfg.APIKey)
 
 	client := &http.Client{Timeout: requestTimeout}
 	resp, err := client.Do(req)
 	if err != nil {
-		logAPIFetch("alias=%s endpoint=profile_view status=network_error err=%v", cwalID, err)
+		logAPIFetch("name=%s cwal_gg_id=%s endpoint=profile_view status=network_error err=%v", playerName, cwalID, err)
 		return profileResult{}, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		body, _ := io.ReadAll(resp.Body)
-		logAPIFetch("alias=%s endpoint=profile_view status=http_%d body=%s", cwalID, resp.StatusCode, truncateText(string(body), 120))
+		logAPIFetch("name=%s cwal_gg_id=%s endpoint=profile_view status=http_%d body=%s", playerName, cwalID, resp.StatusCode, truncateText(string(body), 120))
 		return profileResult{}, fmt.Errorf("HTTP %d: %s", resp.StatusCode, truncateText(string(body), 120))
 	}
 
@@ -1806,44 +1911,80 @@ func decodeUTF16(data []byte, littleEndian bool) string {
 	return string(utf16.Decode(u16))
 }
 
-func loadAPIConfigFromReadme(path string) (apiConfig, error) {
-	file, err := os.Open(path)
+// loadDotEnv parses a .env file of key=value lines and returns the map.
+// Lines starting with '#' and blank lines are ignored.
+func loadDotEnv(path string) map[string]string {
+	f, err := os.Open(path)
 	if err != nil {
-		return apiConfig{}, err
+		return nil
 	}
-	defer file.Close()
-
-	cfg := apiConfig{}
-	scanner := bufio.NewScanner(file)
+	defer f.Close()
+	m := make(map[string]string)
+	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
-		if strings.HasPrefix(line, "https://") && strings.Contains(line, "player_profile_view") {
-			cfg.ProfileURLTemplate = line
+		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
-		if strings.EqualFold(line, "Apikey:") {
-			if scanner.Scan() {
-				cfg.APIKey = strings.TrimSpace(scanner.Text())
-			}
+		idx := strings.IndexByte(line, '=')
+		if idx <= 0 {
 			continue
 		}
-		if strings.EqualFold(line, "Authorization:") {
-			if scanner.Scan() {
-				cfg.Authorization = strings.TrimSpace(scanner.Text())
-			}
-		}
+		k := strings.TrimSpace(line[:idx])
+		v := strings.TrimSpace(line[idx+1:])
+		m[k] = v
 	}
-	if err := scanner.Err(); err != nil {
+	return m
+}
+
+func loadAPIConfigFromReadme(path string) (apiConfig, error) {
+	cfg := apiConfig{}
+
+	file, err := os.Open(path)
+	if err == nil {
+		defer file.Close()
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			line := strings.TrimSpace(scanner.Text())
+			if strings.HasPrefix(line, "https://") && strings.Contains(line, "player_profile_view") {
+				cfg.ProfileURLTemplate = line
+				continue
+			}
+			if strings.EqualFold(line, "Apikey:") {
+				if scanner.Scan() {
+					cfg.APIKey = strings.TrimSpace(scanner.Text())
+				}
+				continue
+			}
+		}
+		if err := scanner.Err(); err != nil {
+			return apiConfig{}, err
+		}
+	} else if !errors.Is(err, os.ErrNotExist) {
 		return apiConfig{}, err
 	}
+
+	// .env overrides README; api_url / url can supply the profile or matches endpoint template.
+	if env := loadDotEnv(".env"); env != nil {
+		if v := strings.TrimSpace(env["api_url"]); v != "" {
+			cfg.ProfileURLTemplate = v
+		} else if v := strings.TrimSpace(env["url"]); v != "" {
+			cfg.ProfileURLTemplate = v
+		}
+		if v, ok := env["api_key"]; ok {
+			v = strings.TrimSpace(v)
+			if v != "" {
+				cfg.APIKey = v
+			}
+		}
+	}
+
 	if cfg.ProfileURLTemplate == "" {
-		return apiConfig{}, errors.New("README missing player_profile_view URL")
+		return apiConfig{}, errors.New("missing API URL: set api_url in .env or add a player_profile_view https URL line in README")
 	}
 	if cfg.APIKey == "" {
-		return apiConfig{}, errors.New("README missing Apikey")
+		return apiConfig{}, errors.New("missing API key: set api_key in .env or Apikey in README")
 	}
-	if cfg.Authorization == "" {
-		return apiConfig{}, errors.New("README missing Authorization")
-	}
+	cfg.Authorization = "Bearer " + cfg.APIKey
 	return cfg, nil
 }
