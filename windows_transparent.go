@@ -87,6 +87,8 @@ const (
 	defaultOverlayY      = 60
 	defaultOverlayWidth  = 420
 	defaultOverlayHeight = 700
+	minOverlayWidth      = 160
+	minOverlayHeight     = 220
 
 	prefWindowsOverlayXKey      = "windows_overlay.x"
 	prefWindowsOverlayYKey      = "windows_overlay.y"
@@ -404,10 +406,10 @@ func loadOverlayPlacement(prefs fynePreferences) overlayPlacement {
 	if v := prefs.Int(prefWindowsOverlayYKey); v >= -32000 && v <= 32000 {
 		p.y = v
 	}
-	if v := prefs.Int(prefWindowsOverlayWidthKey); v >= 240 && v <= 4000 {
+	if v := prefs.Int(prefWindowsOverlayWidthKey); v >= minOverlayWidth && v <= 4000 {
 		p.width = v
 	}
-	if v := prefs.Int(prefWindowsOverlayHeightKey); v >= 220 && v <= 4000 {
+	if v := prefs.Int(prefWindowsOverlayHeightKey); v >= minOverlayHeight && v <= 4000 {
 		p.height = v
 	}
 	return p
@@ -424,7 +426,7 @@ func (s *windowsOverlayState) saveWindowPlacement() {
 	}
 	width := int(rect.Right - rect.Left)
 	height := int(rect.Bottom - rect.Top)
-	if width < 240 || height < 220 {
+	if width < minOverlayWidth || height < minOverlayHeight {
 		return
 	}
 	s.prefs.SetInt(prefWindowsOverlayXKey, int(rect.Left))
@@ -913,11 +915,11 @@ func (s *windowsOverlayState) render() {
 	s.sizeMu.RLock()
 	width, height := s.width, s.height
 	s.sizeMu.RUnlock()
-	if width < 240 {
-		width = 240
+	if width < minOverlayWidth {
+		width = minOverlayWidth
 	}
-	if height < 220 {
-		height = 220
+	if height < minOverlayHeight {
+		height = minOverlayHeight
 	}
 
 	screenDC, _, _ := procGetDC.Call(0)
@@ -1027,16 +1029,24 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 		firstRowY = 98
 		rowStepY  = 28
 	)
-	ratingX := width - 86
-	if ratingX < 150 {
-		ratingX = 150
+	ratingRightPad := 8
+	ratingWidth := measureWinTextWidth(hdc, "RATING")
+	if scoreWidth := measureWinTextWidth(hdc, "0000"); scoreWidth > ratingWidth {
+		ratingWidth = scoreWidth
+	}
+	ratingX := width - ratingRightPad - ratingWidth
+	if ratingX < 96 {
+		ratingX = 96
 	}
 	maxRowsY := height - 50
 	if maxRowsY < firstRowY {
 		maxRowsY = firstRowY
 	}
-	playerGapX := 8
+	playerGapX := 4
 	nameMaxWidth := ratingX - playerX - playerGapX
+	if nameMaxWidth < 20 {
+		nameMaxWidth = 20
+	}
 	textColor := colorText
 	if s.ui != nil {
 		textColor = s.ui.Snapshot().FontColor
@@ -1052,7 +1062,7 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	drawWinText(hdc, 8, 56, "F2/right-click settings", colorRef(colorHeaderText))
 	drawWinText(hdc, rankX, headerY, "#", colorRef(colorHeaderText))
 	drawWinText(hdc, playerX, headerY, fitWinTextToWidth(hdc, "PLAYER", nameMaxWidth), colorRef(colorHeaderText))
-	drawWinText(hdc, ratingX, headerY, "RATING", colorRef(colorHeaderText))
+	drawWinText(hdc, ratingX, headerY, fitWinTextToWidth(hdc, "RATING", width-ratingX-ratingRightPad), colorRef(colorHeaderText))
 
 	y := firstRowY
 	for _, row := range rows {
