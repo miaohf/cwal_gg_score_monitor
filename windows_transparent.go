@@ -25,6 +25,7 @@ const (
 	wmNCHitTest = 0x0084
 	wmKeyDown   = 0x0100
 	wmLButtonUp = 0x0202
+	wmRButtonUp = 0x0205
 	htCaption   = 2
 
 	csHRedraw = 0x0002
@@ -499,14 +500,13 @@ func windowsOverlayWndProc(hwnd uintptr, msg uint32, wParam, lParam uintptr) uin
 		ret, _, _ := procDefWindowProcW.Call(hwnd, uintptr(msg), wParam, lParam)
 		return ret
 	case wmLButtonUp:
+		ret, _, _ := procDefWindowProcW.Call(hwnd, uintptr(msg), wParam, lParam)
+		return ret
+	case wmRButtonUp:
 		if state != nil {
-			x := int(int16(lParam & 0xffff))
-			y := int(int16((lParam >> 16) & 0xffff))
-			if state.hitSettings(x, y) {
-				state.openSettings = true
-				_, _, _ = procPostQuitMessage.Call(0)
-				return 0
-			}
+			state.openSettings = true
+			_, _, _ = procPostQuitMessage.Call(0)
+			return 0
 		}
 		ret, _, _ := procDefWindowProcW.Call(hwnd, uintptr(msg), wParam, lParam)
 		return ret
@@ -605,8 +605,6 @@ func (s *windowsOverlayState) render() {
 	for i := range pixels {
 		pixels[i] = bgPixel
 	}
-	fillDIBRect(pixels, width, height, settingsButtonRect(width, height), color.NRGBA{R: 30, G: 41, B: 59, A: 220})
-
 	_, _, _ = procSetBkMode.Call(memDC, transparentBkMode)
 	if font, _, _ := procGetStockObject.Call(stockDefaultGUIFont); font != 0 {
 		_, _, _ = procSelectObject.Call(memDC, font)
@@ -684,7 +682,7 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	} else {
 		drawWinText(hdc, width/2-45, 26, "updating...", colorRef(colorHeaderText))
 	}
-	drawWinText(hdc, 8, 40, fmt.Sprintf("BG Transparency %d%%  (+/-), Settings: F2 or bottom button", s.backgroundTransparencyPercent()), colorRef(colorHeaderText))
+	drawWinText(hdc, 8, 40, fmt.Sprintf("BG Transparency %d%%  (+/-), Settings: F2/right-click", s.backgroundTransparencyPercent()), colorRef(colorHeaderText))
 	drawWinText(hdc, rankX, headerY, "#", colorRef(colorHeaderText))
 	drawWinText(hdc, playerX, headerY, fitWinTextToWidth(hdc, "PLAYER", nameMaxWidth), colorRef(colorHeaderText))
 	drawWinText(hdc, ratingX, headerY, "RATING", colorRef(colorHeaderText))
@@ -708,8 +706,6 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 			break
 		}
 	}
-	btn := settingsButtonRect(width, height)
-	drawWinText(hdc, btn.x+10, btn.y+5, "Settings", colorRef(colorText))
 }
 
 func (s *windowsOverlayState) hitSettings(x, y int) bool {
