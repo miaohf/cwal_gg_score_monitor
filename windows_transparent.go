@@ -20,17 +20,20 @@ import (
 const (
 	wmDestroy   = 0x0002
 	wmPaint     = 0x000F
+	wmSize      = 0x0005
+	wmMove      = 0x0003
 	wmNCHitTest = 0x0084
 	wmKeyDown   = 0x0100
+	wmLButtonUp = 0x0202
 	htCaption   = 2
 
 	csHRedraw = 0x0002
 	csVRedraw = 0x0001
 
-	wsExLayered = 0x00080000
-	wsExTopmost = 0x00000008
-	wsPopup     = 0x80000000
-	wsVisible   = 0x10000000
+	wsExLayered        = 0x00080000
+	wsExTopmost        = 0x00000008
+	wsOverlappedWindow = 0x00CF0000
+	wsVisible          = 0x10000000
 
 	sWShow = 5
 
@@ -44,6 +47,7 @@ const (
 	vkOemMinus = 0xBD
 	vkAdd      = 0x6B
 	vkSubtract = 0x6D
+	vkF2       = 0x71
 
 	biRGB        = 0
 	dibRGBColors = 0
@@ -54,6 +58,16 @@ const (
 	minOverlayBackgroundAlpha = 0
 	maxOverlayBackgroundAlpha = 255
 	overlayOpacityStep        = 15
+
+	defaultOverlayX      = 60
+	defaultOverlayY      = 60
+	defaultOverlayWidth  = 420
+	defaultOverlayHeight = 700
+
+	prefWindowsOverlayXKey      = "windows_overlay.x"
+	prefWindowsOverlayYKey      = "windows_overlay.y"
+	prefWindowsOverlayWidthKey  = "windows_overlay.width"
+	prefWindowsOverlayHeightKey = "windows_overlay.height"
 )
 
 type winPoint struct {
@@ -147,6 +161,10 @@ type windowsOverlayState struct {
 	hwnd   uintptr
 	stopCh chan struct{}
 
+	sizeMu sync.RWMutex
+	width  int
+	height int
+
 	alphaMu sync.RWMutex
 	bgAlpha uint8
 
@@ -154,6 +172,8 @@ type windowsOverlayState struct {
 	displayRows []overlayRow
 	lastUpdated string
 	anySuccess  bool
+
+	openSettings bool
 }
 
 type fynePreferences interface {
@@ -163,13 +183,23 @@ type fynePreferences interface {
 	SetInt(string, int)
 }
 
+type overlayPlacement struct {
+	x      int
+	y      int
+	width  int
+	height int
+}
+
 var (
+	errOpenFyneSettings = errors.New("open fyne settings")
+
 	user32                    = syscall.NewLazyDLL("user32.dll")
 	gdi32                     = syscall.NewLazyDLL("gdi32.dll")
 	kernel32                  = syscall.NewLazyDLL("kernel32.dll")
 	msimg32                   = syscall.NewLazyDLL("msimg32.dll")
 	procRegisterClassExW      = user32.NewProc("RegisterClassExW")
 	procCreateWindowExW       = user32.NewProc("CreateWindowExW")
+	procDestroyWindow         = user32.NewProc("DestroyWindow")
 	procDefWindowProcW        = user32.NewProc("DefWindowProcW")
 	procShowWindow            = user32.NewProc("ShowWindow")
 	procUpdateWindow          = user32.NewProc("UpdateWindow")
@@ -183,6 +213,7 @@ var (
 	procLoadCursorW           = user32.NewProc("LoadCursorW")
 	procGetDC                 = user32.NewProc("GetDC")
 	procReleaseDC             = user32.NewProc("ReleaseDC")
+	procGetWindowRect         = user32.NewProc("GetWindowRect")
 	procUpdateLayeredWindow   = user32.NewProc("UpdateLayeredWindow")
 	procCreateCompatibleDC    = gdi32.NewProc("CreateCompatibleDC")
 	procDeleteDC              = gdi32.NewProc("DeleteDC")
@@ -209,14 +240,20 @@ func runWindowsTransparentMode(rows []*playerState, cfg apiConfig) bool {
 	if prefs.Bool(prefSettingsSavedKey) {
 		initialAlpha = clampByte(prefs.Int(prefWindowOpacityKey), defaultWindowOpacity)
 	}
+	placement := loadOverlayPlacement(prefs)
 	state := &windowsOverlayState{
 		rows:    rows,
 		cfg:     cfg,
 		prefs:   prefs,
 		stopCh:  make(chan struct{}),
+		width:   placement.width,
+		height:  placement.height,
 		bgAlpha: initialAlpha,
 	}
 	if err := state.run(); err != nil {
+		if errors.Is(err, errOpenFyneSettings) {
+			return false
+		}
 		fmt.Fprintf(os.Stderr, "windows transparent mode failed, fallback to fyne: %v\n", err)
 		return false
 	}
@@ -250,8 +287,8 @@ func (s *windowsOverlayState) run() error {
 		uintptr(wsExLayered|wsExTopmost),
 		uintptr(unsafe.Pointer(className)),
 		uintptr(unsafe.Pointer(title)),
-		uintptr(wsPopup|wsVisible),
-		uintptr(60), uintptr(60), uintptr(420), uintptr(700),
+		uintptr(wsOverlappedWindow|wsVisible),
+		uintptr(placement.x), uintptr(placement.y), uintptr(placement.width), uintptr(placement.height),
 		0, 0, hInstance, 0,
 	)
 	if hwnd == 0 {
@@ -277,6 +314,13 @@ func (s *windowsOverlayState) run() error {
 		_, _, _ = procDispatchMessageW.Call(uintptr(unsafe.Pointer(&msg)))
 	}
 	close(s.stopCh)
+	if s.openSettings && s.hwnd != 0 {
+		_, _, _ = procDestroyWindow.Call(s.hwnd)
+		s.hwnd = 0
+	}
+	if s.openSettings {
+		return errOpenFyneSettings
+	}
 	return nil
 }
 
@@ -285,6 +329,51 @@ func (s *windowsOverlayState) backgroundTransparencyPercent() int {
 	alpha := s.bgAlpha
 	s.alphaMu.RUnlock()
 	return int(transparencyPercentFromAlpha(alpha))
+}
+
+func loadOverlayPlacement(prefs fynePreferences) overlayPlacement {
+	p := overlayPlacement{
+		x:      defaultOverlayX,
+		y:      defaultOverlayY,
+		width:  defaultOverlayWidth,
+		height: defaultOverlayHeight,
+	}
+	if prefs == nil {
+		return p
+	}
+	if v := prefs.Int(prefWindowsOverlayXKey); v >= -32000 && v <= 32000 {
+		p.x = v
+	}
+	if v := prefs.Int(prefWindowsOverlayYKey); v >= -32000 && v <= 32000 {
+		p.y = v
+	}
+	if v := prefs.Int(prefWindowsOverlayWidthKey); v >= 240 && v <= 4000 {
+		p.width = v
+	}
+	if v := prefs.Int(prefWindowsOverlayHeightKey); v >= 220 && v <= 4000 {
+		p.height = v
+	}
+	return p
+}
+
+func (s *windowsOverlayState) saveWindowPlacement() {
+	if s.prefs == nil || s.hwnd == 0 {
+		return
+	}
+	var rect winRect
+	ret, _, _ := procGetWindowRect.Call(s.hwnd, uintptr(unsafe.Pointer(&rect)))
+	if ret == 0 {
+		return
+	}
+	width := int(rect.Right - rect.Left)
+	height := int(rect.Bottom - rect.Top)
+	if width < 240 || height < 220 {
+		return
+	}
+	s.prefs.SetInt(prefWindowsOverlayXKey, int(rect.Left))
+	s.prefs.SetInt(prefWindowsOverlayYKey, int(rect.Top))
+	s.prefs.SetInt(prefWindowsOverlayWidthKey, width)
+	s.prefs.SetInt(prefWindowsOverlayHeightKey, height)
 }
 
 func (s *windowsOverlayState) adjustBackgroundAlpha(delta int) {
@@ -378,7 +467,40 @@ func windowsOverlayWndProc(hwnd uintptr, msg uint32, wParam, lParam uintptr) uin
 	state := globalWindowsOverlayWindow
 	switch msg {
 	case wmNCHitTest:
-		return htCaption
+		ret, _, _ := procDefWindowProcW.Call(hwnd, uintptr(msg), wParam, lParam)
+		return ret
+	case wmSize:
+		if state != nil {
+			w := int(lParam & 0xffff)
+			h := int((lParam >> 16) & 0xffff)
+			if w > 0 && h > 0 {
+				state.sizeMu.Lock()
+				state.width = w
+				state.height = h
+				state.sizeMu.Unlock()
+				state.render()
+			}
+			state.saveWindowPlacement()
+		}
+		return 0
+	case wmMove:
+		if state != nil {
+			state.saveWindowPlacement()
+		}
+		ret, _, _ := procDefWindowProcW.Call(hwnd, uintptr(msg), wParam, lParam)
+		return ret
+	case wmLButtonUp:
+		if state != nil {
+			x := int(int16(lParam & 0xffff))
+			y := int(int16((lParam >> 16) & 0xffff))
+			if state.hitSettings(x, y) {
+				state.openSettings = true
+				_, _, _ = procPostQuitMessage.Call(0)
+				return 0
+			}
+		}
+		ret, _, _ := procDefWindowProcW.Call(hwnd, uintptr(msg), wParam, lParam)
+		return ret
 	case wmKeyDown:
 		if state != nil {
 			switch wParam {
@@ -387,6 +509,10 @@ func windowsOverlayWndProc(hwnd uintptr, msg uint32, wParam, lParam uintptr) uin
 				return 0
 			case vkDown, vkOemMinus, vkSubtract:
 				state.adjustBackgroundAlpha(-overlayOpacityStep)
+				return 0
+			case vkF2:
+				state.openSettings = true
+				_, _, _ = procPostQuitMessage.Call(0)
 				return 0
 			}
 		}
@@ -413,7 +539,15 @@ func (s *windowsOverlayState) render() {
 	if s.hwnd == 0 {
 		return
 	}
-	const width, height = 420, 700
+	s.sizeMu.RLock()
+	width, height := s.width, s.height
+	s.sizeMu.RUnlock()
+	if width < 240 {
+		width = 240
+	}
+	if height < 220 {
+		height = 220
+	}
 
 	screenDC, _, _ := procGetDC.Call(0)
 	if screenDC == 0 {
@@ -429,8 +563,8 @@ func (s *windowsOverlayState) render() {
 
 	bmi := bitmapInfo{}
 	bmi.Header.Size = uint32(unsafe.Sizeof(bitmapInfoHeader{}))
-	bmi.Header.Width = width
-	bmi.Header.Height = -height // top-down DIB
+	bmi.Header.Width = int32(width)
+	bmi.Header.Height = int32(-height) // top-down DIB
 	bmi.Header.Planes = 1
 	bmi.Header.BitCount = 32
 	bmi.Header.Compression = biRGB
@@ -476,8 +610,8 @@ func (s *windowsOverlayState) render() {
 		}
 	}
 
-	dstPt := winPoint{X: 60, Y: 60}
-	size := winSize{CX: width, CY: height}
+	dstPt := s.windowTopLeft()
+	size := winSize{CX: int32(width), CY: int32(height)}
 	srcPt := winPoint{}
 	blend := blendFunction{
 		BlendOp:             acSrcOver,
@@ -497,6 +631,15 @@ func (s *windowsOverlayState) render() {
 	)
 }
 
+func (s *windowsOverlayState) windowTopLeft() winPoint {
+	var rect winRect
+	ret, _, _ := procGetWindowRect.Call(s.hwnd, uintptr(unsafe.Pointer(&rect)))
+	if ret == 0 {
+		return winPoint{X: 60, Y: 60}
+	}
+	return winPoint{X: rect.Left, Y: rect.Top}
+}
+
 func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	s.displayMu.RLock()
 	rows := append([]overlayRow(nil), s.displayRows...)
@@ -504,25 +647,35 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	anySuccess := s.anySuccess
 	s.displayMu.RUnlock()
 
+	s.sizeMu.RLock()
+	width, height := s.width, s.height
+	s.sizeMu.RUnlock()
 	const (
-		rankX      = 8
-		playerX    = 30
-		ratingX    = 260
-		playerGapX = 8
-		headerY    = 52
-		firstRowY  = 78
-		rowStepY   = 28
-		maxRowsY   = 670
+		rankX     = 8
+		playerX   = 30
+		headerY   = 52
+		firstRowY = 78
+		rowStepY  = 28
 	)
+	ratingX := width - 86
+	if ratingX < 150 {
+		ratingX = 150
+	}
+	maxRowsY := height - 30
+	if maxRowsY < firstRowY {
+		maxRowsY = firstRowY
+	}
+	playerGapX := 8
 	nameMaxWidth := ratingX - playerX - playerGapX
 
-	drawWinText(hdc, 150, 8, "Score Monitor", colorRef(colorHeaderText))
+	drawWinText(hdc, width/2-55, 8, "Score Monitor", colorRef(colorHeaderText))
+	drawWinText(hdc, width-82, 10, "Settings", colorRef(colorHeaderText))
 	if anySuccess {
-		drawWinText(hdc, 120, 26, lastUpdated, colorRef(colorHeaderText))
+		drawWinText(hdc, width/2-78, 26, lastUpdated, colorRef(colorHeaderText))
 	} else {
-		drawWinText(hdc, 160, 26, "updating...", colorRef(colorHeaderText))
+		drawWinText(hdc, width/2-45, 26, "updating...", colorRef(colorHeaderText))
 	}
-	drawWinText(hdc, 8, 40, fmt.Sprintf("BG Transparency %d%%  (+/-)", s.backgroundTransparencyPercent()), colorRef(colorHeaderText))
+	drawWinText(hdc, 8, 40, fmt.Sprintf("BG Transparency %d%%  (+/-), Settings: F2", s.backgroundTransparencyPercent()), colorRef(colorHeaderText))
 	drawWinText(hdc, rankX, headerY, "#", colorRef(colorHeaderText))
 	drawWinText(hdc, playerX, headerY, fitWinTextToWidth(hdc, "PLAYER", nameMaxWidth), colorRef(colorHeaderText))
 	drawWinText(hdc, ratingX, headerY, "RATING", colorRef(colorHeaderText))
@@ -546,6 +699,13 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 			break
 		}
 	}
+}
+
+func (s *windowsOverlayState) hitSettings(x, y int) bool {
+	s.sizeMu.RLock()
+	width := s.width
+	s.sizeMu.RUnlock()
+	return x >= width-92 && x <= width-8 && y >= 4 && y <= 34
 }
 
 func fitWinTextToWidth(hdc uintptr, raw string, maxWidth int) string {
