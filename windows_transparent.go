@@ -162,6 +162,8 @@ type windowsOverlayState struct {
 	stopCh chan struct{}
 
 	sizeMu sync.RWMutex
+	x      int
+	y      int
 	width  int
 	height int
 
@@ -246,6 +248,8 @@ func runWindowsTransparentMode(rows []*playerState, cfg apiConfig) bool {
 		cfg:     cfg,
 		prefs:   prefs,
 		stopCh:  make(chan struct{}),
+		x:       placement.x,
+		y:       placement.y,
 		width:   placement.width,
 		height:  placement.height,
 		bgAlpha: initialAlpha,
@@ -288,7 +292,7 @@ func (s *windowsOverlayState) run() error {
 		uintptr(unsafe.Pointer(className)),
 		uintptr(unsafe.Pointer(title)),
 		uintptr(wsOverlappedWindow|wsVisible),
-		uintptr(placement.x), uintptr(placement.y), uintptr(placement.width), uintptr(placement.height),
+		uintptr(s.x), uintptr(s.y), uintptr(s.width), uintptr(s.height),
 		0, 0, hInstance, 0,
 	)
 	if hwnd == 0 {
