@@ -70,6 +70,7 @@ const (
 	prefFontColorBKey      = "ui.font_color_b"
 	prefFontColorAKey      = "ui.font_color_a"
 	prefFontTypeKey        = "ui.font_type"
+	prefWindowOpacityKey   = "ui.window_opacity"
 	prefSettingsSavedKey   = "ui.settings_saved"
 	prefPollSettingsSaved  = "poll.settings_saved"
 	prefPollIntervalSecKey = "poll.interval_sec"
@@ -530,6 +531,7 @@ func loadUISettingsFromPrefs(p fyne.Preferences) *uiSettings {
 	b := clampByte(p.Int(prefFontColorBKey), int(s.FontColor.B))
 	a := clampByte(p.Int(prefFontColorAKey), int(s.FontColor.A))
 	s.FontColor = color.NRGBA{R: r, G: g, B: b, A: a}
+	s.BackgroundAlpha = clampByte(p.Int(prefWindowOpacityKey), defaultWindowOpacity)
 	return s
 }
 
@@ -541,6 +543,7 @@ func saveUISettingsToPrefs(p fyne.Preferences, s uiSettingsSnapshot) {
 	p.SetInt(prefFontColorGKey, int(s.FontColor.G))
 	p.SetInt(prefFontColorBKey, int(s.FontColor.B))
 	p.SetInt(prefFontColorAKey, int(s.FontColor.A))
+	p.SetInt(prefWindowOpacityKey, int(s.BackgroundAlpha))
 }
 
 func clampByte(v int, fallback int) uint8 {
@@ -606,6 +609,9 @@ func main() {
 			player:    p,
 			LastError: "pending",
 		})
+	}
+	if runWindowsTransparentMode(rows, cfg) {
+		return
 	}
 
 	myApp := app.NewWithID("cwalgg.score.monitor")
@@ -817,6 +823,16 @@ func showFontSettingsDialog(
 	typeSelect := widget.NewSelect(typeOptions, nil)
 	typeSelect.SetSelected(current.FontType)
 
+	currentTransparency := transparencyPercentFromAlpha(current.BackgroundAlpha)
+	alphaLabel := widget.NewLabel(fmt.Sprintf("%d%%", int(currentTransparency)))
+	alphaSlider := widget.NewSlider(0, 100)
+	alphaSlider.Step = 1
+	alphaSlider.SetValue(float64(currentTransparency))
+	alphaSlider.OnChanged = func(v float64) {
+		alphaLabel.SetText(fmt.Sprintf("%d%%", int(v)))
+	}
+	alphaRow := container.NewBorder(nil, nil, nil, alphaLabel, alphaSlider)
+
 	intervalEntry := widget.NewEntry()
 	interval, stopEnabled, stopAt, _, manualHold := pollCfg.Snapshot()
 	intervalEntry.SetText(strconv.Itoa(int(interval / time.Second)))
@@ -836,6 +852,7 @@ func showFontSettingsDialog(
 		widget.NewFormItem("Font Size", sizeEntry),
 		widget.NewFormItem("Font Color", colorSelect),
 		widget.NewFormItem("Font Type", typeSelect),
+		widget.NewFormItem("BG Transparency", alphaRow),
 		widget.NewFormItem("Polling Interval(s)", intervalEntry),
 		widget.NewFormItem("Manual Hold(s)", manualHoldEntry),
 		widget.NewFormItem("Stop Time", stopTimeEntry),
@@ -860,7 +877,7 @@ func showFontSettingsDialog(
 			FontSize:        float32(sizeVal),
 			FontColor:       selectedColor,
 			FontType:        selectedType,
-			BackgroundAlpha: defaultWindowOpacity,
+			BackgroundAlpha: alphaFromTransparencyPercent(uint8(alphaSlider.Value)),
 		}
 		intervalSec, err := strconv.Atoi(strings.TrimSpace(intervalEntry.Text))
 		if err != nil || intervalSec < 60 || intervalSec > 86400 {
