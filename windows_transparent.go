@@ -55,7 +55,9 @@ const (
 	acSrcOver    = 0
 	acSrcAlpha   = 1
 
-	minOverlayBackgroundAlpha = 0
+	// Keep a small alpha floor: fully transparent pixels in a layered window can
+	// become effectively unclickable, making the overlay hard to focus or move.
+	minOverlayBackgroundAlpha = 48
 	maxOverlayBackgroundAlpha = 255
 	overlayOpacityStep        = 15
 
@@ -241,6 +243,9 @@ func runWindowsTransparentMode(rows []*playerState, cfg apiConfig) bool {
 	initialAlpha := uint8(defaultWindowOpacity)
 	if prefs.Bool(prefSettingsSavedKey) {
 		initialAlpha = clampByte(prefs.Int(prefWindowOpacityKey), defaultWindowOpacity)
+	}
+	if initialAlpha < minOverlayBackgroundAlpha {
+		initialAlpha = minOverlayBackgroundAlpha
 	}
 	placement := loadOverlayPlacement(prefs)
 	state := &windowsOverlayState{
@@ -600,6 +605,7 @@ func (s *windowsOverlayState) render() {
 	for i := range pixels {
 		pixels[i] = bgPixel
 	}
+	fillDIBRect(pixels, width, height, settingsButtonRect(width), color.NRGBA{R: 30, G: 41, B: 59, A: 220})
 
 	_, _, _ = procSetBkMode.Call(memDC, transparentBkMode)
 	if font, _, _ := procGetStockObject.Call(stockDefaultGUIFont); font != 0 {
@@ -673,7 +679,8 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	nameMaxWidth := ratingX - playerX - playerGapX
 
 	drawWinText(hdc, width/2-55, 8, "Score Monitor", colorRef(colorHeaderText))
-	drawWinText(hdc, width-82, 10, "Settings", colorRef(colorHeaderText))
+	btn := settingsButtonRect(width)
+	drawWinText(hdc, btn.x+10, btn.y+5, "Settings", colorRef(colorText))
 	if anySuccess {
 		drawWinText(hdc, width/2-78, 26, lastUpdated, colorRef(colorHeaderText))
 	} else {
@@ -709,7 +716,54 @@ func (s *windowsOverlayState) hitSettings(x, y int) bool {
 	s.sizeMu.RLock()
 	width := s.width
 	s.sizeMu.RUnlock()
-	return x >= width-92 && x <= width-8 && y >= 4 && y <= 34
+	btn := settingsButtonRect(width)
+	return x >= btn.x && x <= btn.x+btn.w && y >= btn.y && y <= btn.y+btn.h
+}
+
+type winButtonRect struct {
+	x int
+	y int
+	w int
+	h int
+}
+
+func settingsButtonRect(width int) winButtonRect {
+	if width < 120 {
+		width = 120
+	}
+	return winButtonRect{x: width - 96, y: 6, w: 88, h: 26}
+}
+
+func fillDIBRect(pixels []uint32, width int, height int, rect winButtonRect, c color.NRGBA) {
+	if width <= 0 || height <= 0 {
+		return
+	}
+	x0 := rect.x
+	y0 := rect.y
+	x1 := rect.x + rect.w
+	y1 := rect.y + rect.h
+	if x0 < 0 {
+		x0 = 0
+	}
+	if y0 < 0 {
+		y0 = 0
+	}
+	if x1 > width {
+		x1 = width
+	}
+	if y1 > height {
+		y1 = height
+	}
+	if x0 >= x1 || y0 >= y1 {
+		return
+	}
+	px := dibPixel(c)
+	for y := y0; y < y1; y++ {
+		row := y * width
+		for x := x0; x < x1; x++ {
+			pixels[row+x] = px
+		}
+	}
 }
 
 func fitWinTextToWidth(hdc uintptr, raw string, maxWidth int) string {
