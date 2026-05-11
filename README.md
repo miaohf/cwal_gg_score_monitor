@@ -77,8 +77,10 @@ Messiah 2000
 1. 安装编译器：
    - `sudo apt update`
    - `sudo apt install -y gcc-mingw-w64-x86-64`
-2. 使用 CGO 交叉编译：
-   - `CGO_ENABLED=1 GOOS=windows GOARCH=amd64 CC=x86_64-w64-mingw32-gcc go build -o cwalgg.exe .`
+2. 使用 CGO 交叉编译（**必须**带上 `GOOS=windows`，否则生成的是 Linux 程序，只是文件名写了 `.exe`）：
+   - `CGO_ENABLED=1 GOOS=windows GOARCH=amd64 CC=x86_64-w64-mingw32-gcc go build -o cwalgg-windows-amd64.exe .`
+3. 在 Linux 上自检产物是否为 Windows PE（应出现 `PE32+ executable for MS Windows`，**不能**是 `ELF`）：
+   - `file cwalgg-windows-amd64.exe`
 
 如果后续出现 C++ 相关报错，可补充：
 
@@ -88,3 +90,10 @@ Messiah 2000
 
 - 不能只用 `GOOS=windows GOARCH=amd64 go build`，因为 `Fyne` 依赖 `go-gl`，交叉编译时需要 Windows 的 CGO 工具链。
 - `fyne-cross` 也是可选方案，适合后续需要更稳定地打 Windows 包时再引入；当前仓库先保留直接交叉编译方式。
+
+#### Windows 上“双击没反应 / 无法打开”排查
+
+- **最常见**：在 Linux 上执行了 `go build -o cwalgg.exe .` 且**未**设置 `GOOS=windows`，得到的是 **ELF（Linux）可执行文件**，Windows 无法运行。请用上一节的交叉编译命令重新打包，并用 `file` 确认是 PE。
+- **运行目录**：把 exe 与 `README.md`、`users.csv`、`.env` 放在同一目录再运行；缺文件时程序会在启动阶段退出（可能只看到窗口一闪或无任何界面）。
+- **架构**：上述产物为 **amd64**；若是 ARM 版 Windows（如部分 Surface），需要另行 `GOARCH=arm64` 并配套工具链。
+- **安全软件**：若 SmartScreen 拦截，可尝试“仍要运行”或先 `cmd` 里运行 exe 查看是否有报错输出。
