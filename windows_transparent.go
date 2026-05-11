@@ -44,10 +44,10 @@ const (
 	wsBorder           = 0x00800000
 	wsVScroll          = 0x00200000
 
-	esAutoHScroll  = 0x0080
-	bsPushButton   = 0x00000000
+	esAutoHScroll   = 0x0080
+	bsPushButton    = 0x00000000
 	cbsDropDownList = 0x0003
-	cbsAutoHScroll = 0x0040
+	cbsAutoHScroll  = 0x0040
 
 	cbnSelChange = 1
 	bnClicked    = 0
@@ -93,16 +93,16 @@ const (
 	prefWindowsOverlayWidthKey  = "windows_overlay.width"
 	prefWindowsOverlayHeightKey = "windows_overlay.height"
 
-	settingsControlFontSize      = 1001
-	settingsControlFontColor     = 1002
-	settingsControlFontType      = 1003
-	settingsControlTransparency  = 1004
-	settingsControlPollInterval  = 1005
-	settingsControlManualHold    = 1006
-	settingsControlStopTime      = 1007
-	settingsControlStatus        = 1008
-	settingsControlSaveButton    = 1101
-	settingsControlCancelButton  = 1102
+	settingsControlFontSize     = 1001
+	settingsControlFontColor    = 1002
+	settingsControlFontType     = 1003
+	settingsControlTransparency = 1004
+	settingsControlPollInterval = 1005
+	settingsControlManualHold   = 1006
+	settingsControlStopTime     = 1007
+	settingsControlStatus       = 1008
+	settingsControlSaveButton   = 1101
+	settingsControlCancelButton = 1102
 )
 
 type winPoint struct {
