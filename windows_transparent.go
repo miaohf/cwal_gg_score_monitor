@@ -293,6 +293,7 @@ var (
 	procGetDC                 = user32.NewProc("GetDC")
 	procReleaseDC             = user32.NewProc("ReleaseDC")
 	procGetWindowRect         = user32.NewProc("GetWindowRect")
+	procClientToScreen        = user32.NewProc("ClientToScreen")
 	procUpdateLayeredWindow   = user32.NewProc("UpdateLayeredWindow")
 	procCreateCompatibleDC    = gdi32.NewProc("CreateCompatibleDC")
 	procDeleteDC              = gdi32.NewProc("DeleteDC")
@@ -500,6 +501,7 @@ func (s *windowsOverlayState) closeSettings() {
 }
 
 func (s *windowsOverlayState) showManualScoreForPoint(y int) {
+	y = s.overlayYFromClientY(y)
 	if y < overlayFirstRowY {
 		return
 	}
@@ -512,6 +514,21 @@ func (s *windowsOverlayState) showManualScoreForPoint(y int) {
 	sourceIndex := s.displayRows[displayIndex].sourceIndex
 	s.displayMu.RUnlock()
 	s.showManualScore(sourceIndex)
+}
+
+func (s *windowsOverlayState) overlayYFromClientY(clientY int) int {
+	if s.hwnd == 0 {
+		return clientY
+	}
+	clientOrigin := winPoint{}
+	if ret, _, _ := procClientToScreen.Call(s.hwnd, uintptr(unsafe.Pointer(&clientOrigin))); ret == 0 {
+		return clientY
+	}
+	var rect winRect
+	if ret, _, _ := procGetWindowRect.Call(s.hwnd, uintptr(unsafe.Pointer(&rect))); ret == 0 {
+		return clientY
+	}
+	return clientY + int(clientOrigin.Y-rect.Top)
 }
 
 func (s *windowsOverlayState) showManualScore(rowIndex int) {
