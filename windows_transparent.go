@@ -9,11 +9,13 @@ import (
 	"os"
 	"sort"
 	"strconv"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
 	"unsafe"
 
+	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 )
 
@@ -26,6 +28,8 @@ const (
 	wmKeyDown   = 0x0100
 	wmLButtonUp = 0x0202
 	wmRButtonUp = 0x0205
+	wmCommand   = 0x0111
+	wmClose     = 0x0010
 	htCaption   = 2
 
 	csHRedraw = 0x0002
@@ -34,7 +38,23 @@ const (
 	wsExLayered        = 0x00080000
 	wsExTopmost        = 0x00000008
 	wsOverlappedWindow = 0x00CF0000
+	wsChild            = 0x40000000
 	wsVisible          = 0x10000000
+	wsTabStop          = 0x00010000
+	wsBorder           = 0x00800000
+	wsVScroll          = 0x00200000
+
+	esAutoHScroll  = 0x0080
+	bsPushButton   = 0x00000000
+	cbsDropDownList = 0x0003
+	cbsAutoHScroll = 0x0040
+
+	cbnSelChange = 1
+	bnClicked    = 0
+
+	cbGetCurSel = 0x0147
+	cbAddString = 0x0143
+	cbSetCurSel = 0x014E
 
 	sWShow = 5
 
@@ -72,6 +92,17 @@ const (
 	prefWindowsOverlayYKey      = "windows_overlay.y"
 	prefWindowsOverlayWidthKey  = "windows_overlay.width"
 	prefWindowsOverlayHeightKey = "windows_overlay.height"
+
+	settingsControlFontSize      = 1001
+	settingsControlFontColor     = 1002
+	settingsControlFontType      = 1003
+	settingsControlTransparency  = 1004
+	settingsControlPollInterval  = 1005
+	settingsControlManualHold    = 1006
+	settingsControlStopTime      = 1007
+	settingsControlStatus        = 1008
+	settingsControlSaveButton    = 1101
+	settingsControlCancelButton  = 1102
 )
 
 type winPoint struct {
@@ -161,7 +192,9 @@ type windowsOverlayState struct {
 	rows   []*playerState
 	rowsMu sync.RWMutex
 	cfg    apiConfig
-	prefs  fynePreferences
+	prefs  fyne.Preferences
+	ui     *uiSettings
+	poll   *pollControl
 	hwnd   uintptr
 	stopCh chan struct{}
 
@@ -179,7 +212,8 @@ type windowsOverlayState struct {
 	lastUpdated string
 	anySuccess  bool
 
-	settingsOpen bool
+	settingsWnd      uintptr
+	settingsControls windowsSettingsControls
 }
 
 type fynePreferences interface {
@@ -187,6 +221,17 @@ type fynePreferences interface {
 	Int(string) int
 	SetBool(string, bool)
 	SetInt(string, int)
+}
+
+type windowsSettingsControls struct {
+	fontSize     uintptr
+	fontColor    uintptr
+	fontType     uintptr
+	transparency uintptr
+	pollInterval uintptr
+	manualHold   uintptr
+	stopTime     uintptr
+	status       uintptr
 }
 
 type overlayPlacement struct {
@@ -211,6 +256,11 @@ var (
 	procTranslateMessage      = user32.NewProc("TranslateMessage")
 	procDispatchMessageW      = user32.NewProc("DispatchMessageW")
 	procPostQuitMessage       = user32.NewProc("PostQuitMessage")
+	procSendMessageW          = user32.NewProc("SendMessageW")
+	procSetWindowTextW        = user32.NewProc("SetWindowTextW")
+	procGetWindowTextW        = user32.NewProc("GetWindowTextW")
+	procGetWindowTextLengthW  = user32.NewProc("GetWindowTextLengthW")
+	procSetFocus              = user32.NewProc("SetFocus")
 	procBeginPaint            = user32.NewProc("BeginPaint")
 	procEndPaint              = user32.NewProc("EndPaint")
 	procInvalidateRect        = user32.NewProc("InvalidateRect")
@@ -240,18 +290,26 @@ func runWindowsTransparentMode(rows []*playerState, cfg apiConfig) bool {
 		fmt.Fprintf(os.Stderr, "failed to init api logger: %v\n", err)
 	}
 	prefs := app.NewWithID("cwalgg.score.monitor").Preferences()
-	initialAlpha := uint8(defaultWindowOpacity)
-	if prefs.Bool(prefSettingsSavedKey) {
-		initialAlpha = clampByte(prefs.Int(prefWindowOpacityKey), defaultWindowOpacity)
-	}
+	ui := loadUISettingsFromPrefs(prefs)
+	poll := loadPollSettingsFromPrefs(prefs)
+	loadHistoryScoresFromPrefs(prefs, rows)
+	initialAlpha := ui.Snapshot().BackgroundAlpha
 	if initialAlpha < minOverlayBackgroundAlpha {
 		initialAlpha = minOverlayBackgroundAlpha
+		ui.Update(uiSettingsSnapshot{
+			FontSize:        ui.Snapshot().FontSize,
+			FontColor:       ui.Snapshot().FontColor,
+			FontType:        ui.Snapshot().FontType,
+			BackgroundAlpha: initialAlpha,
+		})
 	}
 	placement := loadOverlayPlacement(prefs)
 	state := &windowsOverlayState{
 		rows:    rows,
 		cfg:     cfg,
 		prefs:   prefs,
+		ui:      ui,
+		poll:    poll,
 		stopCh:  make(chan struct{}),
 		x:       placement.x,
 		y:       placement.y,
@@ -388,6 +446,11 @@ func (s *windowsOverlayState) adjustBackgroundAlpha(delta int) {
 	nextAlpha := s.bgAlpha
 	s.alphaMu.Unlock()
 
+	if s.ui != nil {
+		next := s.ui.Snapshot()
+		next.BackgroundAlpha = nextAlpha
+		s.ui.Update(next)
+	}
 	if s.prefs != nil {
 		s.prefs.SetBool(prefSettingsSavedKey, true)
 		s.prefs.SetInt(prefWindowOpacityKey, int(nextAlpha))
@@ -395,37 +458,180 @@ func (s *windowsOverlayState) adjustBackgroundAlpha(delta int) {
 	s.render()
 }
 
-func (s *windowsOverlayState) toggleSettings() {
-	s.displayMu.Lock()
-	s.settingsOpen = !s.settingsOpen
-	s.displayMu.Unlock()
-	s.render()
+func (s *windowsOverlayState) showSettings() {
+	if s.settingsWnd != 0 {
+		_, _, _ = procShowWindow.Call(s.settingsWnd, sWShow)
+		_, _, _ = procSetFocus.Call(s.settingsWnd)
+		return
+	}
+	s.createSettingsWindow()
 }
 
 func (s *windowsOverlayState) closeSettings() {
-	s.displayMu.Lock()
-	wasOpen := s.settingsOpen
-	s.settingsOpen = false
-	s.displayMu.Unlock()
-	if wasOpen {
-		s.render()
+	if s.settingsWnd != 0 {
+		_, _, _ = procDestroyWindow.Call(s.settingsWnd)
 	}
+}
+
+func (s *windowsOverlayState) createSettingsWindow() {
+	hInstance, _, _ := procGetModuleHandleW.Call(0)
+	className, _ := syscall.UTF16PtrFromString("CWALGGSettingsWindow")
+	wc := wndClassEx{
+		Size:      uint32(unsafe.Sizeof(wndClassEx{})),
+		Style:     csHRedraw | csVRedraw,
+		WndProc:   syscall.NewCallback(windowsSettingsWndProc),
+		Instance:  hInstance,
+		ClassName: className,
+	}
+	_, _, _ = procRegisterClassExW.Call(uintptr(unsafe.Pointer(&wc)))
+
+	title, _ := syscall.UTF16PtrFromString("Settings")
+	hwnd, _, _ := procCreateWindowExW.Call(
+		uintptr(wsExTopmost),
+		uintptr(unsafe.Pointer(className)),
+		uintptr(unsafe.Pointer(title)),
+		uintptr(wsOverlappedWindow|wsVisible),
+		uintptr(s.x+30), uintptr(s.y+40), 360, 360,
+		s.hwnd, 0, hInstance, 0,
+	)
+	if hwnd == 0 {
+		return
+	}
+	s.settingsWnd = hwnd
+	s.populateSettingsControls(hwnd, hInstance)
+	_, _, _ = procShowWindow.Call(hwnd, sWShow)
+	_, _, _ = procSetFocus.Call(s.settingsControls.fontSize)
+}
+
+func (s *windowsOverlayState) populateSettingsControls(hwnd, hInstance uintptr) {
+	current := defaultUISettings().Snapshot()
+	if s.ui != nil {
+		current = s.ui.Snapshot()
+	}
+	interval := fetchInterval
+	stopEnabled := false
+	stopAt := time.Time{}
+	manualHold := manualHoldDefaultDuration
+	if s.poll != nil {
+		interval, stopEnabled, stopAt, _, manualHold = s.poll.Snapshot()
+	}
+
+	labelX, fieldX := 18, 138
+	y := 18
+	rowH := 32
+	s.addStatic(hwnd, hInstance, labelX, y+4, 110, 22, "Font Size")
+	s.settingsControls.fontSize = s.addEdit(hwnd, hInstance, settingsControlFontSize, fieldX, y, 170, 24, fmt.Sprintf("%.0f", current.FontSize))
+	y += rowH
+
+	s.addStatic(hwnd, hInstance, labelX, y+4, 110, 22, "Font Color")
+	s.settingsControls.fontColor = s.addCombo(hwnd, hInstance, settingsControlFontColor, fieldX, y, 170, 120, []string{"White", "Light Gray", "Green", "Cyan", "Yellow", "Red"}, colorNameFromValue(current.FontColor))
+	y += rowH
+
+	s.addStatic(hwnd, hInstance, labelX, y+4, 110, 22, "Font Type")
+	s.settingsControls.fontType = s.addCombo(hwnd, hInstance, settingsControlFontType, fieldX, y, 170, 120, []string{"Regular", "Bold", "Monospace"}, current.FontType)
+	y += rowH
+
+	s.addStatic(hwnd, hInstance, labelX, y+4, 110, 22, "BG %")
+	s.settingsControls.transparency = s.addEdit(hwnd, hInstance, settingsControlTransparency, fieldX, y, 170, 24, strconv.Itoa(int(transparencyPercentFromAlpha(current.BackgroundAlpha))))
+	y += rowH
+
+	s.addStatic(hwnd, hInstance, labelX, y+4, 110, 22, "Poll(s)")
+	s.settingsControls.pollInterval = s.addEdit(hwnd, hInstance, settingsControlPollInterval, fieldX, y, 170, 24, strconv.Itoa(int(interval/time.Second)))
+	y += rowH
+
+	s.addStatic(hwnd, hInstance, labelX, y+4, 110, 22, "Hold(s)")
+	s.settingsControls.manualHold = s.addEdit(hwnd, hInstance, settingsControlManualHold, fieldX, y, 170, 24, strconv.Itoa(int(manualHold/time.Second)))
+	y += rowH
+
+	stopValue := ""
+	if stopEnabled {
+		stopValue = stopAt.Format("2006-01-02 15:04")
+	}
+	s.addStatic(hwnd, hInstance, labelX, y+4, 110, 22, "Stop Time")
+	s.settingsControls.stopTime = s.addEdit(hwnd, hInstance, settingsControlStopTime, fieldX, y, 170, 24, stopValue)
+	y += rowH + 6
+
+	s.settingsControls.status = s.addStatic(hwnd, hInstance, labelX, y, 300, 22, "")
+	y += 34
+	s.addButton(hwnd, hInstance, settingsControlSaveButton, fieldX, y, 76, 28, "Save")
+	s.addButton(hwnd, hInstance, settingsControlCancelButton, fieldX+94, y, 76, 28, "Cancel")
+}
+
+func (s *windowsOverlayState) addStatic(parent, hInstance uintptr, x, y, w, h int, text string) uintptr {
+	return createWinControl("STATIC", text, wsChild|wsVisible, parent, hInstance, 0, x, y, w, h)
+}
+
+func (s *windowsOverlayState) addEdit(parent, hInstance uintptr, id, x, y, w, h int, text string) uintptr {
+	return createWinControl("EDIT", text, wsChild|wsVisible|wsTabStop|wsBorder|esAutoHScroll, parent, hInstance, id, x, y, w, h)
+}
+
+func (s *windowsOverlayState) addButton(parent, hInstance uintptr, id, x, y, w, h int, text string) uintptr {
+	return createWinControl("BUTTON", text, wsChild|wsVisible|wsTabStop|bsPushButton, parent, hInstance, id, x, y, w, h)
+}
+
+func (s *windowsOverlayState) addCombo(parent, hInstance uintptr, id, x, y, w, h int, options []string, selected string) uintptr {
+	hwnd := createWinControl("COMBOBOX", "", wsChild|wsVisible|wsTabStop|wsVScroll|cbsDropDownList|cbsAutoHScroll, parent, hInstance, id, x, y, w, h)
+	selectedIndex := 0
+	for i, option := range options {
+		sendComboString(hwnd, cbAddString, option)
+		if option == selected {
+			selectedIndex = i
+		}
+	}
+	_, _, _ = procSendMessageW.Call(hwnd, cbSetCurSel, uintptr(selectedIndex), 0)
+	return hwnd
+}
+
+func createWinControl(className, text string, style uintptr, parent, hInstance uintptr, id, x, y, w, h int) uintptr {
+	classPtr, _ := syscall.UTF16PtrFromString(className)
+	textPtr, _ := syscall.UTF16PtrFromString(text)
+	hwnd, _, _ := procCreateWindowExW.Call(
+		0,
+		uintptr(unsafe.Pointer(classPtr)),
+		uintptr(unsafe.Pointer(textPtr)),
+		style,
+		uintptr(x), uintptr(y), uintptr(w), uintptr(h),
+		parent, uintptr(id), hInstance, 0,
+	)
+	return hwnd
+}
+
+func sendComboString(hwnd uintptr, msg uintptr, value string) {
+	ptr, _ := syscall.UTF16PtrFromString(value)
+	_, _, _ = procSendMessageW.Call(hwnd, msg, 0, uintptr(unsafe.Pointer(ptr)))
 }
 
 func (s *windowsOverlayState) pollLoop() {
 	runCycle := func() {
 		refreshRows(s.rows, &s.rowsMu, s.cfg)
+		if s.prefs != nil {
+			saveHistoryScoresToPrefs(s.prefs, s.rows, &s.rowsMu)
+		}
 		s.rebuildDisplayRows()
 		s.render()
 	}
 	runCycle()
-	ticker := time.NewTicker(fetchInterval)
-	defer ticker.Stop()
 	for {
+		interval := fetchInterval
+		if s.poll != nil {
+			nextInterval, stopEnabled, stopAt, stopped, _ := s.poll.Snapshot()
+			if stopEnabled && time.Now().After(stopAt) {
+				s.poll.MarkStopped()
+				s.rebuildDisplayRows()
+				s.render()
+				return
+			}
+			if stopped {
+				return
+			}
+			interval = nextInterval
+		}
+		timer := time.NewTimer(interval)
 		select {
 		case <-s.stopCh:
+			timer.Stop()
 			return
-		case <-ticker.C:
+		case <-timer.C:
 			runCycle()
 		}
 	}
@@ -510,7 +716,7 @@ func windowsOverlayWndProc(hwnd uintptr, msg uint32, wParam, lParam uintptr) uin
 		return ret
 	case wmRButtonUp:
 		if state != nil {
-			state.toggleSettings()
+			state.showSettings()
 			return 0
 		}
 		ret, _, _ := procDefWindowProcW.Call(hwnd, uintptr(msg), wParam, lParam)
@@ -525,7 +731,7 @@ func windowsOverlayWndProc(hwnd uintptr, msg uint32, wParam, lParam uintptr) uin
 				state.adjustBackgroundAlpha(-overlayOpacityStep)
 				return 0
 			case vkF2:
-				state.toggleSettings()
+				state.showSettings()
 				return 0
 			case vkEsc:
 				state.closeSettings()
@@ -549,6 +755,155 @@ func windowsOverlayWndProc(hwnd uintptr, msg uint32, wParam, lParam uintptr) uin
 		ret, _, _ := procDefWindowProcW.Call(hwnd, uintptr(msg), wParam, lParam)
 		return ret
 	}
+}
+
+func windowsSettingsWndProc(hwnd uintptr, msg uint32, wParam, lParam uintptr) uintptr {
+	state := globalWindowsOverlayWindow
+	switch msg {
+	case wmCommand:
+		id := lowWord(wParam)
+		notify := highWord(wParam)
+		if state != nil && notify == bnClicked {
+			switch id {
+			case settingsControlSaveButton:
+				state.applyWindowsSettings()
+				return 0
+			case settingsControlCancelButton:
+				state.closeSettings()
+				return 0
+			}
+		}
+		if notify == cbnSelChange {
+			return 0
+		}
+	case wmClose:
+		if state != nil {
+			state.closeSettings()
+			return 0
+		}
+	case wmDestroy:
+		if state != nil && state.settingsWnd == hwnd {
+			state.settingsWnd = 0
+			state.settingsControls = windowsSettingsControls{}
+		}
+		return 0
+	}
+	ret, _, _ := procDefWindowProcW.Call(hwnd, uintptr(msg), wParam, lParam)
+	return ret
+}
+
+func (s *windowsOverlayState) applyWindowsSettings() {
+	controls := s.settingsControls
+	sizeVal, err := strconv.ParseFloat(strings.TrimSpace(getWindowText(controls.fontSize)), 32)
+	if err != nil || sizeVal < 10 || sizeVal > 36 {
+		setWindowText(controls.status, "Font size must be 10-36")
+		return
+	}
+	transparency, err := strconv.Atoi(strings.TrimSpace(getWindowText(controls.transparency)))
+	if err != nil || transparency < 0 || transparency > 100 {
+		setWindowText(controls.status, "BG % must be 0-100")
+		return
+	}
+	intervalSec, err := strconv.Atoi(strings.TrimSpace(getWindowText(controls.pollInterval)))
+	if err != nil || intervalSec < 60 || intervalSec > 86400 {
+		setWindowText(controls.status, "Poll(s) must be 60-86400")
+		return
+	}
+	manualHoldSec, err := strconv.Atoi(strings.TrimSpace(getWindowText(controls.manualHold)))
+	if err != nil || manualHoldSec < 0 || manualHoldSec > 86400 {
+		setWindowText(controls.status, "Hold(s) must be 0-86400")
+		return
+	}
+
+	stopText := strings.TrimSpace(getWindowText(controls.stopTime))
+	nextStopEnabled := false
+	nextStopAt := time.Time{}
+	if stopText != "" {
+		parsed, parseErr := time.ParseInLocation("2006-01-02 15:04", stopText, time.Now().Location())
+		if parseErr != nil {
+			setWindowText(controls.status, "Stop Time: YYYY-MM-DD HH:MM")
+			return
+		}
+		if !parsed.After(time.Now()) {
+			setWindowText(controls.status, "Stop Time must be later than now")
+			return
+		}
+		nextStopEnabled = true
+		nextStopAt = parsed
+	}
+
+	nextAlpha := alphaFromTransparencyPercent(uint8(transparency))
+	if nextAlpha < minOverlayBackgroundAlpha {
+		nextAlpha = minOverlayBackgroundAlpha
+	}
+	next := uiSettingsSnapshot{
+		FontSize:        float32(sizeVal),
+		FontColor:       colorValueByName(selectedComboText(controls.fontColor, []string{"White", "Light Gray", "Green", "Cyan", "Yellow", "Red"})),
+		FontType:        selectedComboText(controls.fontType, []string{"Regular", "Bold", "Monospace"}),
+		BackgroundAlpha: nextAlpha,
+	}
+	if next.FontType == "" {
+		next.FontType = defaultFontType
+	}
+	if s.ui != nil {
+		s.ui.Update(next)
+	}
+	if s.prefs != nil {
+		saveUISettingsToPrefs(s.prefs, next)
+	}
+
+	nextInterval := time.Duration(intervalSec) * time.Second
+	nextManualHold := time.Duration(manualHoldSec) * time.Second
+	if s.poll != nil {
+		s.poll.Update(nextInterval, nextStopEnabled, nextStopAt, nextManualHold)
+		s.poll.Reset()
+	}
+	if s.prefs != nil {
+		savePollSettingsToPrefs(s.prefs, nextInterval, nextStopEnabled, nextStopAt, nextManualHold)
+	}
+	s.alphaMu.Lock()
+	s.bgAlpha = nextAlpha
+	s.alphaMu.Unlock()
+	s.render()
+	s.closeSettings()
+}
+
+func selectedComboText(hwnd uintptr, options []string) string {
+	idx, _, _ := procSendMessageW.Call(hwnd, cbGetCurSel, 0, 0)
+	i := int(idx)
+	if i < 0 || i >= len(options) {
+		return ""
+	}
+	return options[i]
+}
+
+func getWindowText(hwnd uintptr) string {
+	if hwnd == 0 {
+		return ""
+	}
+	n, _, _ := procGetWindowTextLengthW.Call(hwnd)
+	buf := make([]uint16, int(n)+1)
+	if len(buf) == 0 {
+		return ""
+	}
+	ret, _, _ := procGetWindowTextW.Call(hwnd, uintptr(unsafe.Pointer(&buf[0])), uintptr(len(buf)))
+	return syscall.UTF16ToString(buf[:ret])
+}
+
+func setWindowText(hwnd uintptr, text string) {
+	if hwnd == 0 {
+		return
+	}
+	ptr, _ := syscall.UTF16PtrFromString(text)
+	_, _, _ = procSetWindowTextW.Call(hwnd, uintptr(unsafe.Pointer(ptr)))
+}
+
+func lowWord(v uintptr) int {
+	return int(v & 0xffff)
+}
+
+func highWord(v uintptr) int {
+	return int((v >> 16) & 0xffff)
 }
 
 func (s *windowsOverlayState) render() {
@@ -612,12 +967,6 @@ func (s *windowsOverlayState) render() {
 	for i := range pixels {
 		pixels[i] = bgPixel
 	}
-	s.displayMu.RLock()
-	settingsOpen := s.settingsOpen
-	s.displayMu.RUnlock()
-	if settingsOpen {
-		fillDIBRect(pixels, width, height, settingsPanelRect(width, height), color.NRGBA{R: 30, G: 41, B: 59, A: 235})
-	}
 	_, _, _ = procSetBkMode.Call(memDC, transparentBkMode)
 	if font, _, _ := procGetStockObject.Call(stockDefaultGUIFont); font != 0 {
 		_, _, _ = procSelectObject.Call(memDC, font)
@@ -666,7 +1015,6 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	rows := append([]overlayRow(nil), s.displayRows...)
 	lastUpdated := s.lastUpdated
 	anySuccess := s.anySuccess
-	settingsOpen := s.settingsOpen
 	s.displayMu.RUnlock()
 
 	s.sizeMu.RLock()
@@ -689,6 +1037,10 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	}
 	playerGapX := 8
 	nameMaxWidth := ratingX - playerX - playerGapX
+	textColor := colorText
+	if s.ui != nil {
+		textColor = s.ui.Snapshot().FontColor
+	}
 
 	drawWinText(hdc, width/2-55, 8, "Score Monitor", colorRef(colorHeaderText))
 	if anySuccess {
@@ -696,8 +1048,8 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	} else {
 		drawWinText(hdc, width/2-45, 26, "updating...", colorRef(colorHeaderText))
 	}
-	drawWinText(hdc, 8, 40, fmt.Sprintf("BG Transparency %d%%  (+/- or Up/Down)", s.backgroundTransparencyPercent()), colorRef(colorHeaderText))
-	drawWinText(hdc, 8, 56, "Settings: F2 or right-click, Esc to close", colorRef(colorHeaderText))
+	drawWinText(hdc, 8, 40, fmt.Sprintf("BG %d%% (+/-)", s.backgroundTransparencyPercent()), colorRef(colorHeaderText))
+	drawWinText(hdc, 8, 56, "F2/right-click settings", colorRef(colorHeaderText))
 	drawWinText(hdc, rankX, headerY, "#", colorRef(colorHeaderText))
 	drawWinText(hdc, playerX, headerY, fitWinTextToWidth(hdc, "PLAYER", nameMaxWidth), colorRef(colorHeaderText))
 	drawWinText(hdc, ratingX, headerY, "RATING", colorRef(colorHeaderText))
@@ -705,13 +1057,13 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	y := firstRowY
 	for _, row := range rows {
 		rankColor := colorRef(colorMuted)
-		nameColor := colorRef(colorText)
-		ratingColor := colorRef(colorText)
+		nameColor := colorRef(textColor)
+		ratingColor := colorRef(textColor)
 		if row.isError {
 			nameColor = colorRef(colorMuted)
 			ratingColor = colorRef(colorMuted)
 		} else if score, err := strconv.Atoi(row.rating); err == nil {
-			ratingColor = colorRef(ratingColorByScore(score, colorText))
+			ratingColor = colorRef(ratingColorByScore(score, textColor))
 		}
 		drawWinText(hdc, rankX, y, row.rank, rankColor)
 		drawWinText(hdc, playerX, y, fitWinTextToWidth(hdc, row.name, nameMaxWidth), nameColor)
@@ -720,9 +1072,6 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 		if y > maxRowsY {
 			break
 		}
-	}
-	if settingsOpen {
-		s.drawSettingsPanel(hdc, width, height)
 	}
 }
 

@@ -852,9 +852,9 @@ func showFontSettingsDialog(
 		widget.NewFormItem("Font Size", sizeEntry),
 		widget.NewFormItem("Font Color", colorSelect),
 		widget.NewFormItem("Font Type", typeSelect),
-		widget.NewFormItem("BG Transparency", alphaRow),
-		widget.NewFormItem("Polling Interval(s)", intervalEntry),
-		widget.NewFormItem("Manual Hold(s)", manualHoldEntry),
+		widget.NewFormItem("BG %", alphaRow),
+		widget.NewFormItem("Poll(s)", intervalEntry),
+		widget.NewFormItem("Hold(s)", manualHoldEntry),
 		widget.NewFormItem("Stop Time", stopTimeEntry),
 	}
 
