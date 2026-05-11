@@ -31,7 +31,16 @@ const (
 	wmRButtonUp     = 0x0205
 	wmCommand       = 0x0111
 	wmClose         = 0x0010
+	htClient        = 1
 	htCaption       = 2
+	htLeft          = 10
+	htRight         = 11
+	htTop           = 12
+	htTopLeft       = 13
+	htTopRight      = 14
+	htBottom        = 15
+	htBottomLeft    = 16
+	htBottomRight   = 17
 
 	csHRedraw = 0x0002
 	csVRedraw = 0x0001
@@ -113,13 +122,16 @@ const (
 	manualControlSaveButton   = 1203
 	manualControlCancelButton = 1204
 
-	overlayRankX     = 8
-	overlayPlayerX   = 30
-	overlayHeaderY   = 72
-	overlayFirstRowY = 98
-	overlayRowStepY  = 28
-	overlayBadgeSize = 10
-	overlayBadgeGap  = 6
+	overlayRankX      = 8
+	overlayPlayerX    = 30
+	overlayHeaderY    = 72
+	overlayFirstRowY  = 98
+	overlayRowStepY   = 28
+	overlayBadgeSize  = 10
+	overlayBadgeGap   = 6
+	overlayResizeGrip = 8
+	overlayDragTop    = 8
+	overlayDragBottom = 34
 )
 
 type winPoint struct {
@@ -861,8 +873,10 @@ func windowsOverlayWndProc(hwnd uintptr, msg uint32, wParam, lParam uintptr) uin
 	state := globalWindowsOverlayWindow
 	switch msg {
 	case wmNCHitTest:
-		ret, _, _ := procDefWindowProcW.Call(hwnd, uintptr(msg), wParam, lParam)
-		return ret
+		if state != nil {
+			return uintptr(state.hitTest(lParam))
+		}
+		return htClient
 	case wmSize:
 		if state != nil {
 			w := int(lParam & 0xffff)
@@ -1152,6 +1166,57 @@ func highWord(v uintptr) int {
 	return int((v >> 16) & 0xffff)
 }
 
+func signedLowWord(v uintptr) int {
+	w := int16(v & 0xffff)
+	return int(w)
+}
+
+func signedHighWord(v uintptr) int {
+	w := int16((v >> 16) & 0xffff)
+	return int(w)
+}
+
+func (s *windowsOverlayState) hitTest(lParam uintptr) int {
+	if s.hwnd == 0 {
+		return htClient
+	}
+	var rect winRect
+	if ret, _, _ := procGetWindowRect.Call(s.hwnd, uintptr(unsafe.Pointer(&rect))); ret == 0 {
+		return htClient
+	}
+	x := signedLowWord(lParam)
+	y := signedHighWord(lParam)
+	left := x < int(rect.Left)+overlayResizeGrip
+	right := x >= int(rect.Right)-overlayResizeGrip
+	top := y < int(rect.Top)+overlayResizeGrip
+	bottom := y >= int(rect.Bottom)-overlayResizeGrip
+
+	switch {
+	case top && left:
+		return htTopLeft
+	case top && right:
+		return htTopRight
+	case bottom && left:
+		return htBottomLeft
+	case bottom && right:
+		return htBottomRight
+	case left:
+		return htLeft
+	case right:
+		return htRight
+	case top:
+		return htTop
+	case bottom:
+		return htBottom
+	}
+
+	localY := y - int(rect.Top)
+	if localY >= overlayDragTop && localY <= overlayDragBottom {
+		return htCaption
+	}
+	return htClient
+}
+
 func (s *windowsOverlayState) render() {
 	if s.hwnd == 0 {
 		return
@@ -1266,6 +1331,12 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	s.sizeMu.RLock()
 	width, height := s.width, s.height
 	s.sizeMu.RUnlock()
+	if width < minOverlayWidth {
+		width = minOverlayWidth
+	}
+	if height < minOverlayHeight {
+		height = minOverlayHeight
+	}
 	ratingRightPad := 8
 	ratingWidth := measureWinTextWidth(hdc, "RATING")
 	if scoreWidth := measureWinTextWidth(hdc, "0000"); scoreWidth > ratingWidth {
@@ -1301,11 +1372,11 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 		textColor = s.ui.Snapshot().FontColor
 	}
 
-	drawWinText(hdc, width/2-55, 8, "Score Monitor", colorRef(colorHeaderText))
+	drawCenteredWinText(hdc, 0, width, 8, "Score Monitor", colorRef(colorHeaderText))
 	if anySuccess {
-		drawWinText(hdc, width/2-78, 26, lastUpdated, colorRef(colorHeaderText))
+		drawCenteredWinText(hdc, 0, width, 26, fitWinTextToWidth(hdc, lastUpdated, width), colorRef(colorHeaderText))
 	} else {
-		drawWinText(hdc, width/2-45, 26, "updating...", colorRef(colorHeaderText))
+		drawCenteredWinText(hdc, 0, width, 26, "updating...", colorRef(colorHeaderText))
 	}
 	drawWinText(hdc, 8, 40, fmt.Sprintf("BG %d%% (+/-)", s.backgroundTransparencyPercent()), colorRef(colorHeaderText))
 	drawWinText(hdc, overlayRankX, overlayHeaderY, "#", colorRef(colorHeaderText))
@@ -1457,6 +1528,18 @@ func drawWinText(hdc uintptr, x, y int, text string, colorRefValue uint32) {
 		uintptr(unsafe.Pointer(w)),
 		uintptr(len([]rune(text))),
 	)
+}
+
+func drawCenteredWinText(hdc uintptr, left, right, y int, text string, colorRefValue uint32) {
+	if text == "" || right <= left {
+		return
+	}
+	textWidth := measureWinTextWidth(hdc, text)
+	x := left + (right-left-textWidth)/2
+	if x < left {
+		x = left
+	}
+	drawWinText(hdc, x, y, text, colorRefValue)
 }
 
 func drawWinBadge(hdc uintptr, x, y int, rank int) {
