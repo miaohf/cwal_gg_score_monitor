@@ -610,6 +610,9 @@ func main() {
 			LastError: "pending",
 		})
 	}
+	if runWindowsTransparentMode(rows, cfg) {
+		return
+	}
 
 	myApp := app.NewWithID("cwalgg.score.monitor")
 	win := myApp.NewWindow("Score Monitor")
