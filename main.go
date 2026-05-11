@@ -303,6 +303,18 @@ func savePollSettingsToPrefs(p fyne.Preferences, interval time.Duration, stopEna
 	}
 }
 
+func nextScoreRefreshAt(now time.Time) time.Time {
+	thisHour := now.Truncate(time.Hour)
+	if now.Minute() == 0 {
+		return thisHour
+	}
+	return thisHour.Add(time.Hour)
+}
+
+func nextScoreRefreshAfter(now time.Time) time.Time {
+	return now.Truncate(time.Hour).Add(time.Hour)
+}
+
 func loadHistoryScoresFromPrefs(p fyne.Preferences, rows []*playerState) {
 	raw := strings.TrimSpace(p.String(prefHistoryScoresKey))
 	if raw == "" {
@@ -1241,9 +1253,9 @@ func pollLoop(
 			countdownText.Refresh()
 		})
 	} else {
-		runCycle()
+		applySortAndRender(rows, rowUIs, listVBox, rowsMu, settings, shouldShowBadges(pollCfg))
 	}
-	nextPollAt := time.Now()
+	nextPollAt := nextScoreRefreshAt(time.Now())
 	ticker := time.NewTicker(time.Second)
 	defer ticker.Stop()
 	var cycleMu sync.Mutex
@@ -1253,20 +1265,14 @@ func pollLoop(
 		case <-stopCh:
 			return
 		case <-pollCfg.resetCh:
-			// Interval changed: reschedule next poll to now+newInterval.
-			interval, _, _, _, _ := pollCfg.Snapshot()
-			nextPollAt = time.Now().Add(interval)
+			nextPollAt = nextScoreRefreshAt(time.Now())
 			continue
 		case <-pollCfg.kickCh:
-			// Trigger one immediate cycle (manual edit should not block other players).
-			nextPollAt = time.Now()
+			nextPollAt = nextScoreRefreshAt(time.Now())
 			continue
 		case <-ticker.C:
-			interval, stopEnabled, stopAt, stopped, _ := pollCfg.Snapshot()
+			_, stopEnabled, stopAt, stopped, _ := pollCfg.Snapshot()
 			now := time.Now()
-			if interval < time.Second {
-				interval = time.Second
-			}
 			if stopped {
 				// keep 00:00:00 (or last stopped display)
 			} else if stopEnabled {
@@ -1323,7 +1329,7 @@ func pollLoop(
 				continue
 			}
 			cycleRunning = true
-			nextPollAt = now.Add(interval)
+			nextPollAt = nextScoreRefreshAfter(now)
 			cycleMu.Unlock()
 
 			go func() {

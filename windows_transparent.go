@@ -90,7 +90,7 @@ const (
 
 	// Keep a small alpha floor: fully transparent pixels in a layered window can
 	// become effectively unclickable, making the overlay hard to focus or move.
-	minOverlayBackgroundAlpha = 48
+	minOverlayBackgroundAlpha = 16
 	maxOverlayBackgroundAlpha = 255
 	overlayOpacityStep        = 15
 	overlayStatusVisibleFor   = 5 * time.Second
@@ -128,13 +128,16 @@ const (
 	overlayHeaderY    = 72
 	overlayFirstRowY  = 98
 	overlayRowStepY   = 28
+	overlayTextHeight = 16
 	overlayStatusSize = 7
 	overlayStatusGap  = 4
 	overlayBadgeSize  = 10
-	overlayBadgeGap   = 4
 	overlayResizeGrip = 8
 	overlayDragTop    = 8
 	overlayDragBottom = 34
+
+	fontWeightNormal = 400
+	fontWeightBold   = 700
 )
 
 type winPoint struct {
@@ -326,6 +329,7 @@ var (
 	procDeleteObject          = gdi32.NewProc("DeleteObject")
 	procSelectObject          = gdi32.NewProc("SelectObject")
 	procGetStockObject        = gdi32.NewProc("GetStockObject")
+	procCreateFontW           = gdi32.NewProc("CreateFontW")
 	procCreateSolidBrush      = gdi32.NewProc("CreateSolidBrush")
 	procEllipse               = gdi32.NewProc("Ellipse")
 	procSetTextColor          = gdi32.NewProc("SetTextColor")
@@ -761,8 +765,9 @@ func (s *windowsOverlayState) pollLoop() {
 		s.rebuildDisplayRows()
 		s.render()
 	}
-	runCycle()
-	nextPollAt := time.Now().Add(s.pollInterval())
+	s.rebuildDisplayRows()
+	s.render()
+	nextPollAt := nextScoreRefreshAt(time.Now())
 	for {
 		if s.pollStopped() {
 			return
@@ -778,14 +783,13 @@ func (s *windowsOverlayState) pollLoop() {
 			return
 		case <-s.pollResetCh():
 			timer.Stop()
-			nextPollAt = time.Now().Add(s.pollInterval())
+			nextPollAt = nextScoreRefreshAt(time.Now())
 		case <-s.pollKickCh():
 			timer.Stop()
-			runCycle()
-			nextPollAt = time.Now().Add(s.pollInterval())
+			nextPollAt = nextScoreRefreshAt(time.Now())
 		case <-timer.C:
 			runCycle()
-			nextPollAt = time.Now().Add(s.pollInterval())
+			nextPollAt = nextScoreRefreshAfter(time.Now())
 		}
 	}
 }
@@ -1399,8 +1403,17 @@ func (s *windowsOverlayState) render() {
 		pixels[i] = bgPixel
 	}
 	_, _, _ = procSetBkMode.Call(memDC, transparentBkMode)
-	if font, _, _ := procGetStockObject.Call(stockDefaultGUIFont); font != 0 {
-		_, _, _ = procSelectObject.Call(memDC, font)
+	if font := s.createContentFont(); font != 0 {
+		oldFont, _, _ := procSelectObject.Call(memDC, font)
+		if oldFont != 0 {
+			defer procSelectObject.Call(memDC, oldFont)
+		}
+		defer procDeleteObject.Call(font)
+	} else if font, _, _ := procGetStockObject.Call(stockDefaultGUIFont); font != 0 {
+		oldFont, _, _ := procSelectObject.Call(memDC, font)
+		if oldFont != 0 {
+			defer procSelectObject.Call(memDC, oldFont)
+		}
 	}
 	s.drawContent(memDC)
 
@@ -1441,6 +1454,43 @@ func (s *windowsOverlayState) windowTopLeft() winPoint {
 	return winPoint{X: rect.Left, Y: rect.Top}
 }
 
+func (s *windowsOverlayState) createContentFont() uintptr {
+	snap := defaultUISettings().Snapshot()
+	if s.ui != nil {
+		snap = s.ui.Snapshot()
+	}
+	height := int(snap.FontSize + 0.5)
+	if height < 8 {
+		height = 8
+	}
+	weight := fontWeightNormal
+	if snap.FontType == "Bold" {
+		weight = fontWeightBold
+	}
+	faceName := "Segoe UI"
+	if snap.FontType == "Monospace" {
+		faceName = "Consolas"
+	}
+	face, _ := syscall.UTF16PtrFromString(faceName)
+	font, _, _ := procCreateFontW.Call(
+		uintptr(int32(-height)),
+		0,
+		0,
+		0,
+		uintptr(weight),
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		uintptr(unsafe.Pointer(face)),
+	)
+	return font
+}
+
 func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	s.displayMu.RLock()
 	rows := append([]overlayRow(nil), s.displayRows...)
@@ -1471,20 +1521,15 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 		maxRowsY = overlayFirstRowY
 	}
 	playerGapX := 2
-	statusX := ratingX - overlayStatusSize - overlayStatusGap
-	badgeX := statusX - overlayBadgeSize - overlayBadgeGap
-	hasBadgeColumn := false
+	indicatorSize := overlayStatusSize
 	for _, row := range rows {
-		if row.badgeRank >= 0 {
-			hasBadgeColumn = true
+		if row.badgeRank >= 0 && overlayBadgeSize > indicatorSize {
+			indicatorSize = overlayBadgeSize
 			break
 		}
 	}
-	nameLimitX := statusX
-	if hasBadgeColumn {
-		nameLimitX = badgeX
-	}
-	nameMaxWidth := nameLimitX - overlayPlayerX - playerGapX
+	indicatorX := ratingX - indicatorSize - overlayStatusGap
+	nameMaxWidth := indicatorX - overlayPlayerX - playerGapX
 	if nameMaxWidth < 8 {
 		nameMaxWidth = 8
 	}
@@ -1518,11 +1563,10 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 		}
 		drawWinText(hdc, overlayRankX, y, row.rank, rankColor)
 		drawWinText(hdc, overlayPlayerX, y, fitWinTextToWidth(hdc, row.name, nameMaxWidth), nameColor)
-		if row.badgeRank >= 0 {
-			drawWinBadge(hdc, badgeX, y+3, row.badgeRank)
-		}
 		if !row.statusUntil.IsZero() && now.Before(row.statusUntil) {
-			drawWinStatusDot(hdc, statusX, y+(overlayRowStepY-overlayStatusSize)/2, row.updateOK)
+			drawWinStatusDot(hdc, indicatorX+(indicatorSize-overlayStatusSize)/2, y+(overlayTextHeight-overlayStatusSize)/2, row.updateOK)
+		} else if row.badgeRank >= 0 {
+			drawWinBadge(hdc, indicatorX+(indicatorSize-overlayBadgeSize)/2, y+(overlayTextHeight-overlayBadgeSize)/2, row.badgeRank)
 		}
 		drawWinText(hdc, ratingX, y, row.rating, ratingColor)
 		y += overlayRowStepY
