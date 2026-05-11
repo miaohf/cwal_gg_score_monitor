@@ -165,9 +165,15 @@ func runWindowsTransparentMode(rows []*playerState, cfg apiConfig) bool {
 		fmt.Fprintf(os.Stderr, "failed to init api logger: %v\n", err)
 	}
 	prefs := app.NewWithID("cwalgg.score.monitor").Preferences()
+	// prefWindowOpacityKey stores window alpha (0–255). Values near 0 mean “very transparent”
+	// in Fyne mode; for layered Win32 windows that makes the entire overlay nearly invisible,
+	// which looks like the exe “does nothing”. Keep a floor so the native window is always usable.
 	initialOpacity := uint8(defaultOverlayOpacityAlpha)
 	if prefs.Bool(prefSettingsSavedKey) {
 		initialOpacity = clampByte(prefs.Int(prefWindowOpacityKey), defaultOverlayOpacityAlpha)
+		if initialOpacity < minOverlayOpacityAlpha {
+			initialOpacity = minOverlayOpacityAlpha
+		}
 	}
 	state := &windowsOverlayState{
 		rows:     rows,
