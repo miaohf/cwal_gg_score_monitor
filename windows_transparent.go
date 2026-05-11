@@ -118,6 +118,8 @@ const (
 	overlayHeaderY   = 72
 	overlayFirstRowY = 98
 	overlayRowStepY  = 28
+	overlayBadgeSize = 10
+	overlayBadgeGap  = 6
 )
 
 type winPoint struct {
@@ -198,6 +200,7 @@ type blendFunction struct {
 
 type overlayRow struct {
 	sourceIndex int
+	badgeRank   int
 	rank        string
 	name        string
 	rating      string
@@ -301,6 +304,8 @@ var (
 	procDeleteObject          = gdi32.NewProc("DeleteObject")
 	procSelectObject          = gdi32.NewProc("SelectObject")
 	procGetStockObject        = gdi32.NewProc("GetStockObject")
+	procCreateSolidBrush      = gdi32.NewProc("CreateSolidBrush")
+	procEllipse               = gdi32.NewProc("Ellipse")
 	procSetTextColor          = gdi32.NewProc("SetTextColor")
 	procSetBkMode             = gdi32.NewProc("SetBkMode")
 	procTextOutW              = gdi32.NewProc("TextOutW")
@@ -800,6 +805,7 @@ func (s *windowsOverlayState) pollKickCh() <-chan struct{} {
 
 func (s *windowsOverlayState) rebuildDisplayRows() {
 	s.rowsMu.RLock()
+	showBadges := shouldShowBadges(s.poll)
 	indices := make([]int, len(s.rows))
 	for i := range s.rows {
 		indices[i] = i
@@ -823,6 +829,7 @@ func (s *windowsOverlayState) rebuildDisplayRows() {
 		r := s.rows[idx]
 		item := overlayRow{
 			sourceIndex: idx,
+			badgeRank:   -1,
 			rank:        strconv.Itoa(pos + 1),
 			name:        r.Name,
 			rating:      strconv.Itoa(r.LiveScore),
@@ -833,6 +840,9 @@ func (s *windowsOverlayState) rebuildDisplayRows() {
 			item.rating = "-"
 		} else {
 			anyOK = true
+			if showBadges && pos < 3 {
+				item.badgeRank = pos
+			}
 		}
 		next = append(next, item)
 	}
@@ -1270,7 +1280,19 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 		maxRowsY = overlayFirstRowY
 	}
 	playerGapX := 4
-	nameMaxWidth := ratingX - overlayPlayerX - playerGapX
+	badgeX := ratingX - overlayBadgeSize - overlayBadgeGap
+	hasBadgeColumn := false
+	for _, row := range rows {
+		if row.badgeRank >= 0 {
+			hasBadgeColumn = true
+			break
+		}
+	}
+	nameLimitX := ratingX
+	if hasBadgeColumn {
+		nameLimitX = badgeX
+	}
+	nameMaxWidth := nameLimitX - overlayPlayerX - playerGapX
 	if nameMaxWidth < 20 {
 		nameMaxWidth = 20
 	}
@@ -1304,6 +1326,9 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 		}
 		drawWinText(hdc, overlayRankX, y, row.rank, rankColor)
 		drawWinText(hdc, overlayPlayerX, y, fitWinTextToWidth(hdc, row.name, nameMaxWidth), nameColor)
+		if row.badgeRank >= 0 {
+			drawWinBadge(hdc, badgeX, y+3, row.badgeRank)
+		}
 		drawWinText(hdc, ratingX, y, row.rating, ratingColor)
 		y += overlayRowStepY
 		if y > maxRowsY {
@@ -1433,6 +1458,39 @@ func drawWinText(hdc uintptr, x, y int, text string, colorRefValue uint32) {
 		uintptr(unsafe.Pointer(w)),
 		uintptr(len([]rune(text))),
 	)
+}
+
+func drawWinBadge(hdc uintptr, x, y int, rank int) {
+	c := badgeColorByRank(rank)
+	brush, _, _ := procCreateSolidBrush.Call(uintptr(colorRef(c)))
+	if brush == 0 {
+		return
+	}
+	defer procDeleteObject.Call(brush)
+	oldBrush, _, _ := procSelectObject.Call(hdc, brush)
+	if oldBrush != 0 {
+		defer procSelectObject.Call(hdc, oldBrush)
+	}
+	_, _, _ = procEllipse.Call(
+		hdc,
+		uintptr(int32(x)),
+		uintptr(int32(y)),
+		uintptr(int32(x+overlayBadgeSize)),
+		uintptr(int32(y+overlayBadgeSize)),
+	)
+}
+
+func badgeColorByRank(rank int) color.NRGBA {
+	switch rank {
+	case 0:
+		return color.NRGBA{R: 234, G: 179, B: 8, A: 255}
+	case 1:
+		return color.NRGBA{R: 148, G: 163, B: 184, A: 255}
+	case 2:
+		return color.NRGBA{R: 180, G: 83, B: 9, A: 255}
+	default:
+		return color.NRGBA{}
+	}
 }
 
 func colorRef(c color.NRGBA) uint32 {
