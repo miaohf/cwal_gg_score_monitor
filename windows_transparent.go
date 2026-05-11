@@ -20,20 +20,22 @@ import (
 )
 
 const (
-	wmDestroy   = 0x0002
-	wmPaint     = 0x000F
-	wmSize      = 0x0005
-	wmMove      = 0x0003
-	wmNCHitTest = 0x0084
-	wmKeyDown   = 0x0100
-	wmLButtonUp = 0x0202
-	wmRButtonUp = 0x0205
-	wmCommand   = 0x0111
-	wmClose     = 0x0010
-	htCaption   = 2
+	wmDestroy       = 0x0002
+	wmPaint         = 0x000F
+	wmSize          = 0x0005
+	wmMove          = 0x0003
+	wmNCHitTest     = 0x0084
+	wmKeyDown       = 0x0100
+	wmLButtonUp     = 0x0202
+	wmLButtonDblClk = 0x0203
+	wmRButtonUp     = 0x0205
+	wmCommand       = 0x0111
+	wmClose         = 0x0010
+	htCaption       = 2
 
 	csHRedraw = 0x0002
 	csVRedraw = 0x0001
+	csDblClks = 0x0008
 
 	wsExLayered        = 0x00080000
 	wsExTopmost        = 0x00000008
@@ -105,6 +107,17 @@ const (
 	settingsControlStatus       = 1008
 	settingsControlSaveButton   = 1101
 	settingsControlCancelButton = 1102
+
+	manualControlScore        = 1201
+	manualControlStatus       = 1202
+	manualControlSaveButton   = 1203
+	manualControlCancelButton = 1204
+
+	overlayRankX     = 8
+	overlayPlayerX   = 30
+	overlayHeaderY   = 72
+	overlayFirstRowY = 98
+	overlayRowStepY  = 28
 )
 
 type winPoint struct {
@@ -184,10 +197,11 @@ type blendFunction struct {
 }
 
 type overlayRow struct {
-	rank    string
-	name    string
-	rating  string
-	isError bool
+	sourceIndex int
+	rank        string
+	name        string
+	rating      string
+	isError     bool
 }
 
 type windowsOverlayState struct {
@@ -216,6 +230,10 @@ type windowsOverlayState struct {
 
 	settingsWnd      uintptr
 	settingsControls windowsSettingsControls
+
+	manualScoreWnd      uintptr
+	manualScoreControls windowsManualScoreControls
+	manualScoreRowIndex int
 }
 
 type fynePreferences interface {
@@ -234,6 +252,11 @@ type windowsSettingsControls struct {
 	manualHold   uintptr
 	stopTime     uintptr
 	status       uintptr
+}
+
+type windowsManualScoreControls struct {
+	score  uintptr
+	status uintptr
 }
 
 type overlayPlacement struct {
@@ -307,17 +330,18 @@ func runWindowsTransparentMode(rows []*playerState, cfg apiConfig) bool {
 	}
 	placement := loadOverlayPlacement(prefs)
 	state := &windowsOverlayState{
-		rows:    rows,
-		cfg:     cfg,
-		prefs:   prefs,
-		ui:      ui,
-		poll:    poll,
-		stopCh:  make(chan struct{}),
-		x:       placement.x,
-		y:       placement.y,
-		width:   placement.width,
-		height:  placement.height,
-		bgAlpha: initialAlpha,
+		rows:                rows,
+		cfg:                 cfg,
+		prefs:               prefs,
+		ui:                  ui,
+		poll:                poll,
+		stopCh:              make(chan struct{}),
+		x:                   placement.x,
+		y:                   placement.y,
+		width:               placement.width,
+		height:              placement.height,
+		bgAlpha:             initialAlpha,
+		manualScoreRowIndex: -1,
 	}
 	if err := state.run(); err != nil {
 		fmt.Fprintf(os.Stderr, "windows transparent mode failed, fallback to fyne: %v\n", err)
@@ -339,7 +363,7 @@ func (s *windowsOverlayState) run() error {
 
 	wc := wndClassEx{
 		Size:      uint32(unsafe.Sizeof(wndClassEx{})),
-		Style:     csHRedraw | csVRedraw,
+		Style:     csHRedraw | csVRedraw | csDblClks,
 		WndProc:   syscall.NewCallback(windowsOverlayWndProc),
 		Instance:  hInstance,
 		Cursor:    cursor,
@@ -472,6 +496,82 @@ func (s *windowsOverlayState) showSettings() {
 func (s *windowsOverlayState) closeSettings() {
 	if s.settingsWnd != 0 {
 		_, _, _ = procDestroyWindow.Call(s.settingsWnd)
+	}
+}
+
+func (s *windowsOverlayState) showManualScoreForPoint(y int) {
+	if y < overlayFirstRowY {
+		return
+	}
+	displayIndex := (y - overlayFirstRowY) / overlayRowStepY
+	s.displayMu.RLock()
+	if displayIndex < 0 || displayIndex >= len(s.displayRows) {
+		s.displayMu.RUnlock()
+		return
+	}
+	sourceIndex := s.displayRows[displayIndex].sourceIndex
+	s.displayMu.RUnlock()
+	s.showManualScore(sourceIndex)
+}
+
+func (s *windowsOverlayState) showManualScore(rowIndex int) {
+	if rowIndex < 0 || rowIndex >= len(s.rows) {
+		return
+	}
+	if s.manualScoreWnd != 0 {
+		_, _, _ = procDestroyWindow.Call(s.manualScoreWnd)
+	}
+	s.rowsMu.RLock()
+	row := s.rows[rowIndex]
+	name := row.Name
+	current := row.LiveScore
+	s.rowsMu.RUnlock()
+
+	hInstance, _, _ := procGetModuleHandleW.Call(0)
+	className, _ := syscall.UTF16PtrFromString("CWALGGManualScoreWindow")
+	wc := wndClassEx{
+		Size:      uint32(unsafe.Sizeof(wndClassEx{})),
+		Style:     csHRedraw | csVRedraw,
+		WndProc:   syscall.NewCallback(windowsSettingsWndProc),
+		Instance:  hInstance,
+		ClassName: className,
+	}
+	_, _, _ = procRegisterClassExW.Call(uintptr(unsafe.Pointer(&wc)))
+
+	title, _ := syscall.UTF16PtrFromString("Manual Rating")
+	hwnd, _, _ := procCreateWindowExW.Call(
+		uintptr(wsExTopmost),
+		uintptr(unsafe.Pointer(className)),
+		uintptr(unsafe.Pointer(title)),
+		uintptr(wsOverlappedWindow|wsVisible),
+		uintptr(s.x+40), uintptr(s.y+60), 340, 190,
+		s.hwnd, 0, hInstance, 0,
+	)
+	if hwnd == 0 {
+		return
+	}
+	s.manualScoreWnd = hwnd
+	s.manualScoreRowIndex = rowIndex
+	s.populateManualScoreControls(hwnd, hInstance, name, current)
+	_, _, _ = procShowWindow.Call(hwnd, sWShow)
+	_, _, _ = procSetFocus.Call(s.manualScoreControls.score)
+}
+
+func (s *windowsOverlayState) populateManualScoreControls(hwnd, hInstance uintptr, name string, current int) {
+	s.addStatic(hwnd, hInstance, 18, 20, 290, 22, fmt.Sprintf("%s score", name))
+	value := ""
+	if current > 0 {
+		value = strconv.Itoa(current)
+	}
+	s.manualScoreControls.score = s.addEdit(hwnd, hInstance, manualControlScore, 18, 48, 290, 24, value)
+	s.manualScoreControls.status = s.addStatic(hwnd, hInstance, 18, 82, 290, 22, "")
+	s.addButton(hwnd, hInstance, manualControlSaveButton, 132, 116, 76, 28, "Save")
+	s.addButton(hwnd, hInstance, manualControlCancelButton, 226, 116, 76, 28, "Cancel")
+}
+
+func (s *windowsOverlayState) closeManualScore() {
+	if s.manualScoreWnd != 0 {
+		_, _, _ = procDestroyWindow.Call(s.manualScoreWnd)
 	}
 }
 
@@ -613,30 +713,72 @@ func (s *windowsOverlayState) pollLoop() {
 		s.render()
 	}
 	runCycle()
+	nextPollAt := time.Now().Add(s.pollInterval())
 	for {
-		interval := fetchInterval
-		if s.poll != nil {
-			nextInterval, stopEnabled, stopAt, stopped, _ := s.poll.Snapshot()
-			if stopEnabled && time.Now().After(stopAt) {
-				s.poll.MarkStopped()
-				s.rebuildDisplayRows()
-				s.render()
-				return
-			}
-			if stopped {
-				return
-			}
-			interval = nextInterval
+		if s.pollStopped() {
+			return
 		}
-		timer := time.NewTimer(interval)
+		wait := time.Until(nextPollAt)
+		if wait < 0 {
+			wait = 0
+		}
+		timer := time.NewTimer(wait)
 		select {
 		case <-s.stopCh:
 			timer.Stop()
 			return
+		case <-s.pollResetCh():
+			timer.Stop()
+			nextPollAt = time.Now().Add(s.pollInterval())
+		case <-s.pollKickCh():
+			timer.Stop()
+			runCycle()
+			nextPollAt = time.Now().Add(s.pollInterval())
 		case <-timer.C:
 			runCycle()
+			nextPollAt = time.Now().Add(s.pollInterval())
 		}
 	}
+}
+
+func (s *windowsOverlayState) pollInterval() time.Duration {
+	if s.poll == nil {
+		return fetchInterval
+	}
+	interval, _, _, _, _ := s.poll.Snapshot()
+	return interval
+}
+
+func (s *windowsOverlayState) pollStopped() bool {
+	if s.poll == nil {
+		return false
+	}
+	_, stopEnabled, stopAt, stopped, _ := s.poll.Snapshot()
+	if stopped {
+		return true
+	}
+	if stopEnabled && !time.Now().Before(stopAt) {
+		if s.poll.MarkStopped() {
+			s.rebuildDisplayRows()
+			s.render()
+		}
+		return true
+	}
+	return false
+}
+
+func (s *windowsOverlayState) pollResetCh() <-chan struct{} {
+	if s.poll == nil {
+		return nil
+	}
+	return s.poll.resetCh
+}
+
+func (s *windowsOverlayState) pollKickCh() <-chan struct{} {
+	if s.poll == nil {
+		return nil
+	}
+	return s.poll.kickCh
 }
 
 func (s *windowsOverlayState) rebuildDisplayRows() {
@@ -663,10 +805,11 @@ func (s *windowsOverlayState) rebuildDisplayRows() {
 	for pos, idx := range indices {
 		r := s.rows[idx]
 		item := overlayRow{
-			rank:    strconv.Itoa(pos + 1),
-			name:    r.Name,
-			rating:  strconv.Itoa(r.LiveScore),
-			isError: r.LastError != "",
+			sourceIndex: idx,
+			rank:        strconv.Itoa(pos + 1),
+			name:        r.Name,
+			rating:      strconv.Itoa(r.LiveScore),
+			isError:     r.LastError != "",
 		}
 		if item.isError {
 			item.rank = "-"
@@ -716,6 +859,14 @@ func windowsOverlayWndProc(hwnd uintptr, msg uint32, wParam, lParam uintptr) uin
 	case wmLButtonUp:
 		ret, _, _ := procDefWindowProcW.Call(hwnd, uintptr(msg), wParam, lParam)
 		return ret
+	case wmLButtonDblClk:
+		if state != nil {
+			y := int((lParam >> 16) & 0xffff)
+			state.showManualScoreForPoint(y)
+			return 0
+		}
+		ret, _, _ := procDefWindowProcW.Call(hwnd, uintptr(msg), wParam, lParam)
+		return ret
 	case wmRButtonUp:
 		if state != nil {
 			state.showSettings()
@@ -737,6 +888,7 @@ func windowsOverlayWndProc(hwnd uintptr, msg uint32, wParam, lParam uintptr) uin
 				return 0
 			case vkEsc:
 				state.closeSettings()
+				state.closeManualScore()
 				return 0
 			}
 		}
@@ -766,13 +918,25 @@ func windowsSettingsWndProc(hwnd uintptr, msg uint32, wParam, lParam uintptr) ui
 		id := lowWord(wParam)
 		notify := highWord(wParam)
 		if state != nil && notify == bnClicked {
-			switch id {
-			case settingsControlSaveButton:
-				state.applyWindowsSettings()
-				return 0
-			case settingsControlCancelButton:
-				state.closeSettings()
-				return 0
+			if hwnd == state.settingsWnd {
+				switch id {
+				case settingsControlSaveButton:
+					state.applyWindowsSettings()
+					return 0
+				case settingsControlCancelButton:
+					state.closeSettings()
+					return 0
+				}
+			}
+			if hwnd == state.manualScoreWnd {
+				switch id {
+				case manualControlSaveButton:
+					state.applyManualScore()
+					return 0
+				case manualControlCancelButton:
+					state.closeManualScore()
+					return 0
+				}
 			}
 		}
 		if notify == cbnSelChange {
@@ -780,13 +944,23 @@ func windowsSettingsWndProc(hwnd uintptr, msg uint32, wParam, lParam uintptr) ui
 		}
 	case wmClose:
 		if state != nil {
-			state.closeSettings()
-			return 0
+			if hwnd == state.settingsWnd {
+				state.closeSettings()
+				return 0
+			}
+			if hwnd == state.manualScoreWnd {
+				state.closeManualScore()
+				return 0
+			}
 		}
 	case wmDestroy:
 		if state != nil && state.settingsWnd == hwnd {
 			state.settingsWnd = 0
 			state.settingsControls = windowsSettingsControls{}
+		} else if state != nil && state.manualScoreWnd == hwnd {
+			state.manualScoreWnd = 0
+			state.manualScoreControls = windowsManualScoreControls{}
+			state.manualScoreRowIndex = -1
 		}
 		return 0
 	}
@@ -868,6 +1042,49 @@ func (s *windowsOverlayState) applyWindowsSettings() {
 	s.alphaMu.Unlock()
 	s.render()
 	s.closeSettings()
+}
+
+func (s *windowsOverlayState) applyManualScore() {
+	rowIndex := s.manualScoreRowIndex
+	if rowIndex < 0 || rowIndex >= len(s.rows) {
+		s.closeManualScore()
+		return
+	}
+	v, err := strconv.Atoi(strings.TrimSpace(getWindowText(s.manualScoreControls.score)))
+	if err != nil || v < 0 || v > 4000 {
+		setWindowText(s.manualScoreControls.status, "Score must be 0-4000")
+		return
+	}
+	manualHold := manualHoldDefaultDuration
+	if s.poll != nil {
+		_, _, _, _, manualHold = s.poll.Snapshot()
+	}
+
+	s.rowsMu.Lock()
+	row := s.rows[rowIndex]
+	row.LiveScore = v
+	row.LastError = ""
+	row.hasManual = manualHold > 0
+	if manualHold > 0 {
+		row.manualUntil = time.Now().Add(manualHold)
+	} else {
+		row.manualUntil = time.Time{}
+	}
+	row.prevScore = v
+	row.hasPrev = true
+	row.trend = 0
+	s.rowsMu.Unlock()
+
+	if s.prefs != nil {
+		saveHistoryScoresToPrefs(s.prefs, s.rows, &s.rowsMu)
+	}
+	s.rebuildDisplayRows()
+	s.render()
+	if s.poll != nil {
+		s.poll.Kick()
+		s.poll.KickAfter(manualHold)
+	}
+	s.closeManualScore()
 }
 
 func selectedComboText(hwnd uintptr, options []string) string {
@@ -1022,13 +1239,6 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	s.sizeMu.RLock()
 	width, height := s.width, s.height
 	s.sizeMu.RUnlock()
-	const (
-		rankX     = 8
-		playerX   = 30
-		headerY   = 72
-		firstRowY = 98
-		rowStepY  = 28
-	)
 	ratingRightPad := 8
 	ratingWidth := measureWinTextWidth(hdc, "RATING")
 	if scoreWidth := measureWinTextWidth(hdc, "0000"); scoreWidth > ratingWidth {
@@ -1039,11 +1249,11 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 		ratingX = 96
 	}
 	maxRowsY := height - 50
-	if maxRowsY < firstRowY {
-		maxRowsY = firstRowY
+	if maxRowsY < overlayFirstRowY {
+		maxRowsY = overlayFirstRowY
 	}
 	playerGapX := 4
-	nameMaxWidth := ratingX - playerX - playerGapX
+	nameMaxWidth := ratingX - overlayPlayerX - playerGapX
 	if nameMaxWidth < 20 {
 		nameMaxWidth = 20
 	}
@@ -1060,11 +1270,11 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	}
 	drawWinText(hdc, 8, 40, fmt.Sprintf("BG %d%% (+/-)", s.backgroundTransparencyPercent()), colorRef(colorHeaderText))
 	drawWinText(hdc, 8, 56, "F2/right-click settings", colorRef(colorHeaderText))
-	drawWinText(hdc, rankX, headerY, "#", colorRef(colorHeaderText))
-	drawWinText(hdc, playerX, headerY, fitWinTextToWidth(hdc, "PLAYER", nameMaxWidth), colorRef(colorHeaderText))
-	drawWinText(hdc, ratingX, headerY, fitWinTextToWidth(hdc, "RATING", width-ratingX-ratingRightPad), colorRef(colorHeaderText))
+	drawWinText(hdc, overlayRankX, overlayHeaderY, "#", colorRef(colorHeaderText))
+	drawWinText(hdc, overlayPlayerX, overlayHeaderY, fitWinTextToWidth(hdc, "PLAYER", nameMaxWidth), colorRef(colorHeaderText))
+	drawWinText(hdc, ratingX, overlayHeaderY, fitWinTextToWidth(hdc, "RATING", width-ratingX-ratingRightPad), colorRef(colorHeaderText))
 
-	y := firstRowY
+	y := overlayFirstRowY
 	for _, row := range rows {
 		rankColor := colorRef(colorMuted)
 		nameColor := colorRef(textColor)
@@ -1075,10 +1285,10 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 		} else if score, err := strconv.Atoi(row.rating); err == nil {
 			ratingColor = colorRef(ratingColorByScore(score, textColor))
 		}
-		drawWinText(hdc, rankX, y, row.rank, rankColor)
-		drawWinText(hdc, playerX, y, fitWinTextToWidth(hdc, row.name, nameMaxWidth), nameColor)
+		drawWinText(hdc, overlayRankX, y, row.rank, rankColor)
+		drawWinText(hdc, overlayPlayerX, y, fitWinTextToWidth(hdc, row.name, nameMaxWidth), nameColor)
 		drawWinText(hdc, ratingX, y, row.rating, ratingColor)
-		y += rowStepY
+		y += overlayRowStepY
 		if y > maxRowsY {
 			break
 		}
