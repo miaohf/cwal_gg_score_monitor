@@ -29,16 +29,13 @@ const (
 	csHRedraw = 0x0002
 	csVRedraw = 0x0001
 
-	wsExTopmost    = 0x00000008
-	wsExToolWindow = 0x00000080
 	wsExLayered    = 0x00080000
-	wsPopup        = 0x80000000
+	wsOverlappedWindow = 0x00CF0000
 	wsVisible      = 0x10000000
 
 	sWShow = 5
 
-	lwaColorKey = 0x00000001
-	lwaAlpha    = 0x00000002
+	lwaAlpha = 0x00000002
 
 	stockDefaultGUIFont = 17
 	transparentBkMode   = 1
@@ -211,11 +208,11 @@ func (s *windowsOverlayState) run() error {
 	}
 
 	hwnd, _, err := procCreateWindowExW.Call(
-		uintptr(wsExTopmost|wsExToolWindow|wsExLayered),
+		uintptr(wsExLayered),
 		uintptr(unsafe.Pointer(className)),
 		uintptr(unsafe.Pointer(title)),
-		uintptr(wsPopup|wsVisible),
-		uintptr(40), uintptr(40), uintptr(248), uintptr(700),
+		uintptr(wsOverlappedWindow|wsVisible),
+		uintptr(60), uintptr(60), uintptr(420), uintptr(700),
 		0, 0, hInstance, 0,
 	)
 	if hwnd == 0 {
@@ -252,7 +249,7 @@ func (s *windowsOverlayState) applyLayeredWindowAttributes() {
 	s.opacityMu.RLock()
 	alpha := s.opacityA
 	s.opacityMu.RUnlock()
-	_, _, _ = procSetLayeredWindowAttrs.Call(s.hwnd, 0x00000000, uintptr(alpha), uintptr(lwaColorKey|lwaAlpha))
+	_, _, _ = procSetLayeredWindowAttrs.Call(s.hwnd, 0, uintptr(alpha), uintptr(lwaAlpha))
 }
 
 func (s *windowsOverlayState) opacityPercent() int {

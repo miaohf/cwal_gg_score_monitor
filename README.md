@@ -62,6 +62,7 @@ Messiah 2000
 - 程序会先调用 `https://v2.api.cwal.gg/player-update` 触发更新，再调用 `player_profile_view` 读取最新分数。
 - 分数读取响应中的 `rating` 字段（不做其他字段兜底）。
 - 当前 GUI 继续使用 `Fyne`。
+- `Settings` 里的 `BG Transparency` 会保存为背景/窗口 alpha；在 Windows 上会作为原生透明叠层的初始不透明度（同一偏好键），也可用 `+` / `-`、`↑` / `↓` 微调。
 
 ### 构建 Windows 可执行文件
 
