@@ -78,8 +78,10 @@ const (
 	prefPollStopEnabledKey = "poll.stop_enabled"
 	prefPollStopAtKey      = "poll.stop_at"
 	prefHistoryScoresKey   = "history.scores_json"
+	prefWindowWidthKey     = "window.width"
+	prefWindowHeightKey    = "window.height"
 	defaultWindowOpacity   = 255
-	defaultFontSize        = 13
+	defaultFontSize        = 16
 	defaultFontType        = "Regular"
 	appVersion             = "v2.0"
 )
@@ -301,6 +303,34 @@ func savePollSettingsToPrefs(p fyne.Preferences, interval time.Duration, stopEna
 	} else {
 		p.SetString(prefPollStopAtKey, "")
 	}
+}
+
+func defaultStopTime(now time.Time) time.Time {
+	stop := time.Date(now.Year(), now.Month(), now.Day(), 23, 45, 0, 0, now.Location())
+	if !stop.After(now) {
+		stop = stop.Add(24 * time.Hour)
+	}
+	return stop
+}
+
+func loadWindowSizeFromPrefs(p fyne.Preferences) fyne.Size {
+	width := float32(p.Float(prefWindowWidthKey))
+	height := float32(p.Float(prefWindowHeightKey))
+	if width < 160 || width > 4000 {
+		width = 420
+	}
+	if height < 220 || height > 4000 {
+		height = 700
+	}
+	return fyne.NewSize(width, height)
+}
+
+func saveWindowSizeToPrefs(p fyne.Preferences, size fyne.Size) {
+	if size.Width < 160 || size.Height < 220 {
+		return
+	}
+	p.SetFloat(prefWindowWidthKey, float64(size.Width))
+	p.SetFloat(prefWindowHeightKey, float64(size.Height))
 }
 
 func nextScoreRefreshAt(now time.Time) time.Time {
@@ -628,7 +658,7 @@ func main() {
 
 	myApp := app.NewWithID("cwalgg.score.monitor")
 	win := myApp.NewWindow("Score Monitor")
-	win.Resize(fyne.NewSize(420, 700))
+	win.Resize(loadWindowSizeFromPrefs(myApp.Preferences()))
 	if err := initAPILogger(apiLogPath); err != nil {
 		fmt.Fprintf(os.Stderr, "failed to init api logger: %v\n", err)
 	}
@@ -733,6 +763,7 @@ func main() {
 	stopCh := make(chan struct{})
 	go pollLoop(rows, rowUIs, listVBox, &rowsMu, statusDot, updatedText, countdownText, stopCh, cfg, settings, pollCfg, myApp.Preferences(), win)
 	win.SetCloseIntercept(func() {
+		saveWindowSizeToPrefs(myApp.Preferences(), win.Canvas().Size())
 		close(stopCh)
 		win.Close()
 	})
@@ -856,8 +887,7 @@ func showFontSettingsDialog(
 	if stopEnabled {
 		stopTimeEntry.SetText(stopAt.Format("2006-01-02 15:04"))
 	} else {
-		now := time.Now()
-		stopTimeEntry.SetText(fmt.Sprintf("%s 00:00", now.Format("2006-01-02")))
+		stopTimeEntry.SetText(defaultStopTime(time.Now()).Format("2006-01-02 15:04"))
 	}
 
 	items := []*widget.FormItem{
@@ -946,30 +976,10 @@ func showFontSettingsDialog(
 func applyTypography(s uiSettingsSnapshot, staticTexts []*canvas.Text, headerRefs headerUI, rowUIs []*rowUI) {
 	bodySize := s.FontSize
 	headerSize := maxFloat32(10, bodySize-2)
-	footerSize := maxFloat32(9, bodySize-3)
 
 	bodyStyle := styleByType(s.FontType)
 	headerStyle := bodyStyle
 	headerStyle.Bold = true
-
-	footerUpdatedSize := maxFloat32(float32(footerUpdatedTimeMinSize), footerSize-float32(footerUpdatedTimeBelowFooter))
-	for i, t := range staticTexts {
-		t.Color = s.FontColor
-		// [0]=last-updated (footer strip), [1]=countdown (header), [2]=footer stats
-		if i == 1 {
-			clockStyle := styleByType(s.FontType)
-			clockStyle.Monospace = true
-			t.TextStyle = clockStyle
-			t.TextSize = bodySize // larger than surrounding header-strip text
-		} else if i == 0 {
-			t.TextStyle = bodyStyle
-			t.TextSize = footerUpdatedSize
-		} else {
-			t.TextStyle = bodyStyle
-			t.TextSize = footerSize
-		}
-		t.Refresh()
-	}
 
 	headerRefs.rank.Color = s.FontColor
 	headerRefs.player.Color = s.FontColor

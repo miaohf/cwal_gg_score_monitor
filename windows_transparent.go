@@ -700,6 +700,8 @@ func (s *windowsOverlayState) populateSettingsControls(hwnd, hInstance uintptr) 
 	stopValue := ""
 	if stopEnabled {
 		stopValue = stopAt.Format("2006-01-02 15:04")
+	} else {
+		stopValue = defaultStopTime(time.Now()).Format("2006-01-02 15:04")
 	}
 	s.addStatic(hwnd, hInstance, labelX, y+4, 110, 22, "Stop Time")
 	s.settingsControls.stopTime = s.addEdit(hwnd, hInstance, settingsControlStopTime, fieldX, y, 170, 24, stopValue)
@@ -1403,13 +1405,7 @@ func (s *windowsOverlayState) render() {
 		pixels[i] = bgPixel
 	}
 	_, _, _ = procSetBkMode.Call(memDC, transparentBkMode)
-	if font := s.createContentFont(); font != 0 {
-		oldFont, _, _ := procSelectObject.Call(memDC, font)
-		if oldFont != 0 {
-			defer procSelectObject.Call(memDC, oldFont)
-		}
-		defer procDeleteObject.Call(font)
-	} else if font, _, _ := procGetStockObject.Call(stockDefaultGUIFont); font != 0 {
+	if font, _, _ := procGetStockObject.Call(stockDefaultGUIFont); font != 0 {
 		oldFont, _, _ := procSelectObject.Call(memDC, font)
 		if oldFont != 0 {
 			defer procSelectObject.Call(memDC, oldFont)
@@ -1507,6 +1503,21 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	if height < minOverlayHeight {
 		height = minOverlayHeight
 	}
+	drawCenteredWinText(hdc, 0, width, 8, "Score Monitor", colorRef(colorHeaderText))
+	if anySuccess {
+		drawCenteredWinText(hdc, 0, width, 26, fitWinTextToWidth(hdc, lastUpdated, width), colorRef(colorHeaderText))
+	} else {
+		drawCenteredWinText(hdc, 0, width, 26, "updating...", colorRef(colorHeaderText))
+	}
+	drawWinText(hdc, 8, 40, fmt.Sprintf("BG %d%% (+/-)", s.backgroundTransparencyPercent()), colorRef(colorHeaderText))
+
+	if font := s.createContentFont(); font != 0 {
+		oldFont, _, _ := procSelectObject.Call(hdc, font)
+		if oldFont != 0 {
+			defer procSelectObject.Call(hdc, oldFont)
+		}
+		defer procDeleteObject.Call(font)
+	}
 	ratingRightPad := 4
 	ratingWidth := measureWinTextWidth(hdc, "RATING")
 	if scoreWidth := measureWinTextWidth(hdc, "0000"); scoreWidth > ratingWidth {
@@ -1538,16 +1549,9 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 		textColor = s.ui.Snapshot().FontColor
 	}
 
-	drawCenteredWinText(hdc, 0, width, 8, "Score Monitor", colorRef(colorHeaderText))
-	if anySuccess {
-		drawCenteredWinText(hdc, 0, width, 26, fitWinTextToWidth(hdc, lastUpdated, width), colorRef(colorHeaderText))
-	} else {
-		drawCenteredWinText(hdc, 0, width, 26, "updating...", colorRef(colorHeaderText))
-	}
-	drawWinText(hdc, 8, 40, fmt.Sprintf("BG %d%% (+/-)", s.backgroundTransparencyPercent()), colorRef(colorHeaderText))
-	drawWinText(hdc, overlayRankX, overlayHeaderY, "#", colorRef(colorHeaderText))
-	drawWinText(hdc, overlayPlayerX, overlayHeaderY, fitWinTextToWidth(hdc, "PLAYER", nameMaxWidth), colorRef(colorHeaderText))
-	drawWinText(hdc, ratingX, overlayHeaderY, fitWinTextToWidth(hdc, "RATING", width-ratingX-ratingRightPad), colorRef(colorHeaderText))
+	drawWinText(hdc, overlayRankX, overlayHeaderY, "#", colorRef(textColor))
+	drawWinText(hdc, overlayPlayerX, overlayHeaderY, fitWinTextToWidth(hdc, "PLAYER", nameMaxWidth), colorRef(textColor))
+	drawWinText(hdc, ratingX, overlayHeaderY, fitWinTextToWidth(hdc, "RATING", width-ratingX-ratingRightPad), colorRef(textColor))
 
 	now := time.Now()
 	y := overlayFirstRowY
