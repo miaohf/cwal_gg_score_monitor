@@ -49,6 +49,7 @@ const (
 	vkAdd      = 0x6B
 	vkSubtract = 0x6D
 	vkF2       = 0x71
+	vkEsc      = 0x1B
 
 	biRGB        = 0
 	dibRGBColors = 0
@@ -178,7 +179,7 @@ type windowsOverlayState struct {
 	lastUpdated string
 	anySuccess  bool
 
-	openSettings bool
+	settingsOpen bool
 }
 
 type fynePreferences interface {
@@ -196,8 +197,6 @@ type overlayPlacement struct {
 }
 
 var (
-	errOpenFyneSettings = errors.New("open fyne settings")
-
 	user32                    = syscall.NewLazyDLL("user32.dll")
 	gdi32                     = syscall.NewLazyDLL("gdi32.dll")
 	kernel32                  = syscall.NewLazyDLL("kernel32.dll")
@@ -261,9 +260,6 @@ func runWindowsTransparentMode(rows []*playerState, cfg apiConfig) bool {
 		bgAlpha: initialAlpha,
 	}
 	if err := state.run(); err != nil {
-		if errors.Is(err, errOpenFyneSettings) {
-			return false
-		}
 		fmt.Fprintf(os.Stderr, "windows transparent mode failed, fallback to fyne: %v\n", err)
 		return false
 	}
@@ -324,13 +320,6 @@ func (s *windowsOverlayState) run() error {
 		_, _, _ = procDispatchMessageW.Call(uintptr(unsafe.Pointer(&msg)))
 	}
 	close(s.stopCh)
-	if s.openSettings && s.hwnd != 0 {
-		_, _, _ = procDestroyWindow.Call(s.hwnd)
-		s.hwnd = 0
-	}
-	if s.openSettings {
-		return errOpenFyneSettings
-	}
 	return nil
 }
 
@@ -404,6 +393,23 @@ func (s *windowsOverlayState) adjustBackgroundAlpha(delta int) {
 		s.prefs.SetInt(prefWindowOpacityKey, int(nextAlpha))
 	}
 	s.render()
+}
+
+func (s *windowsOverlayState) toggleSettings() {
+	s.displayMu.Lock()
+	s.settingsOpen = !s.settingsOpen
+	s.displayMu.Unlock()
+	s.render()
+}
+
+func (s *windowsOverlayState) closeSettings() {
+	s.displayMu.Lock()
+	wasOpen := s.settingsOpen
+	s.settingsOpen = false
+	s.displayMu.Unlock()
+	if wasOpen {
+		s.render()
+	}
 }
 
 func (s *windowsOverlayState) pollLoop() {
@@ -504,8 +510,7 @@ func windowsOverlayWndProc(hwnd uintptr, msg uint32, wParam, lParam uintptr) uin
 		return ret
 	case wmRButtonUp:
 		if state != nil {
-			state.openSettings = true
-			_, _, _ = procPostQuitMessage.Call(0)
+			state.toggleSettings()
 			return 0
 		}
 		ret, _, _ := procDefWindowProcW.Call(hwnd, uintptr(msg), wParam, lParam)
@@ -520,8 +525,10 @@ func windowsOverlayWndProc(hwnd uintptr, msg uint32, wParam, lParam uintptr) uin
 				state.adjustBackgroundAlpha(-overlayOpacityStep)
 				return 0
 			case vkF2:
-				state.openSettings = true
-				_, _, _ = procPostQuitMessage.Call(0)
+				state.toggleSettings()
+				return 0
+			case vkEsc:
+				state.closeSettings()
 				return 0
 			}
 		}
@@ -605,6 +612,12 @@ func (s *windowsOverlayState) render() {
 	for i := range pixels {
 		pixels[i] = bgPixel
 	}
+	s.displayMu.RLock()
+	settingsOpen := s.settingsOpen
+	s.displayMu.RUnlock()
+	if settingsOpen {
+		fillDIBRect(pixels, width, height, settingsPanelRect(width, height), color.NRGBA{R: 30, G: 41, B: 59, A: 235})
+	}
 	_, _, _ = procSetBkMode.Call(memDC, transparentBkMode)
 	if font, _, _ := procGetStockObject.Call(stockDefaultGUIFont); font != 0 {
 		_, _, _ = procSelectObject.Call(memDC, font)
@@ -653,6 +666,7 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	rows := append([]overlayRow(nil), s.displayRows...)
 	lastUpdated := s.lastUpdated
 	anySuccess := s.anySuccess
+	settingsOpen := s.settingsOpen
 	s.displayMu.RUnlock()
 
 	s.sizeMu.RLock()
@@ -661,8 +675,8 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	const (
 		rankX     = 8
 		playerX   = 30
-		headerY   = 52
-		firstRowY = 78
+		headerY   = 72
+		firstRowY = 98
 		rowStepY  = 28
 	)
 	ratingX := width - 86
@@ -682,7 +696,8 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	} else {
 		drawWinText(hdc, width/2-45, 26, "updating...", colorRef(colorHeaderText))
 	}
-	drawWinText(hdc, 8, 40, fmt.Sprintf("BG Transparency %d%%  (+/-), Settings: F2/right-click", s.backgroundTransparencyPercent()), colorRef(colorHeaderText))
+	drawWinText(hdc, 8, 40, fmt.Sprintf("BG Transparency %d%%  (+/- or Up/Down)", s.backgroundTransparencyPercent()), colorRef(colorHeaderText))
+	drawWinText(hdc, 8, 56, "Settings: F2 or right-click, Esc to close", colorRef(colorHeaderText))
 	drawWinText(hdc, rankX, headerY, "#", colorRef(colorHeaderText))
 	drawWinText(hdc, playerX, headerY, fitWinTextToWidth(hdc, "PLAYER", nameMaxWidth), colorRef(colorHeaderText))
 	drawWinText(hdc, ratingX, headerY, "RATING", colorRef(colorHeaderText))
@@ -706,14 +721,9 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 			break
 		}
 	}
-}
-
-func (s *windowsOverlayState) hitSettings(x, y int) bool {
-	s.sizeMu.RLock()
-	width, height := s.width, s.height
-	s.sizeMu.RUnlock()
-	btn := settingsButtonRect(width, height)
-	return x >= btn.x && x <= btn.x+btn.w && y >= btn.y && y <= btn.y+btn.h
+	if settingsOpen {
+		s.drawSettingsPanel(hdc, width, height)
+	}
 }
 
 type winButtonRect struct {
@@ -723,14 +733,35 @@ type winButtonRect struct {
 	h int
 }
 
-func settingsButtonRect(width, height int) winButtonRect {
-	if width < 120 {
-		width = 120
+func (s *windowsOverlayState) drawSettingsPanel(hdc uintptr, width, height int) {
+	panel := settingsPanelRect(width, height)
+	x := panel.x
+	y := panel.y
+
+	// Text drawn after this rect becomes fully opaque in the post-processing pass.
+	drawWinText(hdc, x+18, y+16, "Settings", colorRef(colorText))
+	drawWinText(hdc, x+18, y+48, fmt.Sprintf("BG Transparency: %d%%", s.backgroundTransparencyPercent()), colorRef(colorText))
+	drawWinText(hdc, x+18, y+78, "+ / Up: less transparent", colorRef(colorHeaderText))
+	drawWinText(hdc, x+18, y+104, "- / Down: more transparent", colorRef(colorHeaderText))
+	drawWinText(hdc, x+18, y+130, "F2 / right-click: toggle settings", colorRef(colorHeaderText))
+	drawWinText(hdc, x+18, y+156, "Esc: close", colorRef(colorHeaderText))
+}
+
+func settingsPanelRect(width, height int) winButtonRect {
+	panelW := width - 48
+	if panelW > 380 {
+		panelW = 380
 	}
-	if height < 90 {
-		height = 90
+	if panelW < 240 {
+		panelW = 240
 	}
-	return winButtonRect{x: width - 96, y: height - 38, w: 88, h: 26}
+	panelH := 190
+	x := (width - panelW) / 2
+	y := (height - panelH) / 2
+	if y < 80 {
+		y = 80
+	}
+	return winButtonRect{x: x, y: y, w: panelW, h: panelH}
 }
 
 func fillDIBRect(pixels []uint32, width int, height int, rect winButtonRect, c color.NRGBA) {
