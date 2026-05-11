@@ -605,7 +605,7 @@ func (s *windowsOverlayState) render() {
 	for i := range pixels {
 		pixels[i] = bgPixel
 	}
-	fillDIBRect(pixels, width, height, settingsButtonRect(width), color.NRGBA{R: 30, G: 41, B: 59, A: 220})
+	fillDIBRect(pixels, width, height, settingsButtonRect(width, height), color.NRGBA{R: 30, G: 41, B: 59, A: 220})
 
 	_, _, _ = procSetBkMode.Call(memDC, transparentBkMode)
 	if font, _, _ := procGetStockObject.Call(stockDefaultGUIFont); font != 0 {
@@ -671,7 +671,7 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	if ratingX < 150 {
 		ratingX = 150
 	}
-	maxRowsY := height - 30
+	maxRowsY := height - 50
 	if maxRowsY < firstRowY {
 		maxRowsY = firstRowY
 	}
@@ -679,14 +679,12 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	nameMaxWidth := ratingX - playerX - playerGapX
 
 	drawWinText(hdc, width/2-55, 8, "Score Monitor", colorRef(colorHeaderText))
-	btn := settingsButtonRect(width)
-	drawWinText(hdc, btn.x+10, btn.y+5, "Settings", colorRef(colorText))
 	if anySuccess {
 		drawWinText(hdc, width/2-78, 26, lastUpdated, colorRef(colorHeaderText))
 	} else {
 		drawWinText(hdc, width/2-45, 26, "updating...", colorRef(colorHeaderText))
 	}
-	drawWinText(hdc, 8, 40, fmt.Sprintf("BG Transparency %d%%  (+/-), Settings: F2", s.backgroundTransparencyPercent()), colorRef(colorHeaderText))
+	drawWinText(hdc, 8, 40, fmt.Sprintf("BG Transparency %d%%  (+/-), Settings: F2 or bottom button", s.backgroundTransparencyPercent()), colorRef(colorHeaderText))
 	drawWinText(hdc, rankX, headerY, "#", colorRef(colorHeaderText))
 	drawWinText(hdc, playerX, headerY, fitWinTextToWidth(hdc, "PLAYER", nameMaxWidth), colorRef(colorHeaderText))
 	drawWinText(hdc, ratingX, headerY, "RATING", colorRef(colorHeaderText))
@@ -710,13 +708,15 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 			break
 		}
 	}
+	btn := settingsButtonRect(width, height)
+	drawWinText(hdc, btn.x+10, btn.y+5, "Settings", colorRef(colorText))
 }
 
 func (s *windowsOverlayState) hitSettings(x, y int) bool {
 	s.sizeMu.RLock()
-	width := s.width
+	width, height := s.width, s.height
 	s.sizeMu.RUnlock()
-	btn := settingsButtonRect(width)
+	btn := settingsButtonRect(width, height)
 	return x >= btn.x && x <= btn.x+btn.w && y >= btn.y && y <= btn.y+btn.h
 }
 
@@ -727,11 +727,14 @@ type winButtonRect struct {
 	h int
 }
 
-func settingsButtonRect(width int) winButtonRect {
+func settingsButtonRect(width, height int) winButtonRect {
 	if width < 120 {
 		width = 120
 	}
-	return winButtonRect{x: width - 96, y: 6, w: 88, h: 26}
+	if height < 90 {
+		height = 90
+	}
+	return winButtonRect{x: width - 96, y: height - 38, w: 88, h: 26}
 }
 
 func fillDIBRect(pixels []uint32, width int, height int, rect winButtonRect, c color.NRGBA) {
