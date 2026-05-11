@@ -1308,7 +1308,6 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 		drawWinText(hdc, width/2-45, 26, "updating...", colorRef(colorHeaderText))
 	}
 	drawWinText(hdc, 8, 40, fmt.Sprintf("BG %d%% (+/-)", s.backgroundTransparencyPercent()), colorRef(colorHeaderText))
-	drawWinText(hdc, 8, 56, "F2/right-click settings", colorRef(colorHeaderText))
 	drawWinText(hdc, overlayRankX, overlayHeaderY, "#", colorRef(colorHeaderText))
 	drawWinText(hdc, overlayPlayerX, overlayHeaderY, fitWinTextToWidth(hdc, "PLAYER", nameMaxWidth), colorRef(colorHeaderText))
 	drawWinText(hdc, ratingX, overlayHeaderY, fitWinTextToWidth(hdc, "RATING", width-ratingX-ratingRightPad), colorRef(colorHeaderText))
