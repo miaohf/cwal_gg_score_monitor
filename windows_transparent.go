@@ -98,7 +98,7 @@ const (
 	defaultOverlayY      = 60
 	defaultOverlayWidth  = 420
 	defaultOverlayHeight = 700
-	minOverlayWidth      = 160
+	minOverlayWidth      = 128
 	minOverlayHeight     = 220
 
 	prefWindowsOverlayXKey      = "windows_overlay.x"
@@ -127,8 +127,10 @@ const (
 	overlayHeaderY    = 72
 	overlayFirstRowY  = 98
 	overlayRowStepY   = 28
+	overlayStatusSize = 7
+	overlayStatusGap  = 4
 	overlayBadgeSize  = 10
-	overlayBadgeGap   = 6
+	overlayBadgeGap   = 4
 	overlayResizeGrip = 8
 	overlayDragTop    = 8
 	overlayDragBottom = 34
@@ -216,6 +218,7 @@ type overlayRow struct {
 	rank        string
 	name        string
 	rating      string
+	updateOK    bool
 	isError     bool
 }
 
@@ -223,6 +226,7 @@ type windowsOverlayState struct {
 	rows   []*playerState
 	rowsMu sync.RWMutex
 	cfg    apiConfig
+	app    fyne.App
 	prefs  fyne.Preferences
 	ui     *uiSettings
 	poll   *pollControl
@@ -332,7 +336,8 @@ func runWindowsTransparentMode(rows []*playerState, cfg apiConfig) bool {
 	if err := initAPILogger(apiLogPath); err != nil {
 		fmt.Fprintf(os.Stderr, "failed to init api logger: %v\n", err)
 	}
-	prefs := app.NewWithID("cwalgg.score.monitor").Preferences()
+	myApp := app.NewWithID("cwalgg.score.monitor")
+	prefs := myApp.Preferences()
 	ui := loadUISettingsFromPrefs(prefs)
 	poll := loadPollSettingsFromPrefs(prefs)
 	loadHistoryScoresFromPrefs(prefs, rows)
@@ -350,6 +355,7 @@ func runWindowsTransparentMode(rows []*playerState, cfg apiConfig) bool {
 	state := &windowsOverlayState{
 		rows:                rows,
 		cfg:                 cfg,
+		app:                 myApp,
 		prefs:               prefs,
 		ui:                  ui,
 		poll:                poll,
@@ -780,6 +786,9 @@ func (s *windowsOverlayState) pollInterval() time.Duration {
 		return fetchInterval
 	}
 	interval, _, _, _, _ := s.poll.Snapshot()
+	if interval < time.Second {
+		return time.Second
+	}
 	return interval
 }
 
@@ -845,6 +854,7 @@ func (s *windowsOverlayState) rebuildDisplayRows() {
 			rank:        strconv.Itoa(pos + 1),
 			name:        r.Name,
 			rating:      strconv.Itoa(r.LiveScore),
+			updateOK:    r.LastError == "",
 			isError:     r.LastError != "",
 		}
 		if item.isError {
@@ -944,6 +954,9 @@ func windowsOverlayWndProc(hwnd uintptr, msg uint32, wParam, lParam uintptr) uin
 		}
 		return 0
 	case wmDestroy:
+		if state != nil {
+			state.persistCurrentPreferences()
+		}
 		_, _, _ = procPostQuitMessage.Call(0)
 		return 0
 	default:
@@ -1083,6 +1096,21 @@ func (s *windowsOverlayState) applyWindowsSettings() {
 	s.alphaMu.Unlock()
 	s.render()
 	s.closeSettings()
+}
+
+func (s *windowsOverlayState) persistCurrentPreferences() {
+	if s.prefs == nil {
+		return
+	}
+	if s.ui != nil {
+		saveUISettingsToPrefs(s.prefs, s.ui.Snapshot())
+	}
+	if s.poll != nil {
+		interval, stopEnabled, stopAt, _, manualHold := s.poll.Snapshot()
+		savePollSettingsToPrefs(s.prefs, interval, stopEnabled, stopAt, manualHold)
+	}
+	s.saveWindowPlacement()
+	saveHistoryScoresToPrefs(s.prefs, s.rows, &s.rowsMu)
 }
 
 func (s *windowsOverlayState) applyManualScore() {
@@ -1337,21 +1365,22 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	if height < minOverlayHeight {
 		height = minOverlayHeight
 	}
-	ratingRightPad := 8
+	ratingRightPad := 4
 	ratingWidth := measureWinTextWidth(hdc, "RATING")
 	if scoreWidth := measureWinTextWidth(hdc, "0000"); scoreWidth > ratingWidth {
 		ratingWidth = scoreWidth
 	}
 	ratingX := width - ratingRightPad - ratingWidth
-	if ratingX < 96 {
-		ratingX = 96
+	if ratingX < 82 {
+		ratingX = 82
 	}
 	maxRowsY := height - 50
 	if maxRowsY < overlayFirstRowY {
 		maxRowsY = overlayFirstRowY
 	}
-	playerGapX := 4
-	badgeX := ratingX - overlayBadgeSize - overlayBadgeGap
+	playerGapX := 2
+	statusX := ratingX - overlayStatusSize - overlayStatusGap
+	badgeX := statusX - overlayBadgeSize - overlayBadgeGap
 	hasBadgeColumn := false
 	for _, row := range rows {
 		if row.badgeRank >= 0 {
@@ -1359,13 +1388,13 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 			break
 		}
 	}
-	nameLimitX := ratingX
+	nameLimitX := statusX
 	if hasBadgeColumn {
 		nameLimitX = badgeX
 	}
 	nameMaxWidth := nameLimitX - overlayPlayerX - playerGapX
-	if nameMaxWidth < 20 {
-		nameMaxWidth = 20
+	if nameMaxWidth < 8 {
+		nameMaxWidth = 8
 	}
 	textColor := colorText
 	if s.ui != nil {
@@ -1399,6 +1428,7 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 		if row.badgeRank >= 0 {
 			drawWinBadge(hdc, badgeX, y+3, row.badgeRank)
 		}
+		drawWinStatusDot(hdc, statusX, y+5, row.updateOK)
 		drawWinText(hdc, ratingX, y, row.rating, ratingColor)
 		y += overlayRowStepY
 		if y > maxRowsY {
@@ -1542,8 +1572,19 @@ func drawCenteredWinText(hdc uintptr, left, right, y int, text string, colorRefV
 	drawWinText(hdc, x, y, text, colorRefValue)
 }
 
+func drawWinStatusDot(hdc uintptr, x, y int, ok bool) {
+	c := colorRed
+	if ok {
+		c = colorGreen
+	}
+	drawWinCircle(hdc, x, y, overlayStatusSize, c)
+}
+
 func drawWinBadge(hdc uintptr, x, y int, rank int) {
-	c := badgeColorByRank(rank)
+	drawWinCircle(hdc, x, y, overlayBadgeSize, badgeColorByRank(rank))
+}
+
+func drawWinCircle(hdc uintptr, x, y, size int, c color.NRGBA) {
 	brush, _, _ := procCreateSolidBrush.Call(uintptr(colorRef(c)))
 	if brush == 0 {
 		return
@@ -1557,8 +1598,8 @@ func drawWinBadge(hdc uintptr, x, y int, rank int) {
 		hdc,
 		uintptr(int32(x)),
 		uintptr(int32(y)),
-		uintptr(int32(x+overlayBadgeSize)),
-		uintptr(int32(y+overlayBadgeSize)),
+		uintptr(int32(x+size)),
+		uintptr(int32(y+size)),
 	)
 }
 
