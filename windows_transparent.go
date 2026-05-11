@@ -93,6 +93,7 @@ const (
 	minOverlayBackgroundAlpha = 48
 	maxOverlayBackgroundAlpha = 255
 	overlayOpacityStep        = 15
+	overlayStatusVisibleFor   = 5 * time.Second
 
 	defaultOverlayX      = 60
 	defaultOverlayY      = 60
@@ -219,6 +220,7 @@ type overlayRow struct {
 	name        string
 	rating      string
 	updateOK    bool
+	statusUntil time.Time
 	isError     bool
 }
 
@@ -246,6 +248,10 @@ type windowsOverlayState struct {
 	displayRows []overlayRow
 	lastUpdated string
 	anySuccess  bool
+
+	rowStatusMu    sync.RWMutex
+	rowStatusOK    map[int]bool
+	rowStatusUntil map[int]time.Time
 
 	settingsWnd      uintptr
 	settingsControls windowsSettingsControls
@@ -365,6 +371,8 @@ func runWindowsTransparentMode(rows []*playerState, cfg apiConfig) bool {
 		width:               placement.width,
 		height:              placement.height,
 		bgAlpha:             initialAlpha,
+		rowStatusOK:         make(map[int]bool, len(rows)),
+		rowStatusUntil:      make(map[int]time.Time, len(rows)),
 		manualScoreRowIndex: -1,
 	}
 	if err := state.run(); err != nil {
@@ -746,6 +754,7 @@ func sendComboString(hwnd uintptr, msg uintptr, value string) {
 func (s *windowsOverlayState) pollLoop() {
 	runCycle := func() {
 		refreshRows(s.rows, &s.rowsMu, s.cfg)
+		s.markRowUpdateStatuses()
 		if s.prefs != nil {
 			saveHistoryScoresToPrefs(s.prefs, s.rows, &s.rowsMu)
 		}
@@ -824,6 +833,30 @@ func (s *windowsOverlayState) pollKickCh() <-chan struct{} {
 	return s.poll.kickCh
 }
 
+func (s *windowsOverlayState) markRowUpdateStatuses() {
+	until := time.Now().Add(overlayStatusVisibleFor)
+	s.rowsMu.RLock()
+	s.rowStatusMu.Lock()
+	for idx, row := range s.rows {
+		s.rowStatusOK[idx] = row.LastError == ""
+		s.rowStatusUntil[idx] = until
+	}
+	s.rowStatusMu.Unlock()
+	s.rowsMu.RUnlock()
+	go s.renderWhenStatusExpires(until)
+}
+
+func (s *windowsOverlayState) renderWhenStatusExpires(until time.Time) {
+	timer := time.NewTimer(time.Until(until))
+	defer timer.Stop()
+	select {
+	case <-s.stopCh:
+		return
+	case <-timer.C:
+		s.render()
+	}
+}
+
 func (s *windowsOverlayState) rebuildDisplayRows() {
 	s.rowsMu.RLock()
 	showBadges := shouldShowBadges(s.poll)
@@ -848,13 +881,18 @@ func (s *windowsOverlayState) rebuildDisplayRows() {
 	anyOK := false
 	for pos, idx := range indices {
 		r := s.rows[idx]
+		s.rowStatusMu.RLock()
+		statusOK := s.rowStatusOK[idx]
+		statusUntil := s.rowStatusUntil[idx]
+		s.rowStatusMu.RUnlock()
 		item := overlayRow{
 			sourceIndex: idx,
 			badgeRank:   -1,
 			rank:        strconv.Itoa(pos + 1),
 			name:        r.Name,
 			rating:      strconv.Itoa(r.LiveScore),
-			updateOK:    r.LastError == "",
+			updateOK:    statusOK,
+			statusUntil: statusUntil,
 			isError:     r.LastError != "",
 		}
 		if item.isError {
@@ -1091,11 +1129,39 @@ func (s *windowsOverlayState) applyWindowsSettings() {
 	if s.prefs != nil {
 		savePollSettingsToPrefs(s.prefs, nextInterval, nextStopEnabled, nextStopAt, nextManualHold)
 	}
+	s.applyManualHoldToActiveRows(nextManualHold)
 	s.alphaMu.Lock()
 	s.bgAlpha = nextAlpha
 	s.alphaMu.Unlock()
 	s.render()
 	s.closeSettings()
+}
+
+func (s *windowsOverlayState) applyManualHoldToActiveRows(manualHold time.Duration) {
+	now := time.Now()
+	changed := false
+	s.rowsMu.Lock()
+	for _, row := range s.rows {
+		if !row.hasManual {
+			continue
+		}
+		changed = true
+		if manualHold > 0 {
+			row.manualUntil = now.Add(manualHold)
+		} else {
+			row.hasManual = false
+			row.manualUntil = time.Time{}
+		}
+	}
+	s.rowsMu.Unlock()
+	if !changed {
+		return
+	}
+	if manualHold > 0 && s.poll != nil {
+		s.poll.KickAfter(manualHold)
+	} else if s.poll != nil {
+		s.poll.Kick()
+	}
 }
 
 func (s *windowsOverlayState) persistCurrentPreferences() {
@@ -1134,8 +1200,10 @@ func (s *windowsOverlayState) applyManualScore() {
 	row.LiveScore = v
 	row.LastError = ""
 	row.hasManual = manualHold > 0
+	manualUntil := time.Time{}
 	if manualHold > 0 {
-		row.manualUntil = time.Now().Add(manualHold)
+		manualUntil = time.Now().Add(manualHold)
+		row.manualUntil = manualUntil
 	} else {
 		row.manualUntil = time.Time{}
 	}
@@ -1151,9 +1219,33 @@ func (s *windowsOverlayState) applyManualScore() {
 	s.render()
 	if s.poll != nil {
 		s.poll.Kick()
-		s.poll.KickAfter(manualHold)
+		s.kickWhenManualHoldExpires(rowIndex, manualUntil)
 	}
 	s.closeManualScore()
+}
+
+func (s *windowsOverlayState) kickWhenManualHoldExpires(rowIndex int, manualUntil time.Time) {
+	if manualUntil.IsZero() {
+		return
+	}
+	go func() {
+		timer := time.NewTimer(time.Until(manualUntil))
+		defer timer.Stop()
+		select {
+		case <-s.stopCh:
+			return
+		case <-timer.C:
+		}
+		s.rowsMu.RLock()
+		stillHeld := rowIndex >= 0 &&
+			rowIndex < len(s.rows) &&
+			s.rows[rowIndex].hasManual &&
+			s.rows[rowIndex].manualUntil.Equal(manualUntil)
+		s.rowsMu.RUnlock()
+		if stillHeld && s.poll != nil {
+			s.poll.Kick()
+		}
+	}()
 }
 
 func selectedComboText(hwnd uintptr, options []string) string {
@@ -1412,6 +1504,7 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	drawWinText(hdc, overlayPlayerX, overlayHeaderY, fitWinTextToWidth(hdc, "PLAYER", nameMaxWidth), colorRef(colorHeaderText))
 	drawWinText(hdc, ratingX, overlayHeaderY, fitWinTextToWidth(hdc, "RATING", width-ratingX-ratingRightPad), colorRef(colorHeaderText))
 
+	now := time.Now()
 	y := overlayFirstRowY
 	for _, row := range rows {
 		rankColor := colorRef(colorMuted)
@@ -1428,7 +1521,9 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 		if row.badgeRank >= 0 {
 			drawWinBadge(hdc, badgeX, y+3, row.badgeRank)
 		}
-		drawWinStatusDot(hdc, statusX, y+5, row.updateOK)
+		if !row.statusUntil.IsZero() && now.Before(row.statusUntil) {
+			drawWinStatusDot(hdc, statusX, y+(overlayRowStepY-overlayStatusSize)/2, row.updateOK)
+		}
 		drawWinText(hdc, ratingX, y, row.rating, ratingColor)
 		y += overlayRowStepY
 		if y > maxRowsY {
