@@ -10,7 +10,7 @@
   "manual_hold_sec": 300,
   "stop_enabled": true,
   "stop_at": "2026-05-21T00:00:00+08:00",
-  "window_width": 280,
+  "window_width": 220,
   "window_height": 700,
   "windows_overlay_x": 0,
   "windows_overlay_y": 0,

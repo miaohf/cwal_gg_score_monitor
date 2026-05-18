@@ -93,7 +93,6 @@ const (
 	minOverlayBackgroundAlpha = 16
 	maxOverlayBackgroundAlpha = 255
 	overlayOpacityStep        = 15
-	overlayStatusVisibleFor   = 5 * time.Second
 
 	defaultOverlayX      = 60
 	defaultOverlayY      = 60
@@ -125,7 +124,7 @@ const (
 	overlayRowStepY   = 28
 	overlayTextHeight = 16
 	overlayStatusSize = 7
-	overlayStatusGap  = 4
+	overlayStatusGap  = 2
 	overlayBadgeSize  = 10
 	overlayResizeGrip = 8
 	overlayDragTop    = 8
@@ -218,7 +217,6 @@ type overlayRow struct {
 	name        string
 	rating      string
 	updateOK    bool
-	statusUntil time.Time
 	isError     bool
 }
 
@@ -247,9 +245,8 @@ type windowsOverlayState struct {
 	lastUpdated string
 	anySuccess  bool
 
-	rowStatusMu    sync.RWMutex
-	rowStatusOK    map[int]bool
-	rowStatusUntil map[int]time.Time
+	rowStatusMu sync.RWMutex
+	rowStatusOK map[int]bool
 
 	settingsWnd      uintptr
 	settingsControls windowsSettingsControls
@@ -374,7 +371,6 @@ func runWindowsTransparentMode(rows []*playerState, cfg apiConfig) bool {
 		height:              placement.height,
 		bgAlpha:             initialAlpha,
 		rowStatusOK:         make(map[int]bool, len(rows)),
-		rowStatusUntil:      make(map[int]time.Time, len(rows)),
 		manualScoreRowIndex: -1,
 	}
 	if err := state.run(); err != nil {
@@ -769,51 +765,76 @@ func (s *windowsOverlayState) pollLoop() {
 	}
 	s.rebuildDisplayRows()
 	s.render()
+	_, stopEnabledAtStart, stopAtStart, stoppedAtStart, _ := s.poll.Snapshot()
+	if stopEnabledAtStart && !time.Now().Before(stopAtStart) {
+		if !stoppedAtStart {
+			s.poll.MarkStopped()
+		}
+		s.rebuildDisplayRows()
+		s.render()
+	}
 	nextPollAt := nextScoreRefreshAt(time.Now())
+	ticker := time.NewTicker(time.Second)
+	defer ticker.Stop()
+	var cycleMu sync.Mutex
+	cycleRunning := false
 	logAPIFetch("pollLoop: started, nextPollAt=%v", nextPollAt)
 	for {
-		stopped := s.pollStopped()
-		wait := time.Duration(0)
-		if !stopped {
-			wait = time.Until(nextPollAt)
-			if wait < 0 {
-				wait = 0
-			}
-		} else {
-			// 如果已停止，等待较长时间但仍然可以被Reset/Kick信号唤醒
-			wait = 24 * time.Hour
-		}
-		timer := time.NewTimer(wait)
 		select {
 		case <-s.stopCh:
-			timer.Stop()
 			return
 		case <-s.pollResetCh():
-			timer.Stop()
-			// Reset信号：立即重新计算下次轮询时间
 			nextPollAt = nextScoreRefreshAt(time.Now())
 			logAPIFetch("pollLoop: received Reset signal, nextPollAt=%v", nextPollAt)
 			continue
 		case <-s.pollKickCh():
-			timer.Stop()
-			// Kick信号：立即执行一次更新（如果未停止）
-			isStopped := s.pollStopped()
-			logAPIFetch("pollLoop: received Kick signal, stopped=%v", isStopped)
-			if !isStopped {
-				runCycle()
-			} else {
-				logAPIFetch("pollLoop: Kick received but polling is stopped, skipping runCycle")
+			cycleMu.Lock()
+			if cycleRunning {
+				cycleMu.Unlock()
+				continue
 			}
+			cycleRunning = true
 			nextPollAt = nextScoreRefreshAt(time.Now())
-			continue
-		case <-timer.C:
-			// 定时器到期：如果未停止则执行更新
-			isStopped := s.pollStopped()
-			logAPIFetch("pollLoop: timer expired, stopped=%v", isStopped)
-			if !isStopped {
+			cycleMu.Unlock()
+			logAPIFetch("pollLoop: received Kick signal")
+			go func() {
 				runCycle()
-				nextPollAt = nextScoreRefreshAfter(time.Now())
+				cycleMu.Lock()
+				cycleRunning = false
+				cycleMu.Unlock()
+			}()
+			continue
+		case <-ticker.C:
+			_, stopEnabled, stopAt, stopped, _ := s.poll.Snapshot()
+			now := time.Now()
+			if stopped {
+				continue
 			}
+			if stopEnabled && !now.Before(stopAt) {
+				if s.poll.MarkStopped() {
+					s.rebuildDisplayRows()
+					s.render()
+					logAPIFetch("pollLoop: polling stopped at stopAt=%v", stopAt)
+				}
+				continue
+			}
+			if now.Before(nextPollAt) {
+				continue
+			}
+			cycleMu.Lock()
+			if cycleRunning {
+				cycleMu.Unlock()
+				continue
+			}
+			cycleRunning = true
+			nextPollAt = nextScoreRefreshAfter(now)
+			cycleMu.Unlock()
+			go func() {
+				runCycle()
+				cycleMu.Lock()
+				cycleRunning = false
+				cycleMu.Unlock()
+			}()
 		}
 	}
 }
@@ -867,27 +888,13 @@ func (s *windowsOverlayState) pollKickCh() <-chan struct{} {
 }
 
 func (s *windowsOverlayState) markRowUpdateStatuses() {
-	until := time.Now().Add(overlayStatusVisibleFor)
 	s.rowsMu.RLock()
 	s.rowStatusMu.Lock()
 	for idx, row := range s.rows {
-		s.rowStatusOK[idx] = row.LastError == ""
-		s.rowStatusUntil[idx] = until
+		s.rowStatusOK[idx] = row.LastUpdateOK
 	}
 	s.rowStatusMu.Unlock()
 	s.rowsMu.RUnlock()
-	go s.renderWhenStatusExpires(until)
-}
-
-func (s *windowsOverlayState) renderWhenStatusExpires(until time.Time) {
-	timer := time.NewTimer(time.Until(until))
-	defer timer.Stop()
-	select {
-	case <-s.stopCh:
-		return
-	case <-timer.C:
-		s.render()
-	}
 }
 
 func (s *windowsOverlayState) rebuildDisplayRows() {
@@ -916,7 +923,6 @@ func (s *windowsOverlayState) rebuildDisplayRows() {
 		r := s.rows[idx]
 		s.rowStatusMu.RLock()
 		statusOK := s.rowStatusOK[idx]
-		statusUntil := s.rowStatusUntil[idx]
 		s.rowStatusMu.RUnlock()
 		item := overlayRow{
 			sourceIndex: idx,
@@ -924,8 +930,7 @@ func (s *windowsOverlayState) rebuildDisplayRows() {
 			rank:        strconv.Itoa(pos + 1),
 			name:        r.Name,
 			rating:      strconv.Itoa(r.LiveScore),
-			updateOK:    statusOK,
-			statusUntil: statusUntil,
+			updateOK:    !showBadges && statusOK,
 			isError:     r.LastError != "",
 		}
 		if item.isError {
@@ -1160,8 +1165,6 @@ func (s *windowsOverlayState) applyWindowsSettings() {
 		logAPIFetch("applyWindowsSettings: calling Update and Reset")
 		s.poll.Update(nextInterval, nextStopEnabled, nextStopAt, nextManualHold)
 		s.poll.Reset()
-		logAPIFetch("applyWindowsSettings: after Update and Reset, calling Kick")
-		s.poll.Kick()
 	}
 	if s.prefs != nil {
 		savePollSettingsToPrefs(s.prefs, nextInterval, nextStopEnabled, nextStopAt, nextManualHold)
@@ -1238,6 +1241,7 @@ func (s *windowsOverlayState) applyManualScore() {
 	row := s.rows[rowIndex]
 	row.LiveScore = v
 	row.LastError = ""
+	row.LastUpdateOK = false
 	row.hasManual = manualHold > 0
 	manualUntil := time.Time{}
 	if manualHold > 0 {
@@ -1544,12 +1548,10 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	}
 	drawWinText(hdc, 8, 40, fmt.Sprintf("BG %d%% (+/-)", s.backgroundTransparencyPercent()), colorRef(colorHeaderText))
 
-	if font := s.createContentFont(); font != 0 {
-		oldFont, _, _ := procSelectObject.Call(hdc, font)
-		if oldFont != 0 {
-			defer procSelectObject.Call(hdc, oldFont)
-		}
-		defer procDeleteObject.Call(font)
+	contentFont := s.createContentFont()
+	var oldFont uintptr
+	if contentFont != 0 {
+		oldFont, _, _ = procSelectObject.Call(hdc, contentFont)
 	}
 	ratingRightPad := 4
 	ratingWidth := measureWinTextWidth(hdc, "RATING")
@@ -1586,7 +1588,6 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	drawWinText(hdc, overlayPlayerX, overlayHeaderY, fitWinTextToWidth(hdc, "PLAYER", nameMaxWidth), colorRef(textColor))
 	drawWinText(hdc, ratingX, overlayHeaderY, fitWinTextToWidth(hdc, "RATING", width-ratingX-ratingRightPad), colorRef(textColor))
 
-	now := time.Now()
 	y := overlayFirstRowY
 	for _, row := range rows {
 		rankColor := colorRef(colorMuted)
@@ -1600,10 +1601,10 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 		}
 		drawWinText(hdc, overlayRankX, y, row.rank, rankColor)
 		drawWinText(hdc, overlayPlayerX, y, fitWinTextToWidth(hdc, row.name, nameMaxWidth), nameColor)
-		if !row.statusUntil.IsZero() && now.Before(row.statusUntil) {
-			drawWinStatusDot(hdc, indicatorX+(indicatorSize-overlayStatusSize)/2, y+(overlayTextHeight-overlayStatusSize)/2, row.updateOK)
-		} else if row.badgeRank >= 0 {
-			drawWinBadge(hdc, indicatorX+(indicatorSize-overlayBadgeSize)/2, y+(overlayTextHeight-overlayBadgeSize)/2, row.badgeRank)
+		if row.badgeRank >= 0 {
+			drawWinBadge(hdc, indicatorX+(indicatorSize-overlayBadgeSize)/2, y+(overlayRowStepY-overlayBadgeSize)/2, row.badgeRank)
+		} else if row.updateOK {
+			drawWinStatusDot(hdc, indicatorX+(indicatorSize-overlayStatusSize)/2, y+(overlayRowStepY-overlayStatusSize)/2)
 		}
 		drawWinText(hdc, ratingX, y, row.rating, ratingColor)
 		y += overlayRowStepY
@@ -1611,7 +1612,13 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 			break
 		}
 	}
-	
+	if oldFont != 0 {
+		_, _, _ = procSelectObject.Call(hdc, oldFont)
+	}
+	if contentFont != 0 {
+		_, _, _ = procDeleteObject.Call(contentFont)
+	}
+
 	// 在窗口底部显示日志文件提示
 	footerY := height - 16
 	if footerY > y+10 {
@@ -1754,12 +1761,8 @@ func drawCenteredWinText(hdc uintptr, left, right, y int, text string, colorRefV
 	drawWinText(hdc, x, y, text, colorRefValue)
 }
 
-func drawWinStatusDot(hdc uintptr, x, y int, ok bool) {
-	c := colorRed
-	if ok {
-		c = colorGreen
-	}
-	drawWinCircle(hdc, x, y, overlayStatusSize, c)
+func drawWinStatusDot(hdc uintptr, x, y int) {
+	drawWinCircle(hdc, x, y, overlayStatusSize, colorGreen)
 }
 
 func drawWinBadge(hdc uintptr, x, y int, rank int) {

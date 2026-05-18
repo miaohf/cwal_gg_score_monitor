@@ -140,10 +140,11 @@ type player struct {
 
 type playerState struct {
 	player
-	LiveScore   int
-	LastError   string
-	hasManual   bool
-	manualUntil time.Time
+	LiveScore    int
+	LastError    string
+	hasManual    bool
+	manualUntil  time.Time
+	LastUpdateOK bool
 
 	hasPrev   bool
 	prevScore int
@@ -160,6 +161,8 @@ type rowUI struct {
 	background *canvas.Rectangle
 	rankText   *canvas.Text
 	badgeIcon  *canvas.Image
+	statusDot  *canvas.Circle
+	statusBox  fyne.CanvasObject
 	nameText   *canvas.Text
 	ratingText *canvas.Text
 	container  *fyne.Container
@@ -430,15 +433,15 @@ func saveSettingsFileFromPrefs(p fyne.Preferences) {
 }
 
 func nextScoreRefreshAt(now time.Time) time.Time {
-	thisHour := now.Truncate(time.Hour)
-	if now.Minute() == 0 {
-		return thisHour
+	thisMinute := now.Truncate(time.Minute)
+	if now.Second() == 0 && now.Nanosecond() == 0 {
+		return thisMinute
 	}
-	return thisHour.Add(time.Hour)
+	return thisMinute.Add(time.Minute)
 }
 
 func nextScoreRefreshAfter(now time.Time) time.Time {
-	return now.Truncate(time.Hour).Add(time.Hour)
+	return now.Truncate(time.Minute).Add(time.Minute)
 }
 
 func loadHistoryScoresFromPrefs(p fyne.Preferences, rows []*playerState) {
@@ -918,16 +921,26 @@ func buildRowUI(playerColWidth float32, onDoubleTap func()) *rowUI {
 	badge := canvas.NewImageFromResource(badgeResourceNone)
 	badge.FillMode = canvas.ImageFillContain
 	badge.SetMinSize(fyne.NewSize(16, 16))
+	statusDot := canvas.NewCircle(colorGreen)
+	statusDot.Hide()
+	statusDotSize := float32(7)
+	statusDotPadY := (float32(rowHeight) - statusDotSize) / 2
+	statusDotBox := container.New(
+		layout.NewCustomPaddedLayout(statusDotPadY, statusDotPadY, 0, 0),
+		container.NewGridWrap(fyne.NewSize(statusDotSize, statusDotSize), statusDot),
+	)
+	statusDotBox.Hide()
 
 	rating := canvas.NewText("", colorText)
 	rating.TextStyle = fyne.TextStyle{Monospace: true, Bold: true}
 	rating.TextSize = 13
 	rating.Alignment = fyne.TextAlignTrailing
+	ratingGroup := container.New(layout.NewCustomPaddedHBoxLayout(2), statusDotBox, rating)
 
 	rankBox := container.NewGridWrap(fyne.NewSize(colRankWidth, rowHeight), rank)
 	nameBox := container.NewGridWrap(fyne.NewSize(playerColWidth, rowHeight), name)
 	badgeBox := container.NewGridWrap(fyne.NewSize(colBadgeWidth, rowHeight), container.NewCenter(badge))
-	ratingBox := container.NewGridWrap(fyne.NewSize(colRatingWidth, rowHeight), rating)
+	ratingBox := container.NewGridWrap(fyne.NewSize(colRatingWidth, rowHeight), container.NewBorder(nil, nil, nil, ratingGroup))
 
 	rowInner := container.New(newLeaderboardColumnLayout(colPlayerWidthHardMin, playerColWidth, colPlayerWidthMax), rankBox, nameBox, badgeBox, ratingBox)
 	rowContent := container.New(layout.NewCustomPaddedLayout(0, 0, 0, ratingColPadRight), rowInner)
@@ -937,6 +950,8 @@ func buildRowUI(playerColWidth float32, onDoubleTap func()) *rowUI {
 		background: bg,
 		rankText:   rank,
 		badgeIcon:  badge,
+		statusDot:  statusDot,
+		statusBox:  statusDotBox,
 		nameText:   name,
 		ratingText: rating,
 		container:  row,
@@ -1489,6 +1504,7 @@ func refreshRows(rows []*playerState, rowsMu *sync.RWMutex, cfg apiConfig) {
 				if r.manualUntil.After(now) {
 					// Manual score is still in hold period, skip API overwrite.
 					r.LastError = ""
+					r.LastUpdateOK = false
 					rowsMu.Unlock()
 					return
 				}
@@ -1507,6 +1523,7 @@ func refreshRows(rows []*playerState, rowsMu *sync.RWMutex, cfg apiConfig) {
 				} else {
 					r.LastError = err.Error()
 				}
+				r.LastUpdateOK = false
 				return
 			}
 
@@ -1528,6 +1545,7 @@ func refreshRows(rows []*playerState, rowsMu *sync.RWMutex, cfg apiConfig) {
 
 			r.LiveScore = result.Rating
 			r.LastError = ""
+			r.LastUpdateOK = true
 			r.hasManual = false
 			r.manualUntil = time.Time{}
 		}(row)
@@ -1581,15 +1599,16 @@ func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Con
 
 	// Snapshot values for UI update under fyne thread later
 	type rowSnapshot struct {
-		ui      *rowUI
-		rank    string
-		badge   fyne.Resource
-		name    string
-		bgColor color.NRGBA
-		nameC   color.NRGBA
-		rating  string
-		ratingC color.NRGBA
-		trend   int
+		ui       *rowUI
+		rank     string
+		badge    fyne.Resource
+		name     string
+		bgColor  color.NRGBA
+		nameC    color.NRGBA
+		rating   string
+		ratingC  color.NRGBA
+		trend    int
+		updateOK bool
 	}
 	snapshots := make([]rowSnapshot, len(indices))
 
@@ -1622,15 +1641,16 @@ func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Con
 		}
 
 		snapshots[pos] = rowSnapshot{
-			ui:      ui,
-			rank:    rankStr,
-			badge:   badgeRes,
-			name:    nameStr,
-			bgColor: bgColor,
-			nameC:   nameC,
-			rating:  ratingStr,
-			ratingC: ratingC,
-			trend:   r.trend,
+			ui:       ui,
+			rank:     rankStr,
+			badge:    badgeRes,
+			name:     nameStr,
+			bgColor:  bgColor,
+			nameC:    nameC,
+			rating:   ratingStr,
+			ratingC:  ratingC,
+			trend:    r.trend,
+			updateOK: !showBadges && r.LastUpdateOK,
 		}
 
 		if r.LastError == "" && r.trend != 0 {
@@ -1651,7 +1671,14 @@ func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Con
 			s.ui.background.Refresh()
 
 			s.ui.badgeIcon.Resource = s.badge
+			if s.badge == badgeResourceNone && s.updateOK {
+				s.ui.statusBox.Show()
+			} else {
+				s.ui.statusBox.Hide()
+			}
 			s.ui.badgeIcon.Refresh()
+			s.ui.statusBox.Refresh()
+			s.ui.statusDot.Refresh()
 
 			s.ui.nameText.Text = s.name
 			s.ui.nameText.Color = s.nameC
@@ -1729,6 +1756,7 @@ func showManualScoreDialog(win fyne.Window, row *playerState, manualHold time.Du
 			rowsMu.Lock()
 			row.LiveScore = v
 			row.LastError = ""
+			row.LastUpdateOK = false
 			row.hasManual = manualHold > 0
 			if manualHold > 0 {
 				row.manualUntil = time.Now().Add(manualHold)
