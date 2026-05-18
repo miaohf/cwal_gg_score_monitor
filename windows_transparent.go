@@ -128,6 +128,8 @@ const (
 	overlayStatusSize = 7
 	overlayStatusGap  = 2
 	overlayBadgeSize  = 10
+	overlayCloseSize  = 16
+	overlayClosePad   = 8
 	overlayResizeGrip = 8
 	overlayDragTop    = 8
 	overlayDragBottom = 34
@@ -543,6 +545,53 @@ func (s *windowsOverlayState) closeSettings() {
 	if s.settingsWnd != 0 {
 		_, _, _ = procDestroyWindow.Call(s.settingsWnd)
 	}
+}
+
+func (s *windowsOverlayState) closeOverlayWindow() {
+	if s.hwnd == 0 {
+		return
+	}
+	s.persistCurrentPreferences()
+	_, _, _ = procDestroyWindow.Call(s.hwnd)
+}
+
+func overlayCloseRect(width int) winButtonRect {
+	return winButtonRect{
+		x: width - overlayClosePad - overlayCloseSize,
+		y: overlayClosePad,
+		w: overlayCloseSize,
+		h: overlayCloseSize,
+	}
+}
+
+func pointInRect(x, y int, rect winButtonRect) bool {
+	return x >= rect.x && x < rect.x+rect.w && y >= rect.y && y < rect.y+rect.h
+}
+
+func (s *windowsOverlayState) overlayPointFromClient(clientX, clientY int) (int, int) {
+	if s.hwnd == 0 {
+		return clientX, clientY
+	}
+	clientOrigin := winPoint{}
+	if ret, _, _ := procClientToScreen.Call(s.hwnd, uintptr(unsafe.Pointer(&clientOrigin))); ret == 0 {
+		return clientX, clientY
+	}
+	var rect winRect
+	if ret, _, _ := procGetWindowRect.Call(s.hwnd, uintptr(unsafe.Pointer(&rect))); ret == 0 {
+		return clientX, clientY
+	}
+	return clientX + int(clientOrigin.X-rect.Left), clientY + int(clientOrigin.Y-rect.Top)
+}
+
+func (s *windowsOverlayState) closeButtonHit(clientX, clientY int) bool {
+	s.sizeMu.RLock()
+	width := s.width
+	s.sizeMu.RUnlock()
+	if width < minOverlayWidth {
+		width = minOverlayWidth
+	}
+	x, y := s.overlayPointFromClient(clientX, clientY)
+	return pointInRect(x, y, overlayCloseRect(width))
 }
 
 func (s *windowsOverlayState) showManualScoreForPoint(y int) {
@@ -1012,6 +1061,14 @@ func windowsOverlayWndProc(hwnd uintptr, msg uint32, wParam, lParam uintptr) uin
 		ret, _, _ := procDefWindowProcW.Call(hwnd, uintptr(msg), wParam, lParam)
 		return ret
 	case wmLButtonUp:
+		if state != nil {
+			x := int(int16(lParam & 0xffff))
+			y := int(int16((lParam >> 16) & 0xffff))
+			if state.closeButtonHit(x, y) {
+				state.closeOverlayWindow()
+				return 0
+			}
+		}
 		ret, _, _ := procDefWindowProcW.Call(hwnd, uintptr(msg), wParam, lParam)
 		return ret
 	case wmLButtonDblClk:
@@ -1401,7 +1458,12 @@ func (s *windowsOverlayState) hitTest(lParam uintptr) int {
 		return htBottom
 	}
 
+	localX := x - int(rect.Left)
 	localY := y - int(rect.Top)
+	width := int(rect.Right - rect.Left)
+	if pointInRect(localX, localY, overlayCloseRect(width)) {
+		return htClient
+	}
 	if localY >= overlayDragTop && localY <= overlayDragBottom {
 		return htCaption
 	}
@@ -1476,11 +1538,13 @@ func (s *windowsOverlayState) render() {
 			defer procSelectObject.Call(memDC, oldFont)
 		}
 	}
-	s.drawContent(memDC)
+	s.drawContent(memDC, pixels, width, height)
 
 	bgRGB := bgPixel & 0x00ffffff
+	top8RowRGB := dibPixel(colorTop8RowGlass) & 0x00ffffff
 	for i, px := range pixels {
-		if px&0x00ffffff != bgRGB {
+		rgb := px & 0x00ffffff
+		if rgb != bgRGB && rgb != top8RowRGB {
 			pixels[i] = px | 0xff000000
 		}
 	}
@@ -1560,7 +1624,7 @@ func (s *windowsOverlayState) createContentFont() uintptr {
 	return createOverlayFont(height, weight, faceName)
 }
 
-func (s *windowsOverlayState) drawContent(hdc uintptr) {
+func (s *windowsOverlayState) drawContent(hdc uintptr, pixels []uint32, pixelWidth, pixelHeight int) {
 	s.displayMu.RLock()
 	rows := append([]overlayRow(nil), s.displayRows...)
 	lastUpdated := s.lastUpdated
@@ -1581,6 +1645,8 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	if toolFont != 0 {
 		originalFont, _, _ = procSelectObject.Call(hdc, toolFont)
 	}
+	closeRect := overlayCloseRect(width)
+	drawCenteredWinText(hdc, closeRect.x, closeRect.x+closeRect.w, closeRect.y+1, "X", colorRef(colorHeaderText))
 	drawCenteredWinText(hdc, 0, width, 8, "Score Monitor", colorRef(colorHeaderText))
 	if anySuccess {
 		drawCenteredWinText(hdc, 0, width, 26, fitWinTextToWidth(hdc, lastUpdated, width), colorRef(colorHeaderText))
@@ -1630,7 +1696,7 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	drawWinText(hdc, ratingX, overlayHeaderY, fitWinTextToWidth(hdc, "RATING", width-ratingX-ratingRightPad), colorRef(textColor))
 
 	y := overlayFirstRowY
-	for _, row := range rows {
+	for pos, row := range rows {
 		rankColor := colorRef(colorMuted)
 		nameColor := colorRef(textColor)
 		ratingColor := colorRef(textColor)
@@ -1639,6 +1705,14 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 			ratingColor = colorRef(colorMuted)
 		} else if score, err := strconv.Atoi(row.rating); err == nil {
 			ratingColor = colorRef(ratingColorByScore(score, textColor))
+		}
+		if pos < 8 && !row.isError {
+			fillDIBRect(pixels, pixelWidth, pixelHeight, winButtonRect{
+				x: 0,
+				y: y - 4,
+				w: width,
+				h: overlayRowStepY - 2,
+			}, colorTop8RowGlass)
 		}
 		drawWinText(hdc, overlayRankX, y, row.rank, rankColor)
 		drawWinText(hdc, overlayPlayerX, y, fitWinTextToWidth(hdc, row.name, nameMaxWidth), nameColor)

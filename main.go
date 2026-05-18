@@ -105,9 +105,9 @@ var (
 	// Row panels: translucent milky overlays (real frosted blur is not supported by Fyne).
 	colorRowGlass     = color.NRGBA{R: 241, G: 245, B: 249, A: 40}  // default row frost
 	colorTop8RowGlass = color.NRGBA{R: 226, G: 232, B: 240, A: 72}  // slightly brighter strip for top 8
-	colorRating2200   = color.NRGBA{R: 110, G: 178, B: 238, A: 255} // blue
-	colorRating2300   = color.NRGBA{R: 152, G: 176, B: 234, A: 255} // blue-violet
-	colorRating2400   = color.NRGBA{R: 188, G: 172, B: 232, A: 255} // violet
+	colorRating2200   = color.NRGBA{R: 80, G: 190, B: 255, A: 255}  // cyan-blue
+	colorRating2300   = color.NRGBA{R: 170, G: 155, B: 255, A: 255} // bright violet-blue
+	colorRating2400   = color.NRGBA{R: 255, G: 210, B: 90, A: 255}  // gold
 
 	badgeResourceNone = fyne.NewStaticResource("badge-none.svg", []byte(`
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
@@ -1633,7 +1633,7 @@ func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Con
 			if pos < 8 {
 				bgColor = colorTop8RowGlass
 			} else {
-				bgColor = colorRowGlass
+				bgColor = color.NRGBA{}
 			}
 		} else {
 			nameC = mutedColor
