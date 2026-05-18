@@ -1487,22 +1487,9 @@ func (s *windowsOverlayState) windowTopLeft() winPoint {
 	return winPoint{X: rect.Left, Y: rect.Top}
 }
 
-func (s *windowsOverlayState) createContentFont() uintptr {
-	snap := defaultUISettings().Snapshot()
-	if s.ui != nil {
-		snap = s.ui.Snapshot()
-	}
-	height := int(snap.FontSize + 0.5)
+func createOverlayFont(height int, weight int, faceName string) uintptr {
 	if height < 8 {
 		height = 8
-	}
-	weight := fontWeightNormal
-	if snap.FontType == "Bold" {
-		weight = fontWeightBold
-	}
-	faceName := "Segoe UI"
-	if snap.FontType == "Monospace" {
-		faceName = "Consolas"
 	}
 	face, _ := syscall.UTF16PtrFromString(faceName)
 	font, _, _ := procCreateFontW.Call(
@@ -1524,6 +1511,27 @@ func (s *windowsOverlayState) createContentFont() uintptr {
 	return font
 }
 
+func createToolFont() uintptr {
+	return createOverlayFont(10, fontWeightNormal, "Segoe UI")
+}
+
+func (s *windowsOverlayState) createContentFont() uintptr {
+	snap := defaultUISettings().Snapshot()
+	if s.ui != nil {
+		snap = s.ui.Snapshot()
+	}
+	height := int(snap.FontSize + 0.5)
+	weight := fontWeightNormal
+	if snap.FontType == "Bold" {
+		weight = fontWeightBold
+	}
+	faceName := "Segoe UI"
+	if snap.FontType == "Monospace" {
+		faceName = "Consolas"
+	}
+	return createOverlayFont(height, weight, faceName)
+}
+
 func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	s.displayMu.RLock()
 	rows := append([]overlayRow(nil), s.displayRows...)
@@ -1540,6 +1548,11 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	if height < minOverlayHeight {
 		height = minOverlayHeight
 	}
+	toolFont := createToolFont()
+	var originalFont uintptr
+	if toolFont != 0 {
+		originalFont, _, _ = procSelectObject.Call(hdc, toolFont)
+	}
 	drawCenteredWinText(hdc, 0, width, 8, "Score Monitor", colorRef(colorHeaderText))
 	if anySuccess {
 		drawCenteredWinText(hdc, 0, width, 26, fitWinTextToWidth(hdc, lastUpdated, width), colorRef(colorHeaderText))
@@ -1549,9 +1562,9 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	drawWinText(hdc, 8, 40, fmt.Sprintf("BG %d%% (+/-)", s.backgroundTransparencyPercent()), colorRef(colorHeaderText))
 
 	contentFont := s.createContentFont()
-	var oldFont uintptr
+	var toolSelectedFont uintptr
 	if contentFont != 0 {
-		oldFont, _, _ = procSelectObject.Call(hdc, contentFont)
+		toolSelectedFont, _, _ = procSelectObject.Call(hdc, contentFont)
 	}
 	ratingRightPad := 4
 	ratingWidth := measureWinTextWidth(hdc, "RATING")
@@ -1602,9 +1615,9 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 		drawWinText(hdc, overlayRankX, y, row.rank, rankColor)
 		drawWinText(hdc, overlayPlayerX, y, fitWinTextToWidth(hdc, row.name, nameMaxWidth), nameColor)
 		if row.badgeRank >= 0 {
-			drawWinBadge(hdc, indicatorX+(indicatorSize-overlayBadgeSize)/2, y+(overlayRowStepY-overlayBadgeSize)/2, row.badgeRank)
+			drawWinBadge(hdc, indicatorX+(indicatorSize-overlayBadgeSize)/2, centeredOverlayBadgeY(y), row.badgeRank)
 		} else if row.updateOK {
-			drawWinStatusDot(hdc, indicatorX+(indicatorSize-overlayStatusSize)/2, y+(overlayRowStepY-overlayStatusSize)/2)
+			drawWinStatusDot(hdc, indicatorX+(indicatorSize-overlayStatusSize)/2, centeredOverlayStatusY(y))
 		}
 		drawWinText(hdc, ratingX, y, row.rating, ratingColor)
 		y += overlayRowStepY
@@ -1612,8 +1625,8 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 			break
 		}
 	}
-	if oldFont != 0 {
-		_, _, _ = procSelectObject.Call(hdc, oldFont)
+	if toolSelectedFont != 0 {
+		_, _, _ = procSelectObject.Call(hdc, toolSelectedFont)
 	}
 	if contentFont != 0 {
 		_, _, _ = procDeleteObject.Call(contentFont)
@@ -1623,6 +1636,12 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	footerY := height - 16
 	if footerY > y+10 {
 		drawCenteredWinText(hdc, 0, width, footerY, "Log: api_fetch.log  |  F2: Settings", colorRef(colorHeaderText))
+	}
+	if originalFont != 0 {
+		_, _, _ = procSelectObject.Call(hdc, originalFont)
+	}
+	if toolFont != 0 {
+		_, _, _ = procDeleteObject.Call(toolFont)
 	}
 }
 
@@ -1763,6 +1782,14 @@ func drawCenteredWinText(hdc uintptr, left, right, y int, text string, colorRefV
 
 func drawWinStatusDot(hdc uintptr, x, y int) {
 	drawWinCircle(hdc, x, y, overlayStatusSize, colorGreen)
+}
+
+func centeredOverlayStatusY(rowY int) int {
+	return rowY + (overlayRowStepY-overlayStatusSize)/2
+}
+
+func centeredOverlayBadgeY(rowY int) int {
+	return rowY + (overlayRowStepY-overlayBadgeSize)/2
 }
 
 func drawWinBadge(hdc uintptr, x, y int, rank int) {
