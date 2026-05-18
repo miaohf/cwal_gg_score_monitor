@@ -35,6 +35,7 @@ import (
 const (
 	readmePath             = "README.md"
 	usersCSVPath           = "users.csv"
+	settingsFilePath       = "settings.json"
 	fetchInterval          = 300 * time.Second // 默认轮询间隔（秒）
 	requestTimeout         = 12 * time.Second
 	updateRequestWait      = 1200 * time.Millisecond
@@ -64,24 +65,30 @@ const (
 	footerUpdatedTimeMinSize              = 8 // 底部状态时间最小字号
 	footerUpdatedTimeBelowFooter          = 2 // 相对 footer 统计行再小一档
 
-	prefFontSizeKey        = "ui.font_size"
-	prefFontColorRKey      = "ui.font_color_r"
-	prefFontColorGKey      = "ui.font_color_g"
-	prefFontColorBKey      = "ui.font_color_b"
-	prefFontColorAKey      = "ui.font_color_a"
-	prefFontTypeKey        = "ui.font_type"
-	prefWindowOpacityKey   = "ui.window_opacity"
-	prefSettingsSavedKey   = "ui.settings_saved"
-	prefPollSettingsSaved  = "poll.settings_saved"
-	prefPollIntervalSecKey = "poll.interval_sec"
-	prefManualHoldSecKey   = "poll.manual_hold_sec"
-	prefPollStopEnabledKey = "poll.stop_enabled"
-	prefPollStopAtKey      = "poll.stop_at"
-	prefHistoryScoresKey   = "history.scores_json"
-	defaultWindowOpacity   = 0
-	defaultFontSize        = 13
-	defaultFontType        = "Regular"
-	appVersion             = "v2.0"
+	prefFontSizeKey             = "ui.font_size"
+	prefFontColorRKey           = "ui.font_color_r"
+	prefFontColorGKey           = "ui.font_color_g"
+	prefFontColorBKey           = "ui.font_color_b"
+	prefFontColorAKey           = "ui.font_color_a"
+	prefFontTypeKey             = "ui.font_type"
+	prefWindowOpacityKey        = "ui.window_opacity"
+	prefSettingsSavedKey        = "ui.settings_saved"
+	prefPollSettingsSaved       = "poll.settings_saved"
+	prefPollIntervalSecKey      = "poll.interval_sec"
+	prefManualHoldSecKey        = "poll.manual_hold_sec"
+	prefPollStopEnabledKey      = "poll.stop_enabled"
+	prefPollStopAtKey           = "poll.stop_at"
+	prefHistoryScoresKey        = "history.scores_json"
+	prefWindowWidthKey          = "window.width"
+	prefWindowHeightKey         = "window.height"
+	prefWindowsOverlayXKey      = "windows_overlay.x"
+	prefWindowsOverlayYKey      = "windows_overlay.y"
+	prefWindowsOverlayWidthKey  = "windows_overlay.width"
+	prefWindowsOverlayHeightKey = "windows_overlay.height"
+	defaultWindowOpacity        = 255
+	defaultFontSize             = 16
+	defaultFontType             = "Regular"
+	appVersion                  = "v2.0"
 )
 
 var (
@@ -98,9 +105,9 @@ var (
 	// Row panels: translucent milky overlays (real frosted blur is not supported by Fyne).
 	colorRowGlass     = color.NRGBA{R: 241, G: 245, B: 249, A: 40}  // default row frost
 	colorTop8RowGlass = color.NRGBA{R: 226, G: 232, B: 240, A: 72}  // slightly brighter strip for top 8
-	colorRating2200   = color.NRGBA{R: 110, G: 178, B: 238, A: 255} // blue
-	colorRating2300   = color.NRGBA{R: 152, G: 176, B: 234, A: 255} // blue-violet
-	colorRating2400   = color.NRGBA{R: 188, G: 172, B: 232, A: 255} // violet
+	colorRating2200   = color.NRGBA{R: 80, G: 190, B: 255, A: 255}  // cyan-blue
+	colorRating2300   = color.NRGBA{R: 170, G: 155, B: 255, A: 255} // bright violet-blue
+	colorRating2400   = color.NRGBA{R: 255, G: 210, B: 90, A: 255}  // gold
 
 	badgeResourceNone = fyne.NewStaticResource("badge-none.svg", []byte(`
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
@@ -133,10 +140,11 @@ type player struct {
 
 type playerState struct {
 	player
-	LiveScore   int
-	LastError   string
-	hasManual   bool
-	manualUntil time.Time
+	LiveScore    int
+	LastError    string
+	hasManual    bool
+	manualUntil  time.Time
+	LastUpdateOK bool
 
 	hasPrev   bool
 	prevScore int
@@ -153,6 +161,8 @@ type rowUI struct {
 	background *canvas.Rectangle
 	rankText   *canvas.Text
 	badgeIcon  *canvas.Image
+	statusDot  *canvas.Circle
+	statusBox  fyne.CanvasObject
 	nameText   *canvas.Text
 	ratingText *canvas.Text
 	container  *fyne.Container
@@ -172,6 +182,26 @@ type pollControl struct {
 type savedScore struct {
 	CwalID string `json:"cwal_id"`
 	Score  int    `json:"score"`
+}
+
+type savedSettingsFile struct {
+	FontSize        float32 `json:"font_size"`
+	FontColorR      uint8   `json:"font_color_r"`
+	FontColorG      uint8   `json:"font_color_g"`
+	FontColorB      uint8   `json:"font_color_b"`
+	FontColorA      uint8   `json:"font_color_a"`
+	FontType        string  `json:"font_type"`
+	WindowOpacity   uint8   `json:"window_opacity"`
+	PollIntervalSec int     `json:"poll_interval_sec"`
+	ManualHoldSec   int     `json:"manual_hold_sec"`
+	StopEnabled     bool    `json:"stop_enabled"`
+	StopAt          string  `json:"stop_at"`
+	WindowWidth     float32 `json:"window_width"`
+	WindowHeight    float32 `json:"window_height"`
+	WindowsOverlayX int     `json:"windows_overlay_x"`
+	WindowsOverlayY int     `json:"windows_overlay_y"`
+	WindowsOverlayW int     `json:"windows_overlay_width"`
+	WindowsOverlayH int     `json:"windows_overlay_height"`
 }
 
 func newPollControl() *pollControl {
@@ -301,6 +331,117 @@ func savePollSettingsToPrefs(p fyne.Preferences, interval time.Duration, stopEna
 	} else {
 		p.SetString(prefPollStopAtKey, "")
 	}
+}
+
+func defaultStopTime(now time.Time) time.Time {
+	stop := time.Date(now.Year(), now.Month(), now.Day(), 23, 45, 0, 0, now.Location())
+	if !stop.After(now) {
+		stop = stop.Add(24 * time.Hour)
+	}
+	return stop
+}
+
+func loadWindowSizeFromPrefs(p fyne.Preferences) fyne.Size {
+	width := float32(p.Float(prefWindowWidthKey))
+	height := float32(p.Float(prefWindowHeightKey))
+	if width < 160 || width > 4000 {
+		width = 420
+	}
+	if height < 220 || height > 4000 {
+		height = 700
+	}
+	return fyne.NewSize(width, height)
+}
+
+func saveWindowSizeToPrefs(p fyne.Preferences, size fyne.Size) {
+	if size.Width < 160 || size.Height < 220 {
+		return
+	}
+	p.SetFloat(prefWindowWidthKey, float64(size.Width))
+	p.SetFloat(prefWindowHeightKey, float64(size.Height))
+}
+
+func loadSettingsFileIntoPrefs(p fyne.Preferences) bool {
+	raw, err := os.ReadFile(settingsFilePath)
+	if err != nil {
+		return false
+	}
+	var saved savedSettingsFile
+	if err := json.Unmarshal(raw, &saved); err != nil {
+		return false
+	}
+	if saved.FontSize >= 10 && saved.FontSize <= 36 {
+		p.SetBool(prefSettingsSavedKey, true)
+		p.SetFloat(prefFontSizeKey, float64(saved.FontSize))
+		p.SetString(prefFontTypeKey, saved.FontType)
+		p.SetInt(prefFontColorRKey, int(saved.FontColorR))
+		p.SetInt(prefFontColorGKey, int(saved.FontColorG))
+		p.SetInt(prefFontColorBKey, int(saved.FontColorB))
+		p.SetInt(prefFontColorAKey, int(saved.FontColorA))
+		p.SetInt(prefWindowOpacityKey, int(saved.WindowOpacity))
+	}
+	if saved.PollIntervalSec > 0 || saved.ManualHoldSec > 0 || saved.StopAt != "" {
+		p.SetBool(prefPollSettingsSaved, true)
+		p.SetInt(prefPollIntervalSecKey, saved.PollIntervalSec)
+		p.SetInt(prefManualHoldSecKey, saved.ManualHoldSec)
+		p.SetBool(prefPollStopEnabledKey, saved.StopEnabled)
+		p.SetString(prefPollStopAtKey, saved.StopAt)
+	}
+	if saved.WindowWidth > 0 && saved.WindowHeight > 0 {
+		p.SetFloat(prefWindowWidthKey, float64(saved.WindowWidth))
+		p.SetFloat(prefWindowHeightKey, float64(saved.WindowHeight))
+	}
+	if saved.WindowsOverlayW > 0 && saved.WindowsOverlayH > 0 {
+		p.SetInt(prefWindowsOverlayXKey, saved.WindowsOverlayX)
+		p.SetInt(prefWindowsOverlayYKey, saved.WindowsOverlayY)
+		p.SetInt(prefWindowsOverlayWidthKey, saved.WindowsOverlayW)
+		p.SetInt(prefWindowsOverlayHeightKey, saved.WindowsOverlayH)
+	}
+	return true
+}
+
+func saveSettingsFileFromPrefs(p fyne.Preferences) {
+	ui := loadUISettingsFromPrefs(p).Snapshot()
+	poll := loadPollSettingsFromPrefs(p)
+	interval, stopEnabled, stopAt, _, manualHold := poll.Snapshot()
+	saved := savedSettingsFile{
+		FontSize:        ui.FontSize,
+		FontColorR:      ui.FontColor.R,
+		FontColorG:      ui.FontColor.G,
+		FontColorB:      ui.FontColor.B,
+		FontColorA:      ui.FontColor.A,
+		FontType:        ui.FontType,
+		WindowOpacity:   ui.BackgroundAlpha,
+		PollIntervalSec: int(interval / time.Second),
+		ManualHoldSec:   int(manualHold / time.Second),
+		StopEnabled:     stopEnabled,
+		WindowWidth:     float32(p.Float(prefWindowWidthKey)),
+		WindowHeight:    float32(p.Float(prefWindowHeightKey)),
+		WindowsOverlayX: p.Int(prefWindowsOverlayXKey),
+		WindowsOverlayY: p.Int(prefWindowsOverlayYKey),
+		WindowsOverlayW: p.Int(prefWindowsOverlayWidthKey),
+		WindowsOverlayH: p.Int(prefWindowsOverlayHeightKey),
+	}
+	if stopEnabled && !stopAt.IsZero() {
+		saved.StopAt = stopAt.Format(time.RFC3339)
+	}
+	raw, err := json.MarshalIndent(saved, "", "  ")
+	if err != nil {
+		return
+	}
+	_ = os.WriteFile(settingsFilePath, raw, 0o644)
+}
+
+func nextScoreRefreshAt(now time.Time) time.Time {
+	thisMinute := now.Truncate(time.Minute)
+	if now.Second() == 0 && now.Nanosecond() == 0 {
+		return thisMinute
+	}
+	return thisMinute.Add(time.Minute)
+}
+
+func nextScoreRefreshAfter(now time.Time) time.Time {
+	return now.Truncate(time.Minute).Add(time.Minute)
 }
 
 func loadHistoryScoresFromPrefs(p fyne.Preferences, rows []*playerState) {
@@ -531,7 +672,6 @@ func loadUISettingsFromPrefs(p fyne.Preferences) *uiSettings {
 	b := clampByte(p.Int(prefFontColorBKey), int(s.FontColor.B))
 	a := clampByte(p.Int(prefFontColorAKey), int(s.FontColor.A))
 	s.FontColor = color.NRGBA{R: r, G: g, B: b, A: a}
-
 	s.BackgroundAlpha = clampByte(p.Int(prefWindowOpacityKey), defaultWindowOpacity)
 	return s
 }
@@ -616,8 +756,11 @@ func main() {
 	}
 
 	myApp := app.NewWithID("cwalgg.score.monitor")
+	if !loadSettingsFileIntoPrefs(myApp.Preferences()) {
+		saveUISettingsToPrefs(myApp.Preferences(), defaultUISettings().Snapshot())
+	}
 	win := myApp.NewWindow("Score Monitor")
-	win.Resize(fyne.NewSize(420, 700))
+	win.Resize(loadWindowSizeFromPrefs(myApp.Preferences()))
 	if err := initAPILogger(apiLogPath); err != nil {
 		fmt.Fprintf(os.Stderr, "failed to init api logger: %v\n", err)
 	}
@@ -722,6 +865,8 @@ func main() {
 	stopCh := make(chan struct{})
 	go pollLoop(rows, rowUIs, listVBox, &rowsMu, statusDot, updatedText, countdownText, stopCh, cfg, settings, pollCfg, myApp.Preferences(), win)
 	win.SetCloseIntercept(func() {
+		saveWindowSizeToPrefs(myApp.Preferences(), win.Canvas().Size())
+		saveSettingsFileFromPrefs(myApp.Preferences())
 		close(stopCh)
 		win.Close()
 	})
@@ -776,16 +921,26 @@ func buildRowUI(playerColWidth float32, onDoubleTap func()) *rowUI {
 	badge := canvas.NewImageFromResource(badgeResourceNone)
 	badge.FillMode = canvas.ImageFillContain
 	badge.SetMinSize(fyne.NewSize(16, 16))
+	statusDot := canvas.NewCircle(colorGreen)
+	statusDot.Hide()
+	statusDotSize := float32(7)
+	statusDotPadY := (float32(rowHeight) - statusDotSize) / 2
+	statusDotBox := container.New(
+		layout.NewCustomPaddedLayout(statusDotPadY, statusDotPadY, 0, 0),
+		container.NewGridWrap(fyne.NewSize(statusDotSize, statusDotSize), statusDot),
+	)
+	statusDotBox.Hide()
 
 	rating := canvas.NewText("", colorText)
 	rating.TextStyle = fyne.TextStyle{Monospace: true, Bold: true}
 	rating.TextSize = 13
 	rating.Alignment = fyne.TextAlignTrailing
+	ratingGroup := container.New(layout.NewCustomPaddedHBoxLayout(2), statusDotBox, rating)
 
 	rankBox := container.NewGridWrap(fyne.NewSize(colRankWidth, rowHeight), rank)
 	nameBox := container.NewGridWrap(fyne.NewSize(playerColWidth, rowHeight), name)
 	badgeBox := container.NewGridWrap(fyne.NewSize(colBadgeWidth, rowHeight), container.NewCenter(badge))
-	ratingBox := container.NewGridWrap(fyne.NewSize(colRatingWidth, rowHeight), rating)
+	ratingBox := container.NewGridWrap(fyne.NewSize(colRatingWidth, rowHeight), container.NewBorder(nil, nil, nil, ratingGroup))
 
 	rowInner := container.New(newLeaderboardColumnLayout(colPlayerWidthHardMin, playerColWidth, colPlayerWidthMax), rankBox, nameBox, badgeBox, ratingBox)
 	rowContent := container.New(layout.NewCustomPaddedLayout(0, 0, 0, ratingColPadRight), rowInner)
@@ -795,6 +950,8 @@ func buildRowUI(playerColWidth float32, onDoubleTap func()) *rowUI {
 		background: bg,
 		rankText:   rank,
 		badgeIcon:  badge,
+		statusDot:  statusDot,
+		statusBox:  statusDotBox,
 		nameText:   name,
 		ratingText: rating,
 		container:  row,
@@ -833,6 +990,7 @@ func showFontSettingsDialog(
 		alphaLabel.SetText(fmt.Sprintf("%d%%", int(v)))
 	}
 	alphaRow := container.NewBorder(nil, nil, nil, alphaLabel, alphaSlider)
+
 	intervalEntry := widget.NewEntry()
 	interval, stopEnabled, stopAt, _, manualHold := pollCfg.Snapshot()
 	intervalEntry.SetText(strconv.Itoa(int(interval / time.Second)))
@@ -844,17 +1002,16 @@ func showFontSettingsDialog(
 	if stopEnabled {
 		stopTimeEntry.SetText(stopAt.Format("2006-01-02 15:04"))
 	} else {
-		now := time.Now()
-		stopTimeEntry.SetText(fmt.Sprintf("%s 00:00", now.Format("2006-01-02")))
+		stopTimeEntry.SetText(defaultStopTime(time.Now()).Format("2006-01-02 15:04"))
 	}
 
 	items := []*widget.FormItem{
 		widget.NewFormItem("Font Size", sizeEntry),
 		widget.NewFormItem("Font Color", colorSelect),
 		widget.NewFormItem("Font Type", typeSelect),
-		widget.NewFormItem("BG Transparency", alphaRow),
-		widget.NewFormItem("Polling Interval(s)", intervalEntry),
-		widget.NewFormItem("Manual Hold(s)", manualHoldEntry),
+		widget.NewFormItem("BG %", alphaRow),
+		widget.NewFormItem("Poll(s)", intervalEntry),
+		widget.NewFormItem("Hold(s)", manualHoldEntry),
 		widget.NewFormItem("Stop Time", stopTimeEntry),
 	}
 
@@ -912,6 +1069,7 @@ func showFontSettingsDialog(
 		pollCfg.Update(nextInterval, nextStopEnabled, nextStopAt, nextManualHold)
 		pollCfg.Reset()
 		savePollSettingsToPrefs(prefs, nextInterval, nextStopEnabled, nextStopAt, nextManualHold)
+		saveSettingsFileFromPrefs(prefs)
 		applyTypography(next, staticTexts, headerRefs, rowUIs)
 		backgroundRect.FillColor = color.NRGBA{R: 15, G: 23, B: 42, A: next.BackgroundAlpha}
 		backgroundRect.Refresh()
@@ -934,30 +1092,10 @@ func showFontSettingsDialog(
 func applyTypography(s uiSettingsSnapshot, staticTexts []*canvas.Text, headerRefs headerUI, rowUIs []*rowUI) {
 	bodySize := s.FontSize
 	headerSize := maxFloat32(10, bodySize-2)
-	footerSize := maxFloat32(9, bodySize-3)
 
 	bodyStyle := styleByType(s.FontType)
 	headerStyle := bodyStyle
 	headerStyle.Bold = true
-
-	footerUpdatedSize := maxFloat32(float32(footerUpdatedTimeMinSize), footerSize-float32(footerUpdatedTimeBelowFooter))
-	for i, t := range staticTexts {
-		t.Color = s.FontColor
-		// [0]=last-updated (footer strip), [1]=countdown (header), [2]=footer stats
-		if i == 1 {
-			clockStyle := styleByType(s.FontType)
-			clockStyle.Monospace = true
-			t.TextStyle = clockStyle
-			t.TextSize = bodySize // larger than surrounding header-strip text
-		} else if i == 0 {
-			t.TextStyle = bodyStyle
-			t.TextSize = footerUpdatedSize
-		} else {
-			t.TextStyle = bodyStyle
-			t.TextSize = footerSize
-		}
-		t.Refresh()
-	}
 
 	headerRefs.rank.Color = s.FontColor
 	headerRefs.player.Color = s.FontColor
@@ -1241,9 +1379,9 @@ func pollLoop(
 			countdownText.Refresh()
 		})
 	} else {
-		runCycle()
+		applySortAndRender(rows, rowUIs, listVBox, rowsMu, settings, shouldShowBadges(pollCfg))
 	}
-	nextPollAt := time.Now()
+	nextPollAt := nextScoreRefreshAt(time.Now())
 	ticker := time.NewTicker(time.Second)
 	defer ticker.Stop()
 	var cycleMu sync.Mutex
@@ -1253,20 +1391,27 @@ func pollLoop(
 		case <-stopCh:
 			return
 		case <-pollCfg.resetCh:
-			// Interval changed: reschedule next poll to now+newInterval.
-			interval, _, _, _, _ := pollCfg.Snapshot()
-			nextPollAt = time.Now().Add(interval)
+			nextPollAt = nextScoreRefreshAt(time.Now())
 			continue
 		case <-pollCfg.kickCh:
-			// Trigger one immediate cycle (manual edit should not block other players).
-			nextPollAt = time.Now()
+			cycleMu.Lock()
+			if cycleRunning {
+				cycleMu.Unlock()
+				continue
+			}
+			cycleRunning = true
+			nextPollAt = nextScoreRefreshAt(time.Now())
+			cycleMu.Unlock()
+			go func() {
+				runCycle()
+				cycleMu.Lock()
+				cycleRunning = false
+				cycleMu.Unlock()
+			}()
 			continue
 		case <-ticker.C:
-			interval, stopEnabled, stopAt, stopped, _ := pollCfg.Snapshot()
+			_, stopEnabled, stopAt, stopped, _ := pollCfg.Snapshot()
 			now := time.Now()
-			if interval < time.Second {
-				interval = time.Second
-			}
 			if stopped {
 				// keep 00:00:00 (or last stopped display)
 			} else if stopEnabled {
@@ -1323,7 +1468,7 @@ func pollLoop(
 				continue
 			}
 			cycleRunning = true
-			nextPollAt = now.Add(interval)
+			nextPollAt = nextScoreRefreshAfter(now)
 			cycleMu.Unlock()
 
 			go func() {
@@ -1359,6 +1504,7 @@ func refreshRows(rows []*playerState, rowsMu *sync.RWMutex, cfg apiConfig) {
 				if r.manualUntil.After(now) {
 					// Manual score is still in hold period, skip API overwrite.
 					r.LastError = ""
+					r.LastUpdateOK = false
 					rowsMu.Unlock()
 					return
 				}
@@ -1377,6 +1523,7 @@ func refreshRows(rows []*playerState, rowsMu *sync.RWMutex, cfg apiConfig) {
 				} else {
 					r.LastError = err.Error()
 				}
+				r.LastUpdateOK = false
 				return
 			}
 
@@ -1398,6 +1545,7 @@ func refreshRows(rows []*playerState, rowsMu *sync.RWMutex, cfg apiConfig) {
 
 			r.LiveScore = result.Rating
 			r.LastError = ""
+			r.LastUpdateOK = true
 			r.hasManual = false
 			r.manualUntil = time.Time{}
 		}(row)
@@ -1451,15 +1599,16 @@ func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Con
 
 	// Snapshot values for UI update under fyne thread later
 	type rowSnapshot struct {
-		ui      *rowUI
-		rank    string
-		badge   fyne.Resource
-		name    string
-		bgColor color.NRGBA
-		nameC   color.NRGBA
-		rating  string
-		ratingC color.NRGBA
-		trend   int
+		ui       *rowUI
+		rank     string
+		badge    fyne.Resource
+		name     string
+		bgColor  color.NRGBA
+		nameC    color.NRGBA
+		rating   string
+		ratingC  color.NRGBA
+		trend    int
+		updateOK bool
 	}
 	snapshots := make([]rowSnapshot, len(indices))
 
@@ -1484,7 +1633,7 @@ func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Con
 			if pos < 8 {
 				bgColor = colorTop8RowGlass
 			} else {
-				bgColor = colorRowGlass
+				bgColor = color.NRGBA{}
 			}
 		} else {
 			nameC = mutedColor
@@ -1492,15 +1641,16 @@ func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Con
 		}
 
 		snapshots[pos] = rowSnapshot{
-			ui:      ui,
-			rank:    rankStr,
-			badge:   badgeRes,
-			name:    nameStr,
-			bgColor: bgColor,
-			nameC:   nameC,
-			rating:  ratingStr,
-			ratingC: ratingC,
-			trend:   r.trend,
+			ui:       ui,
+			rank:     rankStr,
+			badge:    badgeRes,
+			name:     nameStr,
+			bgColor:  bgColor,
+			nameC:    nameC,
+			rating:   ratingStr,
+			ratingC:  ratingC,
+			trend:    r.trend,
+			updateOK: !showBadges && r.LastUpdateOK,
 		}
 
 		if r.LastError == "" && r.trend != 0 {
@@ -1521,7 +1671,14 @@ func applySortAndRender(rows []*playerState, rowUIs []*rowUI, listVBox *fyne.Con
 			s.ui.background.Refresh()
 
 			s.ui.badgeIcon.Resource = s.badge
+			if s.badge == badgeResourceNone && s.updateOK {
+				s.ui.statusBox.Show()
+			} else {
+				s.ui.statusBox.Hide()
+			}
 			s.ui.badgeIcon.Refresh()
+			s.ui.statusBox.Refresh()
+			s.ui.statusDot.Refresh()
 
 			s.ui.nameText.Text = s.name
 			s.ui.nameText.Color = s.nameC
@@ -1581,6 +1738,7 @@ func showManualScoreDialog(win fyne.Window, row *playerState, manualHold time.Du
 	rowsMu.RUnlock()
 	if current > 0 {
 		entry.SetText(strconv.Itoa(current))
+		entry.CursorColumn = len([]rune(entry.Text))
 	}
 	formDlg := dialog.NewForm(
 		"Manual Rating",
@@ -1599,6 +1757,7 @@ func showManualScoreDialog(win fyne.Window, row *playerState, manualHold time.Du
 			rowsMu.Lock()
 			row.LiveScore = v
 			row.LastError = ""
+			row.LastUpdateOK = false
 			row.hasManual = manualHold > 0
 			if manualHold > 0 {
 				row.manualUntil = time.Now().Add(manualHold)
@@ -1621,6 +1780,8 @@ func showManualScoreDialog(win fyne.Window, row *playerState, manualHold time.Du
 	formDlg.Show()
 	fyne.Do(func() {
 		win.Canvas().Focus(entry)
+		entry.CursorColumn = len([]rune(entry.Text))
+		entry.Refresh()
 	})
 }
 

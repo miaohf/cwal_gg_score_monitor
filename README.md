@@ -62,15 +62,16 @@ Messiah 2000
 - 程序会先调用 `https://v2.api.cwal.gg/player-update` 触发更新，再调用 `player_profile_view` 读取最新分数。
 - 分数读取响应中的 `rating` 字段（不做其他字段兜底）。
 - 当前 GUI 继续使用 `Fyne`。
-- Windows 构建会优先启用原生透明窗模式（不走 Fyne 窗口层），可实现桌面透出。
-- `BG Transparency` 现在会作为 Windows 原生透明窗的初始透明度设置（同一偏好键）。
-- Windows 原生透明窗支持快捷键调节透明度：`+` / `↑` 提高不透明度，`-` / `↓` 降低不透明度；调整后会保存到 `BG Transparency`。
+- `Settings` 里的 `BG Transparency` 会保存背景透明度。Linux/Fyne 下仅调整应用内部背景；Windows 构建会启用原生分层窗，让背景透出桌面且文字保持不透明，也可用 `+` / `-`、`↑` / `↓` 微调透明度；按 `F2` 或右键窗口可进入设置。
 
 ### 构建 Windows 可执行文件
 
 在 Windows 本机编译最省事：
 
-- `go build -o cwalgg.exe .`
+- 推荐 GUI 打包（双击运行时不弹出黑色控制台窗口）：
+  - `go build -ldflags "-H windowsgui" -o cwalgg.exe .`
+- 调试时如果希望看到标准输出/错误，也可以临时使用：
+  - `go build -o cwalgg.exe .`
 
 如果在 Ubuntu 上交叉编译 Windows exe，需要先安装 MinGW 工具链：
 
@@ -78,7 +79,8 @@ Messiah 2000
    - `sudo apt update`
    - `sudo apt install -y gcc-mingw-w64-x86-64`
 2. 使用 CGO 交叉编译（**必须**带上 `GOOS=windows`，否则生成的是 Linux 程序，只是文件名写了 `.exe`）：
-   - `CGO_ENABLED=1 GOOS=windows GOARCH=amd64 CC=x86_64-w64-mingw32-gcc go build -o cwalgg-windows-amd64.exe .`
+   - `CGO_ENABLED=1 GOOS=windows GOARCH=amd64 CC=x86_64-w64-mingw32-gcc go build -ldflags "-H windowsgui" -o cwalgg-windows-amd64.exe .`
+   - 仓库也提供了等价脚本：`./build-windows.sh`
 3. 在 Linux 上自检产物是否为 Windows PE（应出现 `PE32+ executable for MS Windows`，**不能**是 `ELF`）：
    - `file cwalgg-windows-amd64.exe`
 
@@ -89,6 +91,8 @@ Messiah 2000
 说明：
 
 - 不能只用 `GOOS=windows GOARCH=amd64 go build`，因为 `Fyne` 依赖 `go-gl`，交叉编译时需要 Windows 的 CGO 工具链。
+- `-ldflags "-H windowsgui"` 会把 exe 标记为 Windows GUI 程序，双击时只显示透明积分窗口；不加这个参数会额外弹出一个黑色控制台窗口。
+- API 请求和轮询调试日志不会显示在窗口里，而是写入运行目录下的 `api_fetch.log`。
 - `fyne-cross` 也是可选方案，适合后续需要更稳定地打 Windows 包时再引入；当前仓库先保留直接交叉编译方式。
 
 #### Windows 上“双击没反应 / 无法打开”排查
@@ -96,4 +100,5 @@ Messiah 2000
 - **最常见**：在 Linux 上执行了 `go build -o cwalgg.exe .` 且**未**设置 `GOOS=windows`，得到的是 **ELF（Linux）可执行文件**，Windows 无法运行。请用上一节的交叉编译命令重新打包，并用 `file` 确认是 PE。
 - **运行目录**：把 exe 与 `README.md`、`users.csv`、`.env` 放在同一目录再运行；缺文件时程序会在启动阶段退出（可能只看到窗口一闪或无任何界面）。
 - **架构**：上述产物为 **amd64**；若是 ARM 版 Windows（如部分 Surface），需要另行 `GOARCH=arm64` 并配套工具链。
-- **安全软件**：若 SmartScreen 拦截，可尝试“仍要运行”或先 `cmd` 里运行 exe 查看是否有报错输出。
+- **日志排查**：查看 `api_fetch.log` 的最后几行，确认是否有 `pollLoop`、`player-update` 或 `query_profile` 记录；若没有新日志，通常是运行目录不对、程序未启动成功，或 Stop Time 已到期后仍未重新保存设置。
+- **安全软件**：若 SmartScreen 拦截，可尝试“仍要运行”。如果需要看启动阶段错误，可临时用不带 `-H windowsgui` 的命令编译调试版，并从 `cmd` 里运行。

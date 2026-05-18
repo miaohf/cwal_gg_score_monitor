@@ -1,0 +1,19 @@
+{
+  "font_size": 16,
+  "font_color_r": 255,
+  "font_color_g": 255,
+  "font_color_b": 255,
+  "font_color_a": 255,
+  "font_type": "Regular",
+  "window_opacity": 255,
+  "poll_interval_sec": 60,
+  "manual_hold_sec": 300,
+  "stop_enabled": true,
+  "stop_at": "2026-05-21T00:00:00+08:00",
+  "window_width": 220,
+  "window_height": 700,
+  "windows_overlay_x": 0,
+  "windows_overlay_y": 0,
+  "windows_overlay_width": 0,
+  "windows_overlay_height": 0
+}
