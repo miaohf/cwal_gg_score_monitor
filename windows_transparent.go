@@ -31,6 +31,7 @@ const (
 	wmRButtonUp     = 0x0205
 	wmCommand       = 0x0111
 	wmClose         = 0x0010
+	emSetSel        = 0x00B1
 	htClient        = 1
 	htCaption       = 2
 	htLeft          = 10
@@ -81,6 +82,7 @@ const (
 	vkSubtract = 0x6D
 	vkF2       = 0x71
 	vkEsc      = 0x1B
+	vkReturn   = 0x0D
 
 	biRGB        = 0
 	dibRGBColors = 0
@@ -430,6 +432,9 @@ func (s *windowsOverlayState) run() error {
 		if ret == 0 {
 			break
 		}
+		if s.handleDialogShortcut(msg) {
+			continue
+		}
 		_, _, _ = procTranslateMessage.Call(uintptr(unsafe.Pointer(&msg)))
 		_, _, _ = procDispatchMessageW.Call(uintptr(unsafe.Pointer(&msg)))
 	}
@@ -442,6 +447,17 @@ func (s *windowsOverlayState) backgroundTransparencyPercent() int {
 	alpha := s.bgAlpha
 	s.alphaMu.RUnlock()
 	return int(transparencyPercentFromAlpha(alpha))
+}
+
+func (s *windowsOverlayState) handleDialogShortcut(msg winMsg) bool {
+	if msg.Message != wmKeyDown || msg.WParam != vkReturn {
+		return false
+	}
+	if s.manualScoreWnd != 0 && (msg.Hwnd == s.manualScoreWnd || msg.Hwnd == s.manualScoreControls.score) {
+		s.applyManualScore()
+		return true
+	}
+	return false
 }
 
 func loadOverlayPlacement(prefs fynePreferences) overlayPlacement {
@@ -601,6 +617,7 @@ func (s *windowsOverlayState) showManualScore(rowIndex int) {
 	s.populateManualScoreControls(hwnd, hInstance, name, current)
 	_, _, _ = procShowWindow.Call(hwnd, sWShow)
 	_, _, _ = procSetFocus.Call(s.manualScoreControls.score)
+	s.moveManualScoreCaretToEnd(current)
 }
 
 func (s *windowsOverlayState) populateManualScoreControls(hwnd, hInstance uintptr, name string, current int) {
@@ -613,6 +630,17 @@ func (s *windowsOverlayState) populateManualScoreControls(hwnd, hInstance uintpt
 	s.manualScoreControls.status = s.addStatic(hwnd, hInstance, 18, 82, 290, 22, "")
 	s.addButton(hwnd, hInstance, manualControlSaveButton, 132, 116, 76, 28, "Save")
 	s.addButton(hwnd, hInstance, manualControlCancelButton, 226, 116, 76, 28, "Cancel")
+}
+
+func (s *windowsOverlayState) moveManualScoreCaretToEnd(current int) {
+	if s.manualScoreControls.score == 0 {
+		return
+	}
+	n := 0
+	if current > 0 {
+		n = len(strconv.Itoa(current))
+	}
+	_, _, _ = procSendMessageW.Call(s.manualScoreControls.score, emSetSel, uintptr(n), uintptr(n))
 }
 
 func (s *windowsOverlayState) closeManualScore() {
@@ -1785,7 +1813,7 @@ func drawWinStatusDot(hdc uintptr, x, y int) {
 }
 
 func centeredOverlayStatusY(rowY int) int {
-	return rowY + (overlayRowStepY-overlayStatusSize)/2
+	return rowY + (overlayRowStepY-overlayStatusSize)/2 - 3
 }
 
 func centeredOverlayBadgeY(rowY int) int {

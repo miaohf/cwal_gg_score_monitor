@@ -1738,6 +1738,7 @@ func showManualScoreDialog(win fyne.Window, row *playerState, manualHold time.Du
 	rowsMu.RUnlock()
 	if current > 0 {
 		entry.SetText(strconv.Itoa(current))
+		entry.CursorColumn = len([]rune(entry.Text))
 	}
 	formDlg := dialog.NewForm(
 		"Manual Rating",
@@ -1779,6 +1780,8 @@ func showManualScoreDialog(win fyne.Window, row *playerState, manualHold time.Du
 	formDlg.Show()
 	fyne.Do(func() {
 		win.Canvas().Focus(entry)
+		entry.CursorColumn = len([]rune(entry.Text))
+		entry.Refresh()
 	})
 }
 
