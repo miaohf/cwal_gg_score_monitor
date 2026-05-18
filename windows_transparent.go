@@ -1526,6 +1526,7 @@ func (s *windowsOverlayState) render() {
 	bgAlpha := s.bgAlpha
 	s.alphaMu.RUnlock()
 	bg := color.NRGBA{R: 15, G: 23, B: 42, A: bgAlpha}
+	top8RowBg := compositeNRGBA(bg, colorTop8RowGlass)
 	bgPixel := dibPixel(bg)
 	pixels := unsafe.Slice((*uint32)(unsafe.Pointer(bits)), width*height)
 	for i := range pixels {
@@ -1538,10 +1539,10 @@ func (s *windowsOverlayState) render() {
 			defer procSelectObject.Call(memDC, oldFont)
 		}
 	}
-	s.drawContent(memDC, pixels, width, height)
+	s.drawContent(memDC, pixels, width, height, top8RowBg)
 
 	bgRGB := bgPixel & 0x00ffffff
-	top8RowRGB := dibPixel(colorTop8RowGlass) & 0x00ffffff
+	top8RowRGB := dibPixel(top8RowBg) & 0x00ffffff
 	for i, px := range pixels {
 		rgb := px & 0x00ffffff
 		if rgb != bgRGB && rgb != top8RowRGB {
@@ -1624,7 +1625,7 @@ func (s *windowsOverlayState) createContentFont() uintptr {
 	return createOverlayFont(height, weight, faceName)
 }
 
-func (s *windowsOverlayState) drawContent(hdc uintptr, pixels []uint32, pixelWidth, pixelHeight int) {
+func (s *windowsOverlayState) drawContent(hdc uintptr, pixels []uint32, pixelWidth, pixelHeight int, top8RowBg color.NRGBA) {
 	s.displayMu.RLock()
 	rows := append([]overlayRow(nil), s.displayRows...)
 	lastUpdated := s.lastUpdated
@@ -1712,7 +1713,7 @@ func (s *windowsOverlayState) drawContent(hdc uintptr, pixels []uint32, pixelWid
 				y: y - 4,
 				w: width,
 				h: overlayRowStepY - 2,
-			}, colorTop8RowGlass)
+			}, top8RowBg)
 		}
 		drawWinText(hdc, overlayRankX, y, row.rank, rankColor)
 		drawWinText(hdc, overlayPlayerX, y, fitWinTextToWidth(hdc, row.name, nameMaxWidth), nameColor)
@@ -1927,6 +1928,31 @@ func badgeColorByRank(rank int) color.NRGBA {
 		return color.NRGBA{R: 180, G: 83, B: 9, A: 255}
 	default:
 		return color.NRGBA{}
+	}
+}
+
+func compositeNRGBA(base, overlay color.NRGBA) color.NRGBA {
+	oa := float32(overlay.A) / 255
+	ba := float32(base.A) / 255
+	outA := oa + ba*(1-oa)
+	if outA <= 0 {
+		return color.NRGBA{}
+	}
+	blend := func(baseC, overlayC uint8) uint8 {
+		v := (float32(overlayC)*oa + float32(baseC)*ba*(1-oa)) / outA
+		if v < 0 {
+			v = 0
+		}
+		if v > 255 {
+			v = 255
+		}
+		return uint8(v + 0.5)
+	}
+	return color.NRGBA{
+		R: blend(base.R, overlay.R),
+		G: blend(base.G, overlay.G),
+		B: blend(base.B, overlay.B),
+		A: uint8(outA*255 + 0.5),
 	}
 }
 
