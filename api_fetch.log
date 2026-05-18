@@ -1258,3 +1258,449 @@
 2026/05/12 07:50:20.426164 name=Messiah cwal_gg_id=saikohero endpoint=player-update status=ok code=202
 2026/05/12 07:50:20.452345 name=毕业生 cwal_gg_id=needbigass endpoint=player-update status=ok code=202
 2026/05/12 07:50:20.492881 name=东海 cwal_gg_id=wwwwwwww endpoint=player-update status=ok code=202
+2026/05/12 08:02:52.231849 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/05/12 08:02:52.238393 name=酷酷 cwal_gg_id=kukuboy1 endpoint=player-update status=ok code=202
+2026/05/12 08:02:52.242474 name=AP cwal_gg_id=TIMING3M endpoint=player-update status=ok code=202
+2026/05/12 08:02:52.242987 name=小马 cwal_gg_id=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/05/12 08:02:52.264609 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/05/12 08:02:52.264818 name=天王 cwal_gg_id=lliillii1111l endpoint=player-update status=ok code=202
+2026/05/12 08:02:52.264887 name=过谦 cwal_gg_id=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/05/12 08:02:52.264937 name=小帅 cwal_gg_id=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/05/12 08:02:52.267393 name=KID cwal_gg_id=IILLIILioII endpoint=player-update status=ok code=202
+2026/05/12 08:02:52.290874 name=影子鱼 cwal_gg_id=kele+bing endpoint=player-update status=ok code=202
+2026/05/12 08:02:52.290963 name=毕业生 cwal_gg_id=needbigass endpoint=player-update status=ok code=202
+2026/05/12 08:02:52.291094 name=Fengzi cwal_gg_id=scgotoboy endpoint=player-update status=ok code=202
+2026/05/12 08:02:52.291278 name=小新 cwal_gg_id=unkown endpoint=player-update status=ok code=202
+2026/05/12 08:02:52.291330 name=Messiah cwal_gg_id=saikohero endpoint=player-update status=ok code=202
+2026/05/12 08:02:52.372851 name=xz cwal_gg_id=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/05/12 08:02:52.387653 name=轩轩 cwal_gg_id=lIIIlIlIIIll endpoint=player-update status=http_429 body={"message":"Too Many Requests"}
+2026/05/12 08:02:52.387820 name=轩轩 cwal_gg_id=lIIIlIlIIIll stage=trigger_update status=error err=HTTP 429: {"message":"Too Many Requests"}
+2026/05/12 08:02:52.411946 name=东海 cwal_gg_id=wwwwwwww endpoint=player-update status=ok code=202
+2026/05/12 08:02:54.718131 name=毕业生 cwal_gg_id=needbigass stage=query_profile status=ok rating=2181 elapsed_ms=4365 attempts=1
+2026/05/12 08:02:54.742227 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran stage=query_profile status=ok rating=1404 elapsed_ms=4389 attempts=1
+2026/05/12 08:02:54.758102 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2349 elapsed_ms=4405 attempts=1
+2026/05/12 08:02:54.762721 name=KID cwal_gg_id=IILLIILioII stage=query_profile status=ok rating=2191 elapsed_ms=4410 attempts=1
+2026/05/12 08:02:54.763300 name=AP cwal_gg_id=TIMING3M stage=query_profile status=ok rating=2339 elapsed_ms=4410 attempts=1
+2026/05/12 08:02:54.775703 name=酷酷 cwal_gg_id=kukuboy1 stage=query_profile status=ok rating=2192 elapsed_ms=4423 attempts=1
+2026/05/12 08:02:54.848300 name=xz cwal_gg_id=lIlIlIIIllII112 stage=query_profile status=ok rating=2078 elapsed_ms=4495 attempts=1
+2026/05/12 08:02:54.918722 name=Fengzi cwal_gg_id=scgotoboy stage=query_profile status=ok rating=2338 elapsed_ms=4566 attempts=1
+2026/05/12 08:02:57.695150 name=小帅 cwal_gg_id=32323GDFDGDF344 stage=query_profile status=retry attempt=4 elapsed_ms=7342 err=invalid JSON: []
+2026/05/12 08:02:57.737904 name=小马 cwal_gg_id=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 elapsed_ms=7385 err=invalid JSON: []
+2026/05/12 08:02:57.739072 name=天王 cwal_gg_id=lliillii1111l stage=query_profile status=retry attempt=4 elapsed_ms=7386 err=invalid JSON: []
+2026/05/12 08:02:57.758463 name=东海 cwal_gg_id=wwwwwwww stage=query_profile status=retry attempt=4 elapsed_ms=7405 err=invalid JSON: []
+2026/05/12 08:02:57.894119 name=Messiah cwal_gg_id=saikohero stage=query_profile status=retry attempt=4 elapsed_ms=7541 err=invalid JSON: []
+2026/05/12 08:02:57.898591 name=过谦 cwal_gg_id=Naiqoug_FnuS stage=query_profile status=retry attempt=4 elapsed_ms=7546 err=invalid JSON: []
+2026/05/12 08:02:57.899708 name=影子鱼 cwal_gg_id=kele+bing stage=query_profile status=retry attempt=4 elapsed_ms=7547 err=invalid JSON: []
+2026/05/12 08:02:57.900941 name=小新 cwal_gg_id=unkown stage=query_profile status=retry attempt=4 elapsed_ms=7548 err=invalid JSON: []
+2026/05/12 08:02:59.176176 name=小新 cwal_gg_id=unkown endpoint=player-update status=ok code=202
+2026/05/12 08:02:59.181886 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/05/12 08:02:59.182121 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/05/12 08:02:59.182147 name=AP cwal_gg_id=TIMING3M endpoint=player-update status=ok code=202
+2026/05/12 08:02:59.183103 name=影子鱼 cwal_gg_id=kele+bing endpoint=player-update status=ok code=202
+2026/05/12 08:02:59.184694 name=小帅 cwal_gg_id=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/05/12 08:02:59.184759 name=小马 cwal_gg_id=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/05/12 08:02:59.187985 name=Messiah cwal_gg_id=saikohero endpoint=player-update status=ok code=202
+2026/05/12 08:02:59.188108 name=Fengzi cwal_gg_id=scgotoboy endpoint=player-update status=ok code=202
+2026/05/12 08:02:59.191367 name=东海 cwal_gg_id=wwwwwwww endpoint=player-update status=ok code=202
+2026/05/12 08:02:59.191406 name=毕业生 cwal_gg_id=needbigass endpoint=player-update status=ok code=202
+2026/05/12 08:02:59.194542 name=天王 cwal_gg_id=lliillii1111l endpoint=player-update status=ok code=202
+2026/05/12 08:02:59.194622 name=xz cwal_gg_id=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/05/12 08:02:59.235639 name=KID cwal_gg_id=IILLIILioII endpoint=player-update status=ok code=202
+2026/05/12 08:02:59.235768 name=过谦 cwal_gg_id=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/05/12 08:02:59.235824 name=轩轩 cwal_gg_id=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/05/12 08:02:59.351550 name=酷酷 cwal_gg_id=kukuboy1 endpoint=player-update status=ok code=202
+2026/05/12 08:03:05.408875 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran stage=query_profile status=ok rating=1404 elapsed_ms=6503 attempts=1
+2026/05/12 08:03:06.801284 name=毕业生 cwal_gg_id=needbigass stage=query_profile status=ok rating=2181 elapsed_ms=7895 attempts=1
+2026/05/12 08:03:07.280331 name=xz cwal_gg_id=lIlIlIIIllII112 stage=query_profile status=ok rating=2078 elapsed_ms=8375 attempts=1
+2026/05/12 08:03:07.992620 name=AP cwal_gg_id=TIMING3M stage=query_profile status=ok rating=2339 elapsed_ms=9087 attempts=1
+2026/05/12 08:03:07.999289 name=KID cwal_gg_id=IILLIILioII stage=query_profile status=ok rating=2191 elapsed_ms=9094 attempts=1
+2026/05/12 08:03:08.395601 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2349 elapsed_ms=9490 attempts=1
+2026/05/12 08:03:08.901322 name=酷酷 cwal_gg_id=kukuboy1 stage=query_profile status=ok rating=2192 elapsed_ms=9995 attempts=1
+2026/05/12 08:03:09.050253 name=Fengzi cwal_gg_id=scgotoboy stage=query_profile status=ok rating=2338 elapsed_ms=10145 attempts=1
+2026/05/12 08:03:12.389411 name=Messiah cwal_gg_id=saikohero endpoint=profile_view status=network_error err=Get "https://xmploueumzkrdvapbyfs.supabase.co/rest/v1/player_profile_view?select=*&alias=eq.saikohero&gateway=eq.30": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2026/05/12 08:03:12.437154 name=轩轩 cwal_gg_id=lIIIlIlIIIll endpoint=profile_view status=network_error err=Get "https://xmploueumzkrdvapbyfs.supabase.co/rest/v1/player_profile_view?select=*&alias=eq.lIIIlIlIIIll&gateway=eq.30": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2026/05/12 08:03:20.393537 name=小新 cwal_gg_id=unkown stage=query_profile status=retry attempt=4 elapsed_ms=21488 err=invalid JSON: []
+2026/05/12 08:03:20.746286 name=小帅 cwal_gg_id=32323GDFDGDF344 stage=query_profile status=retry attempt=4 elapsed_ms=21841 err=invalid JSON: []
+2026/05/12 08:03:21.824802 name=过谦 cwal_gg_id=Naiqoug_FnuS stage=query_profile status=retry attempt=4 elapsed_ms=22919 err=invalid JSON: []
+2026/05/12 08:03:22.133510 name=天王 cwal_gg_id=lliillii1111l endpoint=profile_view status=network_error err=Get "https://xmploueumzkrdvapbyfs.supabase.co/rest/v1/player_profile_view?select=*&alias=eq.lliillii1111l&gateway=eq.30": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2026/05/12 08:03:22.461647 name=轩轩 cwal_gg_id=lIIIlIlIIIll stage=query_profile status=ok rating=2197 elapsed_ms=23556 attempts=2
+2026/05/12 08:03:22.486359 name=小马 cwal_gg_id=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 elapsed_ms=23581 err=invalid JSON: []
+2026/05/12 08:03:22.791917 name=东海 cwal_gg_id=wwwwwwww stage=query_profile status=retry attempt=4 elapsed_ms=23886 err=invalid JSON: []
+2026/05/12 08:03:23.563688 name=影子鱼 cwal_gg_id=kele+bing endpoint=profile_view status=network_error err=Get "https://xmploueumzkrdvapbyfs.supabase.co/rest/v1/player_profile_view?select=*&alias=eq.kele%2Bbing&gateway=eq.30": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2026/05/12 08:03:26.241250 name=影子鱼 cwal_gg_id=kele+bing stage=query_profile status=retry attempt=4 elapsed_ms=27336 err=invalid JSON: []
+2026/05/12 08:03:26.480331 name=天王 cwal_gg_id=lliillii1111l stage=query_profile status=retry attempt=4 elapsed_ms=27574 err=invalid JSON: []
+2026/05/12 08:03:28.945786 name=Messiah cwal_gg_id=saikohero stage=query_profile status=retry attempt=4 elapsed_ms=30040 err=invalid JSON: []
+2026/05/12 08:04:16.180181 name=影子鱼 cwal_gg_id=kele+bing endpoint=player-update status=ok code=202
+2026/05/12 08:04:16.181458 name=东海 cwal_gg_id=wwwwwwww endpoint=player-update status=ok code=202
+2026/05/12 08:04:16.184137 name=毕业生 cwal_gg_id=needbigass endpoint=player-update status=ok code=202
+2026/05/12 08:04:16.185538 name=Messiah cwal_gg_id=saikohero endpoint=player-update status=ok code=202
+2026/05/12 08:04:16.186503 name=天王 cwal_gg_id=lliillii1111l endpoint=player-update status=ok code=202
+2026/05/12 08:04:16.188099 name=小新 cwal_gg_id=unkown endpoint=player-update status=ok code=202
+2026/05/12 08:04:16.189560 name=Fengzi cwal_gg_id=scgotoboy endpoint=player-update status=ok code=202
+2026/05/12 08:04:16.191208 name=KID cwal_gg_id=IILLIILioII endpoint=player-update status=ok code=202
+2026/05/12 08:04:16.191294 name=酷酷 cwal_gg_id=kukuboy1 endpoint=player-update status=ok code=202
+2026/05/12 08:04:16.194391 name=轩轩 cwal_gg_id=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/05/12 08:04:16.195920 name=AP cwal_gg_id=TIMING3M endpoint=player-update status=ok code=202
+2026/05/12 08:04:16.198108 name=xz cwal_gg_id=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/05/12 08:04:16.199029 name=小帅 cwal_gg_id=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/05/12 08:04:16.216722 name=小马 cwal_gg_id=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/05/12 08:04:16.235367 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/05/12 08:04:16.236346 name=过谦 cwal_gg_id=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/05/12 08:04:16.239825 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/05/12 08:04:17.669149 name=Fengzi cwal_gg_id=scgotoboy stage=query_profile status=ok rating=2338 elapsed_ms=1764 attempts=1
+2026/05/12 08:04:17.673992 name=酷酷 cwal_gg_id=kukuboy1 stage=query_profile status=ok rating=2192 elapsed_ms=1769 attempts=1
+2026/05/12 08:04:17.679779 name=毕业生 cwal_gg_id=needbigass stage=query_profile status=ok rating=2181 elapsed_ms=1775 attempts=1
+2026/05/12 08:04:17.682168 name=KID cwal_gg_id=IILLIILioII stage=query_profile status=ok rating=2191 elapsed_ms=1777 attempts=1
+2026/05/12 08:04:17.690263 name=轩轩 cwal_gg_id=lIIIlIlIIIll stage=query_profile status=ok rating=2197 elapsed_ms=1785 attempts=1
+2026/05/12 08:04:17.833161 name=AP cwal_gg_id=TIMING3M stage=query_profile status=ok rating=2339 elapsed_ms=1928 attempts=1
+2026/05/12 08:04:17.836359 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2349 elapsed_ms=1931 attempts=1
+2026/05/12 08:04:17.838775 name=xz cwal_gg_id=lIlIlIIIllII112 stage=query_profile status=ok rating=2078 elapsed_ms=1934 attempts=1
+2026/05/12 08:04:17.845072 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran stage=query_profile status=ok rating=1404 elapsed_ms=1940 attempts=1
+2026/05/12 08:04:20.613998 name=小新 cwal_gg_id=unkown stage=query_profile status=retry attempt=4 elapsed_ms=4709 err=invalid JSON: []
+2026/05/12 08:04:20.617310 name=天王 cwal_gg_id=lliillii1111l stage=query_profile status=retry attempt=4 elapsed_ms=4712 err=invalid JSON: []
+2026/05/12 08:04:20.618313 name=Messiah cwal_gg_id=saikohero stage=query_profile status=retry attempt=4 elapsed_ms=4713 err=invalid JSON: []
+2026/05/12 08:04:20.626752 name=东海 cwal_gg_id=wwwwwwww stage=query_profile status=retry attempt=4 elapsed_ms=4721 err=invalid JSON: []
+2026/05/12 08:04:20.648402 name=影子鱼 cwal_gg_id=kele+bing stage=query_profile status=retry attempt=4 elapsed_ms=4743 err=invalid JSON: []
+2026/05/12 08:04:20.786343 name=小马 cwal_gg_id=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 elapsed_ms=4881 err=invalid JSON: []
+2026/05/12 08:04:20.794563 name=过谦 cwal_gg_id=Naiqoug_FnuS stage=query_profile status=retry attempt=4 elapsed_ms=4889 err=invalid JSON: []
+2026/05/12 08:04:20.805367 name=小帅 cwal_gg_id=32323GDFDGDF344 stage=query_profile status=retry attempt=4 elapsed_ms=4900 err=invalid JSON: []
+2026/05/12 08:05:17.183423 name=AP cwal_gg_id=TIMING3M endpoint=player-update status=ok code=202
+2026/05/12 08:05:17.184451 name=轩轩 cwal_gg_id=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/05/12 08:05:17.185917 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/05/12 08:05:17.191198 name=酷酷 cwal_gg_id=kukuboy1 endpoint=player-update status=ok code=202
+2026/05/12 08:05:17.196743 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/05/12 08:05:17.198195 name=小新 cwal_gg_id=unkown endpoint=player-update status=ok code=202
+2026/05/12 08:05:17.198195 name=Messiah cwal_gg_id=saikohero endpoint=player-update status=ok code=202
+2026/05/12 08:05:17.200136 name=东海 cwal_gg_id=wwwwwwww endpoint=player-update status=ok code=202
+2026/05/12 08:05:17.201269 name=KID cwal_gg_id=IILLIILioII endpoint=player-update status=ok code=202
+2026/05/12 08:05:17.202593 name=xz cwal_gg_id=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/05/12 08:05:17.214346 name=小马 cwal_gg_id=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/05/12 08:05:17.236752 name=毕业生 cwal_gg_id=needbigass endpoint=player-update status=ok code=202
+2026/05/12 08:05:17.241517 name=天王 cwal_gg_id=lliillii1111l endpoint=player-update status=ok code=202
+2026/05/12 08:05:17.246691 name=小帅 cwal_gg_id=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/05/12 08:05:17.249784 name=Fengzi cwal_gg_id=scgotoboy endpoint=player-update status=ok code=202
+2026/05/12 08:05:17.268666 name=影子鱼 cwal_gg_id=kele+bing endpoint=player-update status=ok code=202
+2026/05/12 08:05:17.274998 name=过谦 cwal_gg_id=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/05/12 08:05:18.668852 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran stage=query_profile status=ok rating=1404 elapsed_ms=1764 attempts=1
+2026/05/12 08:05:18.673270 name=xz cwal_gg_id=lIlIlIIIllII112 stage=query_profile status=ok rating=2078 elapsed_ms=1769 attempts=1
+2026/05/12 08:05:18.673648 name=酷酷 cwal_gg_id=kukuboy1 stage=query_profile status=ok rating=2192 elapsed_ms=1769 attempts=1
+2026/05/12 08:05:18.676141 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2349 elapsed_ms=1771 attempts=1
+2026/05/12 08:05:18.682616 name=轩轩 cwal_gg_id=lIIIlIlIIIll stage=query_profile status=ok rating=2197 elapsed_ms=1778 attempts=1
+2026/05/12 08:05:18.683897 name=KID cwal_gg_id=IILLIILioII stage=query_profile status=ok rating=2191 elapsed_ms=1779 attempts=1
+2026/05/12 08:05:18.691160 name=AP cwal_gg_id=TIMING3M stage=query_profile status=ok rating=2339 elapsed_ms=1786 attempts=1
+2026/05/12 08:05:18.702497 name=毕业生 cwal_gg_id=needbigass stage=query_profile status=ok rating=2181 elapsed_ms=1798 attempts=1
+2026/05/12 08:05:18.841257 name=Fengzi cwal_gg_id=scgotoboy stage=query_profile status=ok rating=2338 elapsed_ms=1937 attempts=1
+2026/05/12 08:05:21.708936 name=Messiah cwal_gg_id=saikohero stage=query_profile status=retry attempt=4 elapsed_ms=4804 err=invalid JSON: []
+2026/05/12 08:05:21.712538 name=小马 cwal_gg_id=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 elapsed_ms=4808 err=invalid JSON: []
+2026/05/12 08:05:21.764829 name=过谦 cwal_gg_id=Naiqoug_FnuS stage=query_profile status=retry attempt=4 elapsed_ms=4860 err=invalid JSON: []
+2026/05/12 08:05:21.801998 name=东海 cwal_gg_id=wwwwwwww stage=query_profile status=retry attempt=4 elapsed_ms=4897 err=invalid JSON: []
+2026/05/12 08:05:21.811837 name=小新 cwal_gg_id=unkown stage=query_profile status=retry attempt=4 elapsed_ms=4907 err=invalid JSON: []
+2026/05/12 08:05:21.833907 name=小帅 cwal_gg_id=32323GDFDGDF344 stage=query_profile status=retry attempt=4 elapsed_ms=4929 err=invalid JSON: []
+2026/05/12 08:05:21.890104 name=天王 cwal_gg_id=lliillii1111l stage=query_profile status=retry attempt=4 elapsed_ms=4985 err=invalid JSON: []
+2026/05/12 08:05:21.891903 name=影子鱼 cwal_gg_id=kele+bing stage=query_profile status=retry attempt=4 elapsed_ms=4987 err=invalid JSON: []
+2026/05/12 08:06:17.179290 name=小新 cwal_gg_id=unkown endpoint=player-update status=ok code=202
+2026/05/12 08:06:17.184474 name=Fengzi cwal_gg_id=scgotoboy endpoint=player-update status=ok code=202
+2026/05/12 08:06:17.185163 name=天王 cwal_gg_id=lliillii1111l endpoint=player-update status=ok code=202
+2026/05/12 08:06:17.188500 name=轩轩 cwal_gg_id=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/05/12 08:06:17.189723 name=小马 cwal_gg_id=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/05/12 08:06:17.190215 name=毕业生 cwal_gg_id=needbigass endpoint=player-update status=ok code=202
+2026/05/12 08:06:17.191508 name=东海 cwal_gg_id=wwwwwwww endpoint=player-update status=ok code=202
+2026/05/12 08:06:17.192764 name=KID cwal_gg_id=IILLIILioII endpoint=player-update status=ok code=202
+2026/05/12 08:06:17.194453 name=过谦 cwal_gg_id=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/05/12 08:06:17.194495 name=xz cwal_gg_id=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/05/12 08:06:17.203000 name=Messiah cwal_gg_id=saikohero endpoint=player-update status=ok code=202
+2026/05/12 08:06:17.233638 name=AP cwal_gg_id=TIMING3M endpoint=player-update status=ok code=202
+2026/05/12 08:06:17.234429 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/05/12 08:06:17.236795 name=小帅 cwal_gg_id=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/05/12 08:06:17.260588 name=影子鱼 cwal_gg_id=kele+bing endpoint=player-update status=ok code=202
+2026/05/12 08:06:17.268486 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/05/12 08:06:17.316314 name=酷酷 cwal_gg_id=kukuboy1 endpoint=player-update status=ok code=202
+2026/05/12 08:06:18.755589 name=KID cwal_gg_id=IILLIILioII stage=query_profile status=ok rating=2191 elapsed_ms=1850 attempts=1
+2026/05/12 08:06:18.760249 name=xz cwal_gg_id=lIlIlIIIllII112 stage=query_profile status=ok rating=2078 elapsed_ms=1855 attempts=1
+2026/05/12 08:06:18.761516 name=轩轩 cwal_gg_id=lIIIlIlIIIll stage=query_profile status=ok rating=2197 elapsed_ms=1856 attempts=1
+2026/05/12 08:06:18.768548 name=Fengzi cwal_gg_id=scgotoboy stage=query_profile status=ok rating=2338 elapsed_ms=1863 attempts=1
+2026/05/12 08:06:18.771720 name=毕业生 cwal_gg_id=needbigass stage=query_profile status=ok rating=2181 elapsed_ms=1866 attempts=1
+2026/05/12 08:06:18.830589 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran stage=query_profile status=ok rating=1404 elapsed_ms=1925 attempts=1
+2026/05/12 08:06:18.838816 name=酷酷 cwal_gg_id=kukuboy1 stage=query_profile status=ok rating=2192 elapsed_ms=1934 attempts=1
+2026/05/12 08:06:18.841090 name=AP cwal_gg_id=TIMING3M stage=query_profile status=ok rating=2339 elapsed_ms=1936 attempts=1
+2026/05/12 08:06:18.847803 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2349 elapsed_ms=1942 attempts=1
+2026/05/12 08:06:21.683002 name=天王 cwal_gg_id=lliillii1111l stage=query_profile status=retry attempt=4 elapsed_ms=4778 err=invalid JSON: []
+2026/05/12 08:06:21.683880 name=小新 cwal_gg_id=unkown stage=query_profile status=retry attempt=4 elapsed_ms=4779 err=invalid JSON: []
+2026/05/12 08:06:21.690605 name=过谦 cwal_gg_id=Naiqoug_FnuS stage=query_profile status=retry attempt=4 elapsed_ms=4785 err=invalid JSON: []
+2026/05/12 08:06:21.698726 name=东海 cwal_gg_id=wwwwwwww stage=query_profile status=retry attempt=4 elapsed_ms=4793 err=invalid JSON: []
+2026/05/12 08:06:21.714566 name=小马 cwal_gg_id=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 elapsed_ms=4809 err=invalid JSON: []
+2026/05/12 08:06:21.756014 name=影子鱼 cwal_gg_id=kele+bing stage=query_profile status=retry attempt=4 elapsed_ms=4851 err=invalid JSON: []
+2026/05/12 08:06:21.757454 name=小帅 cwal_gg_id=32323GDFDGDF344 stage=query_profile status=retry attempt=4 elapsed_ms=4852 err=invalid JSON: []
+2026/05/12 08:06:21.775022 name=Messiah cwal_gg_id=saikohero stage=query_profile status=retry attempt=4 elapsed_ms=4870 err=invalid JSON: []
+2026/05/12 08:07:17.182273 name=影子鱼 cwal_gg_id=kele+bing endpoint=player-update status=ok code=202
+2026/05/12 08:07:17.182309 name=xz cwal_gg_id=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/05/12 08:07:17.184508 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/05/12 08:07:17.185512 name=过谦 cwal_gg_id=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/05/12 08:07:17.187321 name=AP cwal_gg_id=TIMING3M endpoint=player-update status=ok code=202
+2026/05/12 08:07:17.188740 name=KID cwal_gg_id=IILLIILioII endpoint=player-update status=ok code=202
+2026/05/12 08:07:17.190330 name=酷酷 cwal_gg_id=kukuboy1 endpoint=player-update status=ok code=202
+2026/05/12 08:07:17.190701 name=小新 cwal_gg_id=unkown endpoint=player-update status=ok code=202
+2026/05/12 08:07:17.195741 name=Messiah cwal_gg_id=saikohero endpoint=player-update status=ok code=202
+2026/05/12 08:07:17.200367 name=Fengzi cwal_gg_id=scgotoboy endpoint=player-update status=ok code=202
+2026/05/12 08:07:17.204100 name=轩轩 cwal_gg_id=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/05/12 08:07:17.211932 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/05/12 08:07:17.213566 name=小帅 cwal_gg_id=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/05/12 08:07:17.218320 name=东海 cwal_gg_id=wwwwwwww endpoint=player-update status=ok code=202
+2026/05/12 08:07:17.225765 name=小马 cwal_gg_id=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/05/12 08:07:17.253451 name=毕业生 cwal_gg_id=needbigass endpoint=player-update status=ok code=202
+2026/05/12 08:07:17.285929 name=天王 cwal_gg_id=lliillii1111l endpoint=player-update status=ok code=202
+2026/05/12 08:07:18.666355 name=KID cwal_gg_id=IILLIILioII stage=query_profile status=ok rating=2191 elapsed_ms=1761 attempts=1
+2026/05/12 08:07:18.669313 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran stage=query_profile status=ok rating=1404 elapsed_ms=1764 attempts=1
+2026/05/12 08:07:18.671585 name=AP cwal_gg_id=TIMING3M stage=query_profile status=ok rating=2339 elapsed_ms=1766 attempts=1
+2026/05/12 08:07:18.674455 name=酷酷 cwal_gg_id=kukuboy1 stage=query_profile status=ok rating=2192 elapsed_ms=1769 attempts=1
+2026/05/12 08:07:18.678951 name=xz cwal_gg_id=lIlIlIIIllII112 stage=query_profile status=ok rating=2078 elapsed_ms=1773 attempts=1
+2026/05/12 08:07:18.689936 name=轩轩 cwal_gg_id=lIIIlIlIIIll stage=query_profile status=ok rating=2197 elapsed_ms=1784 attempts=1
+2026/05/12 08:07:18.704963 name=Fengzi cwal_gg_id=scgotoboy stage=query_profile status=ok rating=2338 elapsed_ms=1799 attempts=1
+2026/05/12 08:07:18.852345 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2349 elapsed_ms=1947 attempts=1
+2026/05/12 08:07:18.855159 name=毕业生 cwal_gg_id=needbigass stage=query_profile status=ok rating=2181 elapsed_ms=1950 attempts=1
+2026/05/12 08:07:21.612711 name=Messiah cwal_gg_id=saikohero stage=query_profile status=retry attempt=4 elapsed_ms=4707 err=invalid JSON: []
+2026/05/12 08:07:21.617124 name=小新 cwal_gg_id=unkown stage=query_profile status=retry attempt=4 elapsed_ms=4712 err=invalid JSON: []
+2026/05/12 08:07:21.628492 name=过谦 cwal_gg_id=Naiqoug_FnuS stage=query_profile status=retry attempt=4 elapsed_ms=4723 err=invalid JSON: []
+2026/05/12 08:07:21.641832 name=影子鱼 cwal_gg_id=kele+bing stage=query_profile status=retry attempt=4 elapsed_ms=4736 err=invalid JSON: []
+2026/05/12 08:07:21.778968 name=东海 cwal_gg_id=wwwwwwww stage=query_profile status=retry attempt=4 elapsed_ms=4873 err=invalid JSON: []
+2026/05/12 08:07:21.782015 name=小帅 cwal_gg_id=32323GDFDGDF344 stage=query_profile status=retry attempt=4 elapsed_ms=4876 err=invalid JSON: []
+2026/05/12 08:07:21.797846 name=天王 cwal_gg_id=lliillii1111l stage=query_profile status=retry attempt=4 elapsed_ms=4892 err=invalid JSON: []
+2026/05/12 08:07:21.805109 name=小马 cwal_gg_id=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 elapsed_ms=4900 err=invalid JSON: []
+2026/05/12 08:08:17.174306 name=酷酷 cwal_gg_id=kukuboy1 endpoint=player-update status=ok code=202
+2026/05/12 08:08:17.182049 name=KID cwal_gg_id=IILLIILioII endpoint=player-update status=ok code=202
+2026/05/12 08:08:17.182780 name=xz cwal_gg_id=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/05/12 08:08:17.184585 name=毕业生 cwal_gg_id=needbigass endpoint=player-update status=ok code=202
+2026/05/12 08:08:17.184953 name=轩轩 cwal_gg_id=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/05/12 08:08:17.186219 name=Messiah cwal_gg_id=saikohero endpoint=player-update status=ok code=202
+2026/05/12 08:08:17.187230 name=过谦 cwal_gg_id=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/05/12 08:08:17.191416 name=Fengzi cwal_gg_id=scgotoboy endpoint=player-update status=ok code=202
+2026/05/12 08:08:17.194491 name=小新 cwal_gg_id=unkown endpoint=player-update status=ok code=202
+2026/05/12 08:08:17.194558 name=小马 cwal_gg_id=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/05/12 08:08:17.202951 name=影子鱼 cwal_gg_id=kele+bing endpoint=player-update status=ok code=202
+2026/05/12 08:08:17.210130 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/05/12 08:08:17.210352 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/05/12 08:08:17.212763 name=小帅 cwal_gg_id=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/05/12 08:08:17.214986 name=东海 cwal_gg_id=wwwwwwww endpoint=player-update status=ok code=202
+2026/05/12 08:08:17.226552 name=天王 cwal_gg_id=lliillii1111l endpoint=player-update status=ok code=202
+2026/05/12 08:08:17.296487 name=AP cwal_gg_id=TIMING3M endpoint=player-update status=ok code=202
+2026/05/12 08:08:18.717168 name=毕业生 cwal_gg_id=needbigass stage=query_profile status=ok rating=2181 elapsed_ms=1812 attempts=1
+2026/05/12 08:08:18.720717 name=酷酷 cwal_gg_id=kukuboy1 stage=query_profile status=ok rating=2192 elapsed_ms=1815 attempts=1
+2026/05/12 08:08:18.721399 name=Fengzi cwal_gg_id=scgotoboy stage=query_profile status=ok rating=2338 elapsed_ms=1816 attempts=1
+2026/05/12 08:08:18.732700 name=xz cwal_gg_id=lIlIlIIIllII112 stage=query_profile status=ok rating=2078 elapsed_ms=1827 attempts=1
+2026/05/12 08:08:18.736665 name=轩轩 cwal_gg_id=lIIIlIlIIIll stage=query_profile status=ok rating=2197 elapsed_ms=1831 attempts=1
+2026/05/12 08:08:18.745516 name=KID cwal_gg_id=IILLIILioII stage=query_profile status=ok rating=2191 elapsed_ms=1840 attempts=1
+2026/05/12 08:08:18.853677 name=AP cwal_gg_id=TIMING3M stage=query_profile status=ok rating=2339 elapsed_ms=1948 attempts=1
+2026/05/12 08:08:18.856597 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2349 elapsed_ms=1951 attempts=1
+2026/05/12 08:08:18.856858 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran stage=query_profile status=ok rating=1404 elapsed_ms=1951 attempts=1
+2026/05/12 08:08:21.657646 name=小马 cwal_gg_id=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 elapsed_ms=4752 err=invalid JSON: []
+2026/05/12 08:08:21.674856 name=影子鱼 cwal_gg_id=kele+bing stage=query_profile status=retry attempt=4 elapsed_ms=4769 err=invalid JSON: []
+2026/05/12 08:08:21.697781 name=过谦 cwal_gg_id=Naiqoug_FnuS stage=query_profile status=retry attempt=4 elapsed_ms=4792 err=invalid JSON: []
+2026/05/12 08:08:21.701610 name=Messiah cwal_gg_id=saikohero stage=query_profile status=retry attempt=4 elapsed_ms=4796 err=invalid JSON: []
+2026/05/12 08:08:21.701786 name=小新 cwal_gg_id=unkown stage=query_profile status=retry attempt=4 elapsed_ms=4796 err=invalid JSON: []
+2026/05/12 08:08:21.792983 name=东海 cwal_gg_id=wwwwwwww stage=query_profile status=retry attempt=4 elapsed_ms=4887 err=invalid JSON: []
+2026/05/12 08:08:21.820319 name=天王 cwal_gg_id=lliillii1111l stage=query_profile status=retry attempt=4 elapsed_ms=4915 err=invalid JSON: []
+2026/05/12 08:08:21.874405 name=小帅 cwal_gg_id=32323GDFDGDF344 stage=query_profile status=retry attempt=4 elapsed_ms=4969 err=invalid JSON: []
+2026/05/12 08:09:18.178169 name=Fengzi cwal_gg_id=scgotoboy endpoint=player-update status=ok code=202
+2026/05/12 08:09:18.179803 name=天王 cwal_gg_id=lliillii1111l endpoint=player-update status=ok code=202
+2026/05/12 08:09:18.185454 name=东海 cwal_gg_id=wwwwwwww endpoint=player-update status=ok code=202
+2026/05/12 08:09:18.185755 name=Messiah cwal_gg_id=saikohero endpoint=player-update status=ok code=202
+2026/05/12 08:09:18.187750 name=过谦 cwal_gg_id=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/05/12 08:09:18.188606 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/05/12 08:09:18.189612 name=KID cwal_gg_id=IILLIILioII endpoint=player-update status=ok code=202
+2026/05/12 08:09:18.190365 name=xz cwal_gg_id=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/05/12 08:09:18.190369 name=小帅 cwal_gg_id=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/05/12 08:09:18.192282 name=小新 cwal_gg_id=unkown endpoint=player-update status=ok code=202
+2026/05/12 08:09:18.193546 name=影子鱼 cwal_gg_id=kele+bing endpoint=player-update status=ok code=202
+2026/05/12 08:09:18.193579 name=AP cwal_gg_id=TIMING3M endpoint=player-update status=ok code=202
+2026/05/12 08:09:18.195808 name=小马 cwal_gg_id=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/05/12 08:09:18.202636 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/05/12 08:09:18.209578 name=毕业生 cwal_gg_id=needbigass endpoint=player-update status=ok code=202
+2026/05/12 08:09:18.216031 name=轩轩 cwal_gg_id=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/05/12 08:09:18.236723 name=酷酷 cwal_gg_id=kukuboy1 endpoint=player-update status=ok code=202
+2026/05/12 08:09:19.683867 name=Fengzi cwal_gg_id=scgotoboy stage=query_profile status=ok rating=2338 elapsed_ms=1778 attempts=1
+2026/05/12 08:09:19.689777 name=xz cwal_gg_id=lIlIlIIIllII112 stage=query_profile status=ok rating=2078 elapsed_ms=1784 attempts=1
+2026/05/12 08:09:19.692632 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2349 elapsed_ms=1787 attempts=1
+2026/05/12 08:09:19.700414 name=KID cwal_gg_id=IILLIILioII stage=query_profile status=ok rating=2191 elapsed_ms=1795 attempts=1
+2026/05/12 08:09:19.830711 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran stage=query_profile status=ok rating=1404 elapsed_ms=1925 attempts=1
+2026/05/12 08:09:19.834658 name=轩轩 cwal_gg_id=lIIIlIlIIIll stage=query_profile status=ok rating=2197 elapsed_ms=1929 attempts=1
+2026/05/12 08:09:19.838339 name=AP cwal_gg_id=TIMING3M stage=query_profile status=ok rating=2339 elapsed_ms=1933 attempts=1
+2026/05/12 08:09:19.838441 name=酷酷 cwal_gg_id=kukuboy1 stage=query_profile status=ok rating=2192 elapsed_ms=1933 attempts=1
+2026/05/12 08:09:19.841237 name=毕业生 cwal_gg_id=needbigass stage=query_profile status=ok rating=2181 elapsed_ms=1935 attempts=1
+2026/05/12 08:09:22.605220 name=Messiah cwal_gg_id=saikohero stage=query_profile status=retry attempt=4 elapsed_ms=4699 err=invalid JSON: []
+2026/05/12 08:09:22.611784 name=小帅 cwal_gg_id=32323GDFDGDF344 stage=query_profile status=retry attempt=4 elapsed_ms=4706 err=invalid JSON: []
+2026/05/12 08:09:22.619431 name=东海 cwal_gg_id=wwwwwwww stage=query_profile status=retry attempt=4 elapsed_ms=4714 err=invalid JSON: []
+2026/05/12 08:09:22.670653 name=过谦 cwal_gg_id=Naiqoug_FnuS stage=query_profile status=retry attempt=4 elapsed_ms=4765 err=invalid JSON: []
+2026/05/12 08:09:22.686489 name=天王 cwal_gg_id=lliillii1111l stage=query_profile status=retry attempt=4 elapsed_ms=4781 err=invalid JSON: []
+2026/05/12 08:09:22.709378 name=小新 cwal_gg_id=unkown stage=query_profile status=retry attempt=4 elapsed_ms=4804 err=invalid JSON: []
+2026/05/12 08:09:22.749254 name=小马 cwal_gg_id=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 elapsed_ms=4843 err=invalid JSON: []
+2026/05/12 08:09:22.767546 name=影子鱼 cwal_gg_id=kele+bing stage=query_profile status=retry attempt=4 elapsed_ms=4862 err=invalid JSON: []
+2026/05/12 08:10:19.180003 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/05/12 08:10:19.185904 name=Messiah cwal_gg_id=saikohero endpoint=player-update status=ok code=202
+2026/05/12 08:10:19.187136 name=小新 cwal_gg_id=unkown endpoint=player-update status=ok code=202
+2026/05/12 08:10:19.187430 name=小马 cwal_gg_id=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/05/12 08:10:19.192781 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/05/12 08:10:19.193880 name=过谦 cwal_gg_id=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/05/12 08:10:19.195902 name=AP cwal_gg_id=TIMING3M endpoint=player-update status=ok code=202
+2026/05/12 08:10:19.196800 name=酷酷 cwal_gg_id=kukuboy1 endpoint=player-update status=ok code=202
+2026/05/12 08:10:19.197396 name=Fengzi cwal_gg_id=scgotoboy endpoint=player-update status=ok code=202
+2026/05/12 08:10:19.198481 name=小帅 cwal_gg_id=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/05/12 08:10:19.199576 name=东海 cwal_gg_id=wwwwwwww endpoint=player-update status=ok code=202
+2026/05/12 08:10:19.200728 name=影子鱼 cwal_gg_id=kele+bing endpoint=player-update status=ok code=202
+2026/05/12 08:10:19.201715 name=xz cwal_gg_id=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/05/12 08:10:19.202704 name=天王 cwal_gg_id=lliillii1111l endpoint=player-update status=ok code=202
+2026/05/12 08:10:19.203731 name=毕业生 cwal_gg_id=needbigass endpoint=player-update status=ok code=202
+2026/05/12 08:10:19.204858 name=轩轩 cwal_gg_id=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/05/12 08:10:19.208742 name=KID cwal_gg_id=IILLIILioII endpoint=player-update status=ok code=202
+2026/05/12 08:10:20.678161 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran stage=query_profile status=ok rating=1404 elapsed_ms=1772 attempts=1
+2026/05/12 08:10:20.682283 name=酷酷 cwal_gg_id=kukuboy1 stage=query_profile status=ok rating=2192 elapsed_ms=1777 attempts=1
+2026/05/12 08:10:20.686014 name=Fengzi cwal_gg_id=scgotoboy stage=query_profile status=ok rating=2338 elapsed_ms=1780 attempts=1
+2026/05/12 08:10:20.687132 name=AP cwal_gg_id=TIMING3M stage=query_profile status=ok rating=2339 elapsed_ms=1781 attempts=1
+2026/05/12 08:10:20.709110 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2349 elapsed_ms=1803 attempts=1
+2026/05/12 08:10:20.845567 name=KID cwal_gg_id=IILLIILioII stage=query_profile status=ok rating=2191 elapsed_ms=1940 attempts=1
+2026/05/12 08:10:20.846420 name=毕业生 cwal_gg_id=needbigass stage=query_profile status=ok rating=2181 elapsed_ms=1941 attempts=1
+2026/05/12 08:10:20.851109 name=xz cwal_gg_id=lIlIlIIIllII112 stage=query_profile status=ok rating=2078 elapsed_ms=1945 attempts=1
+2026/05/12 08:10:20.856753 name=轩轩 cwal_gg_id=lIIIlIlIIIll stage=query_profile status=ok rating=2197 elapsed_ms=1951 attempts=1
+2026/05/12 08:10:23.594823 name=小马 cwal_gg_id=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 elapsed_ms=4689 err=invalid JSON: []
+2026/05/12 08:10:23.606495 name=过谦 cwal_gg_id=Naiqoug_FnuS stage=query_profile status=retry attempt=4 elapsed_ms=4701 err=invalid JSON: []
+2026/05/12 08:10:23.632581 name=小新 cwal_gg_id=unkown stage=query_profile status=retry attempt=4 elapsed_ms=4727 err=invalid JSON: []
+2026/05/12 08:10:23.638309 name=东海 cwal_gg_id=wwwwwwww stage=query_profile status=retry attempt=4 elapsed_ms=4732 err=invalid JSON: []
+2026/05/12 08:10:23.662953 name=小帅 cwal_gg_id=32323GDFDGDF344 stage=query_profile status=retry attempt=4 elapsed_ms=4757 err=invalid JSON: []
+2026/05/12 08:10:23.777820 name=影子鱼 cwal_gg_id=kele+bing stage=query_profile status=retry attempt=4 elapsed_ms=4872 err=invalid JSON: []
+2026/05/12 08:10:23.948376 name=Messiah cwal_gg_id=saikohero stage=query_profile status=retry attempt=4 elapsed_ms=5042 err=invalid JSON: []
+2026/05/12 08:10:23.950143 name=天王 cwal_gg_id=lliillii1111l stage=query_profile status=retry attempt=4 elapsed_ms=5044 err=invalid JSON: []
+2026/05/12 08:11:20.175211 name=酷酷 cwal_gg_id=kukuboy1 endpoint=player-update status=ok code=202
+2026/05/12 08:11:20.179810 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/05/12 08:11:20.179851 name=小新 cwal_gg_id=unkown endpoint=player-update status=ok code=202
+2026/05/12 08:11:20.180553 name=小马 cwal_gg_id=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/05/12 08:11:20.181844 name=影子鱼 cwal_gg_id=kele+bing endpoint=player-update status=ok code=202
+2026/05/12 08:11:20.182619 name=轩轩 cwal_gg_id=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/05/12 08:11:20.183116 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/05/12 08:11:20.185094 name=KID cwal_gg_id=IILLIILioII endpoint=player-update status=ok code=202
+2026/05/12 08:11:20.188955 name=毕业生 cwal_gg_id=needbigass endpoint=player-update status=ok code=202
+2026/05/12 08:11:20.189782 name=小帅 cwal_gg_id=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/05/12 08:11:20.191102 name=Messiah cwal_gg_id=saikohero endpoint=player-update status=ok code=202
+2026/05/12 08:11:20.193557 name=xz cwal_gg_id=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/05/12 08:11:20.193546 name=AP cwal_gg_id=TIMING3M endpoint=player-update status=ok code=202
+2026/05/12 08:11:20.194384 name=天王 cwal_gg_id=lliillii1111l endpoint=player-update status=ok code=202
+2026/05/12 08:11:20.195932 name=东海 cwal_gg_id=wwwwwwww endpoint=player-update status=ok code=202
+2026/05/12 08:11:20.238316 name=过谦 cwal_gg_id=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/05/12 08:11:20.374417 name=Fengzi cwal_gg_id=scgotoboy endpoint=player-update status=ok code=202
+2026/05/12 08:11:21.729845 name=轩轩 cwal_gg_id=lIIIlIlIIIll stage=query_profile status=ok rating=2197 elapsed_ms=1825 attempts=1
+2026/05/12 08:11:21.732916 name=KID cwal_gg_id=IILLIILioII stage=query_profile status=ok rating=2191 elapsed_ms=1828 attempts=1
+2026/05/12 08:11:21.736241 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2349 elapsed_ms=1831 attempts=1
+2026/05/12 08:11:21.737993 name=毕业生 cwal_gg_id=needbigass stage=query_profile status=ok rating=2181 elapsed_ms=1833 attempts=1
+2026/05/12 08:11:21.739516 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran stage=query_profile status=ok rating=1404 elapsed_ms=1834 attempts=1
+2026/05/12 08:11:21.757481 name=酷酷 cwal_gg_id=kukuboy1 stage=query_profile status=ok rating=2192 elapsed_ms=1852 attempts=1
+2026/05/12 08:11:21.838126 name=xz cwal_gg_id=lIlIlIIIllII112 stage=query_profile status=ok rating=2078 elapsed_ms=1933 attempts=1
+2026/05/12 08:11:21.844512 name=Fengzi cwal_gg_id=scgotoboy stage=query_profile status=ok rating=2338 elapsed_ms=1939 attempts=1
+2026/05/12 08:11:21.847263 name=AP cwal_gg_id=TIMING3M stage=query_profile status=ok rating=2339 elapsed_ms=1942 attempts=1
+2026/05/12 08:11:24.636384 name=影子鱼 cwal_gg_id=kele+bing stage=query_profile status=retry attempt=4 elapsed_ms=4731 err=invalid JSON: []
+2026/05/12 08:11:24.657642 name=小新 cwal_gg_id=unkown stage=query_profile status=retry attempt=4 elapsed_ms=4753 err=invalid JSON: []
+2026/05/12 08:11:24.658547 name=小帅 cwal_gg_id=32323GDFDGDF344 stage=query_profile status=retry attempt=4 elapsed_ms=4754 err=invalid JSON: []
+2026/05/12 08:11:24.668935 name=小马 cwal_gg_id=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 elapsed_ms=4764 err=invalid JSON: []
+2026/05/12 08:11:24.761968 name=过谦 cwal_gg_id=Naiqoug_FnuS stage=query_profile status=retry attempt=4 elapsed_ms=4857 err=invalid JSON: []
+2026/05/12 08:11:24.776278 name=Messiah cwal_gg_id=saikohero stage=query_profile status=retry attempt=4 elapsed_ms=4871 err=invalid JSON: []
+2026/05/12 08:11:24.778905 name=东海 cwal_gg_id=wwwwwwww stage=query_profile status=retry attempt=4 elapsed_ms=4874 err=invalid JSON: []
+2026/05/12 08:11:25.110871 name=天王 cwal_gg_id=lliillii1111l stage=query_profile status=retry attempt=4 elapsed_ms=5206 err=invalid JSON: []
+2026/05/12 08:12:20.169347 name=小新 cwal_gg_id=unkown endpoint=player-update status=ok code=202
+2026/05/12 08:12:20.179243 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/05/12 08:12:20.181820 name=东海 cwal_gg_id=wwwwwwww endpoint=player-update status=ok code=202
+2026/05/12 08:12:20.183714 name=AP cwal_gg_id=TIMING3M endpoint=player-update status=ok code=202
+2026/05/12 08:12:20.184789 name=过谦 cwal_gg_id=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/05/12 08:12:20.187322 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/05/12 08:12:20.188152 name=小帅 cwal_gg_id=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/05/12 08:12:20.188688 name=小马 cwal_gg_id=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/05/12 08:12:20.189788 name=xz cwal_gg_id=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/05/12 08:12:20.190229 name=Fengzi cwal_gg_id=scgotoboy endpoint=player-update status=ok code=202
+2026/05/12 08:12:20.192856 name=KID cwal_gg_id=IILLIILioII endpoint=player-update status=ok code=202
+2026/05/12 08:12:20.193827 name=毕业生 cwal_gg_id=needbigass endpoint=player-update status=ok code=202
+2026/05/12 08:12:20.196280 name=Messiah cwal_gg_id=saikohero endpoint=player-update status=ok code=202
+2026/05/12 08:12:20.202141 name=天王 cwal_gg_id=lliillii1111l endpoint=player-update status=ok code=202
+2026/05/12 08:12:20.205020 name=影子鱼 cwal_gg_id=kele+bing endpoint=player-update status=ok code=202
+2026/05/12 08:12:20.220423 name=酷酷 cwal_gg_id=kukuboy1 endpoint=player-update status=ok code=202
+2026/05/12 08:12:20.231310 name=轩轩 cwal_gg_id=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/05/12 08:12:21.661935 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2349 elapsed_ms=1757 attempts=1
+2026/05/12 08:12:21.663607 name=xz cwal_gg_id=lIlIlIIIllII112 stage=query_profile status=ok rating=2078 elapsed_ms=1759 attempts=1
+2026/05/12 08:12:21.668949 name=Fengzi cwal_gg_id=scgotoboy stage=query_profile status=ok rating=2338 elapsed_ms=1764 attempts=1
+2026/05/12 08:12:21.673685 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran stage=query_profile status=ok rating=1404 elapsed_ms=1768 attempts=1
+2026/05/12 08:12:21.675366 name=AP cwal_gg_id=TIMING3M stage=query_profile status=ok rating=2339 elapsed_ms=1770 attempts=1
+2026/05/12 08:12:21.827722 name=KID cwal_gg_id=IILLIILioII stage=query_profile status=ok rating=2191 elapsed_ms=1923 attempts=1
+2026/05/12 08:12:21.827787 name=毕业生 cwal_gg_id=needbigass stage=query_profile status=ok rating=2181 elapsed_ms=1923 attempts=1
+2026/05/12 08:12:21.832264 name=酷酷 cwal_gg_id=kukuboy1 stage=query_profile status=ok rating=2192 elapsed_ms=1927 attempts=1
+2026/05/12 08:12:21.836403 name=轩轩 cwal_gg_id=lIIIlIlIIIll stage=query_profile status=ok rating=2197 elapsed_ms=1931 attempts=1
+2026/05/12 08:12:24.617012 name=小新 cwal_gg_id=unkown stage=query_profile status=retry attempt=4 elapsed_ms=4712 err=invalid JSON: []
+2026/05/12 08:12:24.624692 name=过谦 cwal_gg_id=Naiqoug_FnuS stage=query_profile status=retry attempt=4 elapsed_ms=4719 err=invalid JSON: []
+2026/05/12 08:12:24.628592 name=小帅 cwal_gg_id=32323GDFDGDF344 stage=query_profile status=retry attempt=4 elapsed_ms=4723 err=invalid JSON: []
+2026/05/12 08:12:24.641067 name=东海 cwal_gg_id=wwwwwwww stage=query_profile status=retry attempt=4 elapsed_ms=4736 err=invalid JSON: []
+2026/05/12 08:12:24.664502 name=小马 cwal_gg_id=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 elapsed_ms=4760 err=invalid JSON: []
+2026/05/12 08:12:24.754216 name=影子鱼 cwal_gg_id=kele+bing stage=query_profile status=retry attempt=4 elapsed_ms=4849 err=invalid JSON: []
+2026/05/12 08:12:24.768338 name=Messiah cwal_gg_id=saikohero stage=query_profile status=retry attempt=4 elapsed_ms=4863 err=invalid JSON: []
+2026/05/12 08:12:24.938613 name=天王 cwal_gg_id=lliillii1111l stage=query_profile status=retry attempt=4 elapsed_ms=5033 err=invalid JSON: []
+2026/05/12 08:13:20.181786 name=天王 cwal_gg_id=lliillii1111l endpoint=player-update status=ok code=202
+2026/05/12 08:13:20.184069 name=KID cwal_gg_id=IILLIILioII endpoint=player-update status=ok code=202
+2026/05/12 08:13:20.186809 name=轩轩 cwal_gg_id=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/05/12 08:13:20.188726 name=小新 cwal_gg_id=unkown endpoint=player-update status=ok code=202
+2026/05/12 08:13:20.188780 name=影子鱼 cwal_gg_id=kele+bing endpoint=player-update status=ok code=202
+2026/05/12 08:13:20.192542 name=东海 cwal_gg_id=wwwwwwww endpoint=player-update status=ok code=202
+2026/05/12 08:13:20.192813 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/05/12 08:13:20.195203 name=小马 cwal_gg_id=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/05/12 08:13:20.198741 name=酷酷 cwal_gg_id=kukuboy1 endpoint=player-update status=ok code=202
+2026/05/12 08:13:20.207747 name=Fengzi cwal_gg_id=scgotoboy endpoint=player-update status=ok code=202
+2026/05/12 08:13:20.213969 name=毕业生 cwal_gg_id=needbigass endpoint=player-update status=ok code=202
+2026/05/12 08:13:20.218086 name=过谦 cwal_gg_id=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/05/12 08:13:20.234575 name=xz cwal_gg_id=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/05/12 08:13:20.234917 name=Messiah cwal_gg_id=saikohero endpoint=player-update status=ok code=202
+2026/05/12 08:13:20.239110 name=AP cwal_gg_id=TIMING3M endpoint=player-update status=ok code=202
+2026/05/12 08:13:20.268687 name=小帅 cwal_gg_id=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/05/12 08:13:20.427407 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/05/12 08:13:21.718732 name=KID cwal_gg_id=IILLIILioII stage=query_profile status=ok rating=2191 elapsed_ms=1812 attempts=1
+2026/05/12 08:13:21.721294 name=轩轩 cwal_gg_id=lIIIlIlIIIll stage=query_profile status=ok rating=2197 elapsed_ms=1815 attempts=1
+2026/05/12 08:13:21.736706 name=酷酷 cwal_gg_id=kukuboy1 stage=query_profile status=ok rating=2192 elapsed_ms=1831 attempts=1
+2026/05/12 08:13:21.750319 name=Fengzi cwal_gg_id=scgotoboy stage=query_profile status=ok rating=2338 elapsed_ms=1844 attempts=1
+2026/05/12 08:13:21.751148 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2349 elapsed_ms=1845 attempts=1
+2026/05/12 08:13:21.835734 name=xz cwal_gg_id=lIlIlIIIllII112 stage=query_profile status=ok rating=2078 elapsed_ms=1930 attempts=1
+2026/05/12 08:13:21.839589 name=AP cwal_gg_id=TIMING3M stage=query_profile status=ok rating=2339 elapsed_ms=1933 attempts=1
+2026/05/12 08:13:21.842623 name=毕业生 cwal_gg_id=needbigass stage=query_profile status=ok rating=2181 elapsed_ms=1936 attempts=1
+2026/05/12 08:13:22.022963 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran stage=query_profile status=ok rating=1404 elapsed_ms=2117 attempts=1
+2026/05/12 08:13:24.636757 name=天王 cwal_gg_id=lliillii1111l stage=query_profile status=retry attempt=4 elapsed_ms=4731 err=invalid JSON: []
+2026/05/12 08:13:24.664533 name=东海 cwal_gg_id=wwwwwwww stage=query_profile status=retry attempt=4 elapsed_ms=4758 err=invalid JSON: []
+2026/05/12 08:13:24.672254 name=小新 cwal_gg_id=unkown stage=query_profile status=retry attempt=4 elapsed_ms=4766 err=invalid JSON: []
+2026/05/12 08:13:24.680462 name=影子鱼 cwal_gg_id=kele+bing stage=query_profile status=retry attempt=4 elapsed_ms=4774 err=invalid JSON: []
+2026/05/12 08:13:24.681427 name=小马 cwal_gg_id=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 elapsed_ms=4775 err=invalid JSON: []
+2026/05/12 08:13:24.732148 name=过谦 cwal_gg_id=Naiqoug_FnuS stage=query_profile status=retry attempt=4 elapsed_ms=4826 err=invalid JSON: []
+2026/05/12 08:13:24.742624 name=Messiah cwal_gg_id=saikohero stage=query_profile status=retry attempt=4 elapsed_ms=4836 err=invalid JSON: []
+2026/05/12 08:13:24.753302 name=小帅 cwal_gg_id=32323GDFDGDF344 stage=query_profile status=retry attempt=4 elapsed_ms=4847 err=invalid JSON: []
+2026/05/12 08:14:21.171478 name=AP cwal_gg_id=TIMING3M endpoint=player-update status=ok code=202
+2026/05/12 08:14:21.177976 name=xz cwal_gg_id=lIlIlIIIllII112 endpoint=player-update status=ok code=202
+2026/05/12 08:14:21.182780 name=Fengzi cwal_gg_id=scgotoboy endpoint=player-update status=ok code=202
+2026/05/12 08:14:21.182790 name=小新 cwal_gg_id=unkown endpoint=player-update status=ok code=202
+2026/05/12 08:14:21.187990 name=影子鱼 cwal_gg_id=kele+bing endpoint=player-update status=ok code=202
+2026/05/12 08:14:21.188180 name=小帅 cwal_gg_id=32323GDFDGDF344 endpoint=player-update status=ok code=202
+2026/05/12 08:14:21.188977 name=酷酷 cwal_gg_id=kukuboy1 endpoint=player-update status=ok code=202
+2026/05/12 08:14:21.192121 name=轩轩 cwal_gg_id=lIIIlIlIIIll endpoint=player-update status=ok code=202
+2026/05/12 08:14:21.193484 name=过谦 cwal_gg_id=Naiqoug_FnuS endpoint=player-update status=ok code=202
+2026/05/12 08:14:21.195478 name=小马 cwal_gg_id=C9_flash!!!!!!!! endpoint=player-update status=ok code=202
+2026/05/12 08:14:21.201860 name=毕业生 cwal_gg_id=needbigass endpoint=player-update status=ok code=202
+2026/05/12 08:14:21.205248 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI endpoint=player-update status=ok code=202
+2026/05/12 08:14:21.205575 name=天王 cwal_gg_id=lliillii1111l endpoint=player-update status=ok code=202
+2026/05/12 08:14:21.217611 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran endpoint=player-update status=ok code=202
+2026/05/12 08:14:21.222217 name=Messiah cwal_gg_id=saikohero endpoint=player-update status=ok code=202
+2026/05/12 08:14:21.270366 name=东海 cwal_gg_id=wwwwwwww endpoint=player-update status=ok code=202
+2026/05/12 08:14:21.329776 name=KID cwal_gg_id=IILLIILioII endpoint=player-update status=ok code=202
+2026/05/12 08:14:22.660518 name=Fengzi cwal_gg_id=scgotoboy stage=query_profile status=ok rating=2338 elapsed_ms=1755 attempts=1
+2026/05/12 08:14:22.663295 name=AP cwal_gg_id=TIMING3M stage=query_profile status=ok rating=2339 elapsed_ms=1758 attempts=1
+2026/05/12 08:14:22.664208 name=xz cwal_gg_id=lIlIlIIIllII112 stage=query_profile status=ok rating=2078 elapsed_ms=1759 attempts=1
+2026/05/12 08:14:22.669625 name=酷酷 cwal_gg_id=kukuboy1 stage=query_profile status=ok rating=2192 elapsed_ms=1764 attempts=1
+2026/05/12 08:14:22.682451 name=轩轩 cwal_gg_id=lIIIlIlIIIll stage=query_profile status=ok rating=2197 elapsed_ms=1777 attempts=1
+2026/05/12 08:14:22.825019 name=胡阿牛 cwal_gg_id=CCZ_MagouTerran stage=query_profile status=ok rating=1404 elapsed_ms=1920 attempts=1
+2026/05/12 08:14:22.827788 name=毕业生 cwal_gg_id=needbigass stage=query_profile status=ok rating=2181 elapsed_ms=1923 attempts=1
+2026/05/12 08:14:22.831496 name=迷糊 cwal_gg_id=IllIIIIIIlIlIlI stage=query_profile status=ok rating=2349 elapsed_ms=1926 attempts=1
+2026/05/12 08:14:23.014147 name=KID cwal_gg_id=IILLIILioII stage=query_profile status=ok rating=2191 elapsed_ms=2109 attempts=1
+2026/05/12 08:14:25.578558 name=影子鱼 cwal_gg_id=kele+bing stage=query_profile status=retry attempt=4 elapsed_ms=4673 err=invalid JSON: []
+2026/05/12 08:14:25.581754 name=小新 cwal_gg_id=unkown stage=query_profile status=retry attempt=4 elapsed_ms=4677 err=invalid JSON: []
+2026/05/12 08:14:25.582937 name=过谦 cwal_gg_id=Naiqoug_FnuS stage=query_profile status=retry attempt=4 elapsed_ms=4678 err=invalid JSON: []
+2026/05/12 08:14:25.599274 name=小帅 cwal_gg_id=32323GDFDGDF344 stage=query_profile status=retry attempt=4 elapsed_ms=4694 err=invalid JSON: []
+2026/05/12 08:14:25.625016 name=小马 cwal_gg_id=C9_flash!!!!!!!! stage=query_profile status=retry attempt=4 elapsed_ms=4720 err=invalid JSON: []
+2026/05/12 08:14:25.761646 name=天王 cwal_gg_id=lliillii1111l stage=query_profile status=retry attempt=4 elapsed_ms=4856 err=invalid JSON: []
+2026/05/12 08:14:25.789496 name=Messiah cwal_gg_id=saikohero stage=query_profile status=retry attempt=4 elapsed_ms=4884 err=invalid JSON: []
+2026/05/12 08:14:25.792953 name=东海 cwal_gg_id=wwwwwwww stage=query_profile status=retry attempt=4 elapsed_ms=4888 err=invalid JSON: []

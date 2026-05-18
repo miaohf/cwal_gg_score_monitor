@@ -102,11 +102,6 @@ const (
 	minOverlayWidth      = 128
 	minOverlayHeight     = 220
 
-	prefWindowsOverlayXKey      = "windows_overlay.x"
-	prefWindowsOverlayYKey      = "windows_overlay.y"
-	prefWindowsOverlayWidthKey  = "windows_overlay.width"
-	prefWindowsOverlayHeightKey = "windows_overlay.height"
-
 	settingsControlFontSize     = 1001
 	settingsControlFontColor    = 1002
 	settingsControlFontType     = 1003
@@ -348,6 +343,9 @@ func runWindowsTransparentMode(rows []*playerState, cfg apiConfig) bool {
 	}
 	myApp := app.NewWithID("cwalgg.score.monitor")
 	prefs := myApp.Preferences()
+	if !loadSettingsFileIntoPrefs(prefs) {
+		saveUISettingsToPrefs(prefs, defaultUISettings().Snapshot())
+	}
 	ui := loadUISettingsFromPrefs(prefs)
 	poll := loadPollSettingsFromPrefs(prefs)
 	loadHistoryScoresFromPrefs(prefs, rows)
@@ -771,12 +769,15 @@ func (s *windowsOverlayState) pollLoop() {
 	s.render()
 	nextPollAt := nextScoreRefreshAt(time.Now())
 	for {
-		if s.pollStopped() {
-			return
-		}
-		wait := time.Until(nextPollAt)
-		if wait < 0 {
-			wait = 0
+		stopped := s.pollStopped()
+		wait := time.Duration(0)
+		if !stopped {
+			wait = time.Until(nextPollAt)
+			if wait < 0 {
+				wait = 0
+			}
+		} else {
+			wait = 24 * time.Hour
 		}
 		timer := time.NewTimer(wait)
 		select {
@@ -788,10 +789,15 @@ func (s *windowsOverlayState) pollLoop() {
 			nextPollAt = nextScoreRefreshAt(time.Now())
 		case <-s.pollKickCh():
 			timer.Stop()
+			if !stopped {
+				runCycle()
+			}
 			nextPollAt = nextScoreRefreshAt(time.Now())
 		case <-timer.C:
-			runCycle()
-			nextPollAt = nextScoreRefreshAfter(time.Now())
+			if !stopped {
+				runCycle()
+				nextPollAt = nextScoreRefreshAfter(time.Now())
+			}
 		}
 	}
 }
@@ -1134,6 +1140,7 @@ func (s *windowsOverlayState) applyWindowsSettings() {
 	}
 	if s.prefs != nil {
 		savePollSettingsToPrefs(s.prefs, nextInterval, nextStopEnabled, nextStopAt, nextManualHold)
+		saveSettingsFileFromPrefs(s.prefs)
 	}
 	s.applyManualHoldToActiveRows(nextManualHold)
 	s.alphaMu.Lock()
@@ -1183,6 +1190,7 @@ func (s *windowsOverlayState) persistCurrentPreferences() {
 	}
 	s.saveWindowPlacement()
 	saveHistoryScoresToPrefs(s.prefs, s.rows, &s.rowsMu)
+	saveSettingsFileFromPrefs(s.prefs)
 }
 
 func (s *windowsOverlayState) applyManualScore() {

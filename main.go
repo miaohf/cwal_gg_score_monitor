@@ -35,6 +35,7 @@ import (
 const (
 	readmePath             = "README.md"
 	usersCSVPath           = "users.csv"
+	settingsFilePath       = "settings.json"
 	fetchInterval          = 300 * time.Second // 默认轮询间隔（秒）
 	requestTimeout         = 12 * time.Second
 	updateRequestWait      = 1200 * time.Millisecond
@@ -64,26 +65,30 @@ const (
 	footerUpdatedTimeMinSize              = 8 // 底部状态时间最小字号
 	footerUpdatedTimeBelowFooter          = 2 // 相对 footer 统计行再小一档
 
-	prefFontSizeKey        = "ui.font_size"
-	prefFontColorRKey      = "ui.font_color_r"
-	prefFontColorGKey      = "ui.font_color_g"
-	prefFontColorBKey      = "ui.font_color_b"
-	prefFontColorAKey      = "ui.font_color_a"
-	prefFontTypeKey        = "ui.font_type"
-	prefWindowOpacityKey   = "ui.window_opacity"
-	prefSettingsSavedKey   = "ui.settings_saved"
-	prefPollSettingsSaved  = "poll.settings_saved"
-	prefPollIntervalSecKey = "poll.interval_sec"
-	prefManualHoldSecKey   = "poll.manual_hold_sec"
-	prefPollStopEnabledKey = "poll.stop_enabled"
-	prefPollStopAtKey      = "poll.stop_at"
-	prefHistoryScoresKey   = "history.scores_json"
-	prefWindowWidthKey     = "window.width"
-	prefWindowHeightKey    = "window.height"
-	defaultWindowOpacity   = 255
-	defaultFontSize        = 16
-	defaultFontType        = "Regular"
-	appVersion             = "v2.0"
+	prefFontSizeKey             = "ui.font_size"
+	prefFontColorRKey           = "ui.font_color_r"
+	prefFontColorGKey           = "ui.font_color_g"
+	prefFontColorBKey           = "ui.font_color_b"
+	prefFontColorAKey           = "ui.font_color_a"
+	prefFontTypeKey             = "ui.font_type"
+	prefWindowOpacityKey        = "ui.window_opacity"
+	prefSettingsSavedKey        = "ui.settings_saved"
+	prefPollSettingsSaved       = "poll.settings_saved"
+	prefPollIntervalSecKey      = "poll.interval_sec"
+	prefManualHoldSecKey        = "poll.manual_hold_sec"
+	prefPollStopEnabledKey      = "poll.stop_enabled"
+	prefPollStopAtKey           = "poll.stop_at"
+	prefHistoryScoresKey        = "history.scores_json"
+	prefWindowWidthKey          = "window.width"
+	prefWindowHeightKey         = "window.height"
+	prefWindowsOverlayXKey      = "windows_overlay.x"
+	prefWindowsOverlayYKey      = "windows_overlay.y"
+	prefWindowsOverlayWidthKey  = "windows_overlay.width"
+	prefWindowsOverlayHeightKey = "windows_overlay.height"
+	defaultWindowOpacity        = 255
+	defaultFontSize             = 16
+	defaultFontType             = "Regular"
+	appVersion                  = "v2.0"
 )
 
 var (
@@ -174,6 +179,26 @@ type pollControl struct {
 type savedScore struct {
 	CwalID string `json:"cwal_id"`
 	Score  int    `json:"score"`
+}
+
+type savedSettingsFile struct {
+	FontSize        float32 `json:"font_size"`
+	FontColorR      uint8   `json:"font_color_r"`
+	FontColorG      uint8   `json:"font_color_g"`
+	FontColorB      uint8   `json:"font_color_b"`
+	FontColorA      uint8   `json:"font_color_a"`
+	FontType        string  `json:"font_type"`
+	WindowOpacity   uint8   `json:"window_opacity"`
+	PollIntervalSec int     `json:"poll_interval_sec"`
+	ManualHoldSec   int     `json:"manual_hold_sec"`
+	StopEnabled     bool    `json:"stop_enabled"`
+	StopAt          string  `json:"stop_at"`
+	WindowWidth     float32 `json:"window_width"`
+	WindowHeight    float32 `json:"window_height"`
+	WindowsOverlayX int     `json:"windows_overlay_x"`
+	WindowsOverlayY int     `json:"windows_overlay_y"`
+	WindowsOverlayW int     `json:"windows_overlay_width"`
+	WindowsOverlayH int     `json:"windows_overlay_height"`
 }
 
 func newPollControl() *pollControl {
@@ -331,6 +356,77 @@ func saveWindowSizeToPrefs(p fyne.Preferences, size fyne.Size) {
 	}
 	p.SetFloat(prefWindowWidthKey, float64(size.Width))
 	p.SetFloat(prefWindowHeightKey, float64(size.Height))
+}
+
+func loadSettingsFileIntoPrefs(p fyne.Preferences) bool {
+	raw, err := os.ReadFile(settingsFilePath)
+	if err != nil {
+		return false
+	}
+	var saved savedSettingsFile
+	if err := json.Unmarshal(raw, &saved); err != nil {
+		return false
+	}
+	if saved.FontSize >= 10 && saved.FontSize <= 36 {
+		p.SetBool(prefSettingsSavedKey, true)
+		p.SetFloat(prefFontSizeKey, float64(saved.FontSize))
+		p.SetString(prefFontTypeKey, saved.FontType)
+		p.SetInt(prefFontColorRKey, int(saved.FontColorR))
+		p.SetInt(prefFontColorGKey, int(saved.FontColorG))
+		p.SetInt(prefFontColorBKey, int(saved.FontColorB))
+		p.SetInt(prefFontColorAKey, int(saved.FontColorA))
+		p.SetInt(prefWindowOpacityKey, int(saved.WindowOpacity))
+	}
+	if saved.PollIntervalSec > 0 || saved.ManualHoldSec > 0 || saved.StopAt != "" {
+		p.SetBool(prefPollSettingsSaved, true)
+		p.SetInt(prefPollIntervalSecKey, saved.PollIntervalSec)
+		p.SetInt(prefManualHoldSecKey, saved.ManualHoldSec)
+		p.SetBool(prefPollStopEnabledKey, saved.StopEnabled)
+		p.SetString(prefPollStopAtKey, saved.StopAt)
+	}
+	if saved.WindowWidth > 0 && saved.WindowHeight > 0 {
+		p.SetFloat(prefWindowWidthKey, float64(saved.WindowWidth))
+		p.SetFloat(prefWindowHeightKey, float64(saved.WindowHeight))
+	}
+	if saved.WindowsOverlayW > 0 && saved.WindowsOverlayH > 0 {
+		p.SetInt(prefWindowsOverlayXKey, saved.WindowsOverlayX)
+		p.SetInt(prefWindowsOverlayYKey, saved.WindowsOverlayY)
+		p.SetInt(prefWindowsOverlayWidthKey, saved.WindowsOverlayW)
+		p.SetInt(prefWindowsOverlayHeightKey, saved.WindowsOverlayH)
+	}
+	return true
+}
+
+func saveSettingsFileFromPrefs(p fyne.Preferences) {
+	ui := loadUISettingsFromPrefs(p).Snapshot()
+	poll := loadPollSettingsFromPrefs(p)
+	interval, stopEnabled, stopAt, _, manualHold := poll.Snapshot()
+	saved := savedSettingsFile{
+		FontSize:        ui.FontSize,
+		FontColorR:      ui.FontColor.R,
+		FontColorG:      ui.FontColor.G,
+		FontColorB:      ui.FontColor.B,
+		FontColorA:      ui.FontColor.A,
+		FontType:        ui.FontType,
+		WindowOpacity:   ui.BackgroundAlpha,
+		PollIntervalSec: int(interval / time.Second),
+		ManualHoldSec:   int(manualHold / time.Second),
+		StopEnabled:     stopEnabled,
+		WindowWidth:     float32(p.Float(prefWindowWidthKey)),
+		WindowHeight:    float32(p.Float(prefWindowHeightKey)),
+		WindowsOverlayX: p.Int(prefWindowsOverlayXKey),
+		WindowsOverlayY: p.Int(prefWindowsOverlayYKey),
+		WindowsOverlayW: p.Int(prefWindowsOverlayWidthKey),
+		WindowsOverlayH: p.Int(prefWindowsOverlayHeightKey),
+	}
+	if stopEnabled && !stopAt.IsZero() {
+		saved.StopAt = stopAt.Format(time.RFC3339)
+	}
+	raw, err := json.MarshalIndent(saved, "", "  ")
+	if err != nil {
+		return
+	}
+	_ = os.WriteFile(settingsFilePath, raw, 0o644)
 }
 
 func nextScoreRefreshAt(now time.Time) time.Time {
@@ -657,6 +753,9 @@ func main() {
 	}
 
 	myApp := app.NewWithID("cwalgg.score.monitor")
+	if !loadSettingsFileIntoPrefs(myApp.Preferences()) {
+		saveUISettingsToPrefs(myApp.Preferences(), defaultUISettings().Snapshot())
+	}
 	win := myApp.NewWindow("Score Monitor")
 	win.Resize(loadWindowSizeFromPrefs(myApp.Preferences()))
 	if err := initAPILogger(apiLogPath); err != nil {
@@ -764,6 +863,7 @@ func main() {
 	go pollLoop(rows, rowUIs, listVBox, &rowsMu, statusDot, updatedText, countdownText, stopCh, cfg, settings, pollCfg, myApp.Preferences(), win)
 	win.SetCloseIntercept(func() {
 		saveWindowSizeToPrefs(myApp.Preferences(), win.Canvas().Size())
+		saveSettingsFileFromPrefs(myApp.Preferences())
 		close(stopCh)
 		win.Close()
 	})
@@ -954,6 +1054,7 @@ func showFontSettingsDialog(
 		pollCfg.Update(nextInterval, nextStopEnabled, nextStopAt, nextManualHold)
 		pollCfg.Reset()
 		savePollSettingsToPrefs(prefs, nextInterval, nextStopEnabled, nextStopAt, nextManualHold)
+		saveSettingsFileFromPrefs(prefs)
 		applyTypography(next, staticTexts, headerRefs, rowUIs)
 		backgroundRect.FillColor = color.NRGBA{R: 15, G: 23, B: 42, A: next.BackgroundAlpha}
 		backgroundRect.Refresh()
@@ -1278,7 +1379,20 @@ func pollLoop(
 			nextPollAt = nextScoreRefreshAt(time.Now())
 			continue
 		case <-pollCfg.kickCh:
+			cycleMu.Lock()
+			if cycleRunning {
+				cycleMu.Unlock()
+				continue
+			}
+			cycleRunning = true
 			nextPollAt = nextScoreRefreshAt(time.Now())
+			cycleMu.Unlock()
+			go func() {
+				runCycle()
+				cycleMu.Lock()
+				cycleRunning = false
+				cycleMu.Unlock()
+			}()
 			continue
 		case <-ticker.C:
 			_, stopEnabled, stopAt, stopped, _ := pollCfg.Snapshot()
