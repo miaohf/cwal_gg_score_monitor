@@ -757,6 +757,7 @@ func sendComboString(hwnd uintptr, msg uintptr, value string) {
 
 func (s *windowsOverlayState) pollLoop() {
 	runCycle := func() {
+		logAPIFetch("pollLoop: runCycle starting")
 		refreshRows(s.rows, &s.rowsMu, s.cfg)
 		s.markRowUpdateStatuses()
 		if s.prefs != nil {
@@ -764,10 +765,12 @@ func (s *windowsOverlayState) pollLoop() {
 		}
 		s.rebuildDisplayRows()
 		s.render()
+		logAPIFetch("pollLoop: runCycle completed")
 	}
 	s.rebuildDisplayRows()
 	s.render()
 	nextPollAt := nextScoreRefreshAt(time.Now())
+	logAPIFetch("pollLoop: started, nextPollAt=%v", nextPollAt)
 	for {
 		stopped := s.pollStopped()
 		wait := time.Duration(0)
@@ -777,6 +780,7 @@ func (s *windowsOverlayState) pollLoop() {
 				wait = 0
 			}
 		} else {
+			// 如果已停止，等待较长时间但仍然可以被Reset/Kick信号唤醒
 			wait = 24 * time.Hour
 		}
 		timer := time.NewTimer(wait)
@@ -786,15 +790,27 @@ func (s *windowsOverlayState) pollLoop() {
 			return
 		case <-s.pollResetCh():
 			timer.Stop()
+			// Reset信号：立即重新计算下次轮询时间
 			nextPollAt = nextScoreRefreshAt(time.Now())
+			logAPIFetch("pollLoop: received Reset signal, nextPollAt=%v", nextPollAt)
+			continue
 		case <-s.pollKickCh():
 			timer.Stop()
-			if !stopped {
+			// Kick信号：立即执行一次更新（如果未停止）
+			isStopped := s.pollStopped()
+			logAPIFetch("pollLoop: received Kick signal, stopped=%v", isStopped)
+			if !isStopped {
 				runCycle()
+			} else {
+				logAPIFetch("pollLoop: Kick received but polling is stopped, skipping runCycle")
 			}
 			nextPollAt = nextScoreRefreshAt(time.Now())
+			continue
 		case <-timer.C:
-			if !stopped {
+			// 定时器到期：如果未停止则执行更新
+			isStopped := s.pollStopped()
+			logAPIFetch("pollLoop: timer expired, stopped=%v", isStopped)
+			if !isStopped {
 				runCycle()
 				nextPollAt = nextScoreRefreshAfter(time.Now())
 			}
@@ -818,16 +834,21 @@ func (s *windowsOverlayState) pollStopped() bool {
 		return false
 	}
 	_, stopEnabled, stopAt, stopped, _ := s.poll.Snapshot()
+	now := time.Now()
+	logAPIFetch("pollStopped: stopEnabled=%v stopAt=%v stopped=%v now=%v", stopEnabled, stopAt, stopped, now)
 	if stopped {
+		logAPIFetch("pollStopped: returning true (already marked as stopped)")
 		return true
 	}
-	if stopEnabled && !time.Now().Before(stopAt) {
+	if stopEnabled && !now.Before(stopAt) {
+		logAPIFetch("pollStopped: stopAt has passed, marking as stopped")
 		if s.poll.MarkStopped() {
 			s.rebuildDisplayRows()
 			s.render()
 		}
 		return true
 	}
+	logAPIFetch("pollStopped: returning false (polling active)")
 	return false
 }
 
@@ -1111,6 +1132,7 @@ func (s *windowsOverlayState) applyWindowsSettings() {
 		nextStopEnabled = true
 		nextStopAt = parsed
 	}
+	logAPIFetch("applyWindowsSettings: stopEnabled=%v stopAt=%v", nextStopEnabled, nextStopAt)
 
 	nextAlpha := alphaFromTransparencyPercent(uint8(transparency))
 	if nextAlpha < minOverlayBackgroundAlpha {
@@ -1135,8 +1157,11 @@ func (s *windowsOverlayState) applyWindowsSettings() {
 	nextInterval := time.Duration(intervalSec) * time.Second
 	nextManualHold := time.Duration(manualHoldSec) * time.Second
 	if s.poll != nil {
+		logAPIFetch("applyWindowsSettings: calling Update and Reset")
 		s.poll.Update(nextInterval, nextStopEnabled, nextStopAt, nextManualHold)
 		s.poll.Reset()
+		logAPIFetch("applyWindowsSettings: after Update and Reset, calling Kick")
+		s.poll.Kick()
 	}
 	if s.prefs != nil {
 		savePollSettingsToPrefs(s.prefs, nextInterval, nextStopEnabled, nextStopAt, nextManualHold)
@@ -1585,6 +1610,12 @@ func (s *windowsOverlayState) drawContent(hdc uintptr) {
 		if y > maxRowsY {
 			break
 		}
+	}
+	
+	// 在窗口底部显示日志文件提示
+	footerY := height - 16
+	if footerY > y+10 {
+		drawCenteredWinText(hdc, 0, width, footerY, "Log: api_fetch.log  |  F2: Settings", colorRef(colorHeaderText))
 	}
 }
 
