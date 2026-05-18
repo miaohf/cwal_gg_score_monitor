@@ -1526,7 +1526,6 @@ func (s *windowsOverlayState) render() {
 	bgAlpha := s.bgAlpha
 	s.alphaMu.RUnlock()
 	bg := color.NRGBA{R: 15, G: 23, B: 42, A: bgAlpha}
-	top8RowBg := compositeNRGBA(bg, colorTop8RowGlass)
 	bgPixel := dibPixel(bg)
 	pixels := unsafe.Slice((*uint32)(unsafe.Pointer(bits)), width*height)
 	for i := range pixels {
@@ -1539,13 +1538,12 @@ func (s *windowsOverlayState) render() {
 			defer procSelectObject.Call(memDC, oldFont)
 		}
 	}
-	s.drawContent(memDC, pixels, width, height, top8RowBg)
+	s.drawContent(memDC)
 
 	bgRGB := bgPixel & 0x00ffffff
-	top8RowRGB := dibPixel(top8RowBg) & 0x00ffffff
 	for i, px := range pixels {
 		rgb := px & 0x00ffffff
-		if rgb != bgRGB && rgb != top8RowRGB {
+		if rgb != bgRGB {
 			pixels[i] = px | 0xff000000
 		}
 	}
@@ -1625,7 +1623,7 @@ func (s *windowsOverlayState) createContentFont() uintptr {
 	return createOverlayFont(height, weight, faceName)
 }
 
-func (s *windowsOverlayState) drawContent(hdc uintptr, pixels []uint32, pixelWidth, pixelHeight int, top8RowBg color.NRGBA) {
+func (s *windowsOverlayState) drawContent(hdc uintptr) {
 	s.displayMu.RLock()
 	rows := append([]overlayRow(nil), s.displayRows...)
 	lastUpdated := s.lastUpdated
@@ -1697,7 +1695,7 @@ func (s *windowsOverlayState) drawContent(hdc uintptr, pixels []uint32, pixelWid
 	drawWinText(hdc, ratingX, overlayHeaderY, fitWinTextToWidth(hdc, "RATING", width-ratingX-ratingRightPad), colorRef(textColor))
 
 	y := overlayFirstRowY
-	for pos, row := range rows {
+	for _, row := range rows {
 		rankColor := colorRef(colorMuted)
 		nameColor := colorRef(textColor)
 		ratingColor := colorRef(textColor)
@@ -1706,14 +1704,6 @@ func (s *windowsOverlayState) drawContent(hdc uintptr, pixels []uint32, pixelWid
 			ratingColor = colorRef(colorMuted)
 		} else if score, err := strconv.Atoi(row.rating); err == nil {
 			ratingColor = colorRef(ratingColorByScore(score, textColor))
-		}
-		if pos < 8 && !row.isError {
-			fillDIBRect(pixels, pixelWidth, pixelHeight, winButtonRect{
-				x: 0,
-				y: y - 4,
-				w: width,
-				h: overlayRowStepY - 2,
-			}, top8RowBg)
 		}
 		drawWinText(hdc, overlayRankX, y, row.rank, rankColor)
 		drawWinText(hdc, overlayPlayerX, y, fitWinTextToWidth(hdc, row.name, nameMaxWidth), nameColor)
@@ -1784,38 +1774,6 @@ func settingsPanelRect(width, height int) winButtonRect {
 		y = 80
 	}
 	return winButtonRect{x: x, y: y, w: panelW, h: panelH}
-}
-
-func fillDIBRect(pixels []uint32, width int, height int, rect winButtonRect, c color.NRGBA) {
-	if width <= 0 || height <= 0 {
-		return
-	}
-	x0 := rect.x
-	y0 := rect.y
-	x1 := rect.x + rect.w
-	y1 := rect.y + rect.h
-	if x0 < 0 {
-		x0 = 0
-	}
-	if y0 < 0 {
-		y0 = 0
-	}
-	if x1 > width {
-		x1 = width
-	}
-	if y1 > height {
-		y1 = height
-	}
-	if x0 >= x1 || y0 >= y1 {
-		return
-	}
-	px := dibPixel(c)
-	for y := y0; y < y1; y++ {
-		row := y * width
-		for x := x0; x < x1; x++ {
-			pixels[row+x] = px
-		}
-	}
 }
 
 func fitWinTextToWidth(hdc uintptr, raw string, maxWidth int) string {
@@ -1928,31 +1886,6 @@ func badgeColorByRank(rank int) color.NRGBA {
 		return color.NRGBA{R: 180, G: 83, B: 9, A: 255}
 	default:
 		return color.NRGBA{}
-	}
-}
-
-func compositeNRGBA(base, overlay color.NRGBA) color.NRGBA {
-	oa := float32(overlay.A) / 255
-	ba := float32(base.A) / 255
-	outA := oa + ba*(1-oa)
-	if outA <= 0 {
-		return color.NRGBA{}
-	}
-	blend := func(baseC, overlayC uint8) uint8 {
-		v := (float32(overlayC)*oa + float32(baseC)*ba*(1-oa)) / outA
-		if v < 0 {
-			v = 0
-		}
-		if v > 255 {
-			v = 255
-		}
-		return uint8(v + 0.5)
-	}
-	return color.NRGBA{
-		R: blend(base.R, overlay.R),
-		G: blend(base.G, overlay.G),
-		B: blend(base.B, overlay.B),
-		A: uint8(outA*255 + 0.5),
 	}
 }
 
